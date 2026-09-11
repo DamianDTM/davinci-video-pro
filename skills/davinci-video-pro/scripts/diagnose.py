@@ -115,7 +115,7 @@ def main():
     parser.add_argument('--claude-config', type=Path, help='Ruta explicita a .claude.json si se usa otro perfil.')
     parser.add_argument('--output',type=Path)
     parser.add_argument('--skip-connection',action='store_true')
-    parser.add_argument('--check-connection',action='store_true',help='Consulta Resolve solo con guion confirmado.')
+    parser.add_argument('--check-connection',action='store_true',help='Prueba tecnica de Resolve, sin editar ni requerir guion.')
     parser.add_argument('--project-dir',type=Path)
     args=parser.parse_args()
     codex_root=Path(os.environ.get('CODEX_HOME',str(Path.home()/'.codex')))
@@ -136,11 +136,6 @@ def main():
     report['connection']={'tested':False}
     if args.check_connection and not repo:
         report['connection']['next'] = 'Indica --repo: no se encontro un checkout unico para el cliente elegido.'
-    if args.check_connection and not args.skip_connection:
-        from workflow import require_script
-        if not args.project_dir:
-            parser.error('--project-dir es obligatorio para consultar la API de Resolve.')
-        require_script(args.project_dir)
     if report['repo_found'] and args.check_connection and not args.skip_connection:
         try:
             sys.path.insert(0,str(repo))

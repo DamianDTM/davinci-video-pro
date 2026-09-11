@@ -1,6 +1,8 @@
 # Imágenes y clips adicionales
 
-Antes de cualquier llamada, registrar el guion propio o la eleccion del profesional por defecto y pasar workflow.py gate. No pedir otro si ya fue elegido. Pedir la preferencia de generación durante la recepción. Si el usuario ya pidió
+Antes de generar, comprobar que el usuario eligio imagenes en ENCARGO.md,
+leer guion y brief tecnico vigentes y pasar workflow.py gate. No pedir documentos
+ya elegidos. Mostrar estilos y vias disponibles segun flujo-guiado.md. Pedir la preferencia de generación durante la recepción. Si el usuario ya pidió
 imágenes acompañantes, generarlas dentro de ese alcance. Para clips de pago,
 concretar duración, cantidad y presupuesto antes de gastar créditos.
 

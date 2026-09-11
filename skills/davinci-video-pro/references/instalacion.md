@@ -1,11 +1,16 @@
 # Instalación guiada
 
-## Guion obligatorio y comprobacion inicial
+## Primera etapa: instalar y conectar
 
-Recibir el guion o registrar «usa el guion por defecto» antes de las APIs de esta
-fase. No pedir otro guion ni otra confirmacion si ya fue elegido. Las consultas MCP, autenticacion y pruebas del
-instalador requieren workflow.py gate. diagnose.py sin --check-connection solo
-lee archivos locales. Ver clientes.md para Codex y Claude Code.
+Seguir flujo-guiado.md: preguntar si ya posee Resolve y version/edicion. Si no lo
+sabe, revisarlo localmente. Mostrar una version compatible concreta y preguntar
+por instalarla si falta o hay que cambiarla, preservando proyectos y autorizaciones
+previas. No pedir guion ni brief para instalar o probar conexiones.
+
+Las pruebas tecnicas de autenticacion, modelos, texto minimo y version/proyecto
+de Resolve estan permitidas en esta fase. Analizar materiales, generar recursos
+y editar requieren despues guion y brief tecnico elegidos y workflow.py gate.
+diagnose.py sin --check-connection solo lee datos locales. Ver clientes.md.
 
 ## Alcance y comprobación inicial
 
@@ -89,6 +94,13 @@ necesarias según la documentación vigente. Nunca desactives restricciones ni
 autenticación para arreglar un problema de rutas. Usa un directorio de exportación
 admitido o agrega el directorio concreto autorizado.
 
+## Configurar la clave propia de Google
+
+Despues de instalar los componentes, seguir gemini.md: comprobar si ya hay clave
+local; si falta, preguntar si tiene una de AI Studio y ofrecer la entrada local
+oculta. No pedir que la pegue en el chat. Verificar autenticacion y modelo sin
+subir videos. No confundir guardar la clave con una conexion comprobada.
+
 ## Activar y verificar el puente Free
 
 Explicación al usuario: "Abre Resolve, abre o crea un proyecto y ve a
@@ -122,4 +134,6 @@ ruta de configuración sin su contenido secreto, vía Studio/puente, estado de
 las consultas, último error seguro y siguiente clic pendiente.
 Al reconectar, prueba primero la conexión: no repitas la instalación.
 
-Una vez comprobados Resolve y Gemini, reutiliza el guion ya recibido y continua con los materiales y el plan de edicion.
+Una vez comprobados Resolve y Gemini, pasar directamente a flujo-guiado.md:
+carpeta/seleccion, cantidad de videos, brief, guion, Omni e imagenes. Reutilizar
+cualquier dato ya recibido. Mostrar las rutas editables reales de ambos documentos.

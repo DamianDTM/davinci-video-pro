@@ -1,81 +1,98 @@
-# Guion, revisiones y preferencias entre chats
+# Documentos, encargo y continuidad
 
 Python >=3.11. Estos comandos solo operan archivos locales. Resolver rutas absolutas.
+La instalacion y las pruebas tecnicas de conexion no requieren guion ni brief.
+Antes de producir, ambos documentos deben estar elegidos, leidos y vigentes.
+
+## Inicializar y mostrar los archivos
 
 ```text
-python <skill>/scripts/workflow.py --project-dir <proyecto> init
-python <skill>/scripts/workflow.py --project-dir <proyecto> status
+python <skill>/scripts/workflow.py --project-dir <encargo> init
+python <skill>/scripts/workflow.py --project-dir <encargo> documents
+python <skill>/scripts/workflow.py --project-dir <encargo> status
 ```
 
-init no sobrescribe proyectos. Crea los dos documentos, carpetas, tareas, estado,
-comentarios pendientes y AGENTS.md/CLAUDE.md para orientar nuevos chats.
-Si hay documentos previos sin estado, elegir otra carpeta y conservar los existentes.
-Las plantillas se guardan en DAVINCI_VIDEO_PRO_HOME o ~/.davinci-video-pro/templates.
-Codex y Claude comparten ese lugar. Un nuevo proyecto hereda estilo, pero necesita
-elegir guion (propio o predeterminado) y autorizaciones vigentes. Otro equipo necesita una copia de las plantillas.
+init no sobrescribe proyectos: crea documentos, tareas, estado, comentarios,
+carpetas y AGENTS.md/CLAUDE.md para nuevos chats. Si ya hay documentos sin estado,
+conservarlos y elegir otra carpeta para inicializar. Un encargo puede contener
+varias salidas identificadas en ENCARGO.md; crear montajes y exports separados.
 
-## Guion primero
+documents devuelve rutas absolutas existentes: guion de trabajo, copia editable
+del predeterminado y brief. Mostrar SIEMPRE las rutas al usuario como enlaces
+locales cuando sea posible. No enviar rutas de ejemplo ni pedir editar el paquete.
+La copia GUION-POR-DEFECTO.md se crea una sola vez; documents no elimina sus cambios.
+Una vez elegido, GUION-CREATIVO.md es el archivo activo para siguientes ediciones.
 
-Si el usuario dice «usa el guion por defecto» o una eleccion equivalente, ejecutar:
+Las plantillas generales viven en DAVINCI_VIDEO_PRO_HOME o ~/.davinci-video-pro/templates.
+Codex y Claude comparten ese perfil. Otro equipo necesita su propia copia.
+Un nuevo encargo hereda estilo, sin autorizaciones de gasto ni discurso anterior.
+
+## Elegir guion y brief sin preguntas repetidas
+
+Si tiene guion propio, conservar su fuente y colocar el contenido en GUION-CREATIVO.md.
+Si elige nuestro guion o dice que no tiene, activar la copia editable predeterminada.
+«Hazlo con el de defecto» es suficiente; mostrar su ruta y continuar.
+Un borrador nuevo personalizado se muestra y confirma antes de usarlo.
 
 ```text
-python <skill>/scripts/workflow.py --project-dir <proyecto> use-default-script --confirmation <respuesta-real>
-python <skill>/scripts/workflow.py --project-dir <proyecto> gate
+python <skill>/scripts/workflow.py --project-dir <encargo> use-default-script --confirmation <respuesta-real>
+python <skill>/scripts/workflow.py --project-dir <encargo> confirm-script --confirmation <respuesta-real>
+python <skill>/scripts/workflow.py --project-dir <encargo> confirm-brief --source default --confirmation <respuesta-real>
+python <skill>/scripts/workflow.py --project-dir <encargo> gate
 ```
 
-La frase del usuario confirma la eleccion; NO volver a preguntar. Se activa el
-guion profesional del paquete, con las preferencias del perfil, y se conserva el
-brief tecnico del proyecto. El asistente lee ambos y continua con las fases
-pendientes. No se inventan autorizaciones de envio/gasto. Un chat posterior con
-gate vigente retoma sin pedir de nuevo el guion. Una eleccion para otro video se
-registra en la carpeta de ese video. No sobrescribir un guion propio existente.
+Elegir use-default-script O confirm-script segun corresponda. Para un brief propio,
+usar confirm-brief --source user despues de leer su copia de trabajo.
+--confirmation registra la respuesta REAL que entrega o elige ese documento;
+no exige un segundo «si» si ya lo eligio. «Ambos por defecto» permite registrar los
+dos con esa respuesta. Nunca inventar una respuesta que todavia falta.
 
-Guardar el guion real en GUION-CREATIVO.md, conservando su texto fuente. Si es un
-borrador, mostrarlo y confirmarlo. --confirmation contiene la respuesta REAL del
-usuario que entrega el guion para usarlo o confirma el borrador; nunca fabricarla.
+gate comprueba los hashes de ambos documentos, su contenido y ausencia de una
+transaccion interrumpida. Cambiar un archivo invalida su eleccion vigente. Si el
+usuario dice «ya lo edite, usalo», leer los cambios y registrar esa instruccion;
+no reiniciar la instalacion. Para cambios propuestos por la IA usar la revision
+confirmada siguiente. Los helpers no garantizan calidad por si solos: la IA debe
+leer, ejecutar y comprobar todos los criterios tecnicos.
 
-```text
-python <skill>/scripts/workflow.py --project-dir <proyecto> confirm-script --confirmation <respuesta-real>
-python <skill>/scripts/workflow.py --project-dir <proyecto> gate
-```
+Al retomar un proyecto de una version anterior, no destruir documentos ni su
+historial. Si falta brief_approval, leer el brief y registrar una eleccion real
+previa si consta; si no, preguntar solo por esa eleccion, mostrando su ruta.
+Revisar instrucciones de continuidad generadas por versiones anteriores que aun
+exijan guion para conexiones; actualizar ese texto generado al orden de 2.2,
+conservando instrucciones personales ajenas. Guardar la migracion en ESTADO.md.
 
-La puerta verifica el hash vigente y rechaza plantillas sin completar. Cambiar el
-guion directamente invalida la confirmacion. Una revision confirmada actualiza
-el hash. Pedir confirmacion de un borrador no requiere volver a pedir un guion ya entregado.
+## Guardar la recepcion
+
+Seguir flujo-guiado.md e intake.py: inventario local, seleccion concreta, numero
+de videos finales y distribucion, documentos, Omni e imagenes. ENCARGO.md guarda
+las elecciones y .davinci-video-pro/intake.json su registro. Reutilizarlo al retomar.
+Si cambian documentos, verificar la coherencia del plan, actualizarlo con las
+respuestas existentes y conservar el historial; no repetir todas las preguntas.
 
 ## Rondas de comentarios
 
-Guardar cambios en CAMBIOS-PENDIENTES.md mientras se ejecutan las ediciones ya
-autorizadas. Preparar dos documentos candidatos y un resumen que separe cambios
-del video actual de preferencias generales. No consolidar preferencias antes de
-confirmar el resumen. No generalizar nombres, discursos, marcas o CTA concretos.
+Guardar comentarios en CAMBIOS-PENDIENTES.md mientras se ejecuta trabajo autorizado.
+Al cerrar la ronda, preparar ambos documentos candidatos y resumir por documento
+y alcance: video actual o preferencias generales. Mostrar el resumen, preguntar
+si es correcto y esperar respuesta antes de consolidar. No generalizar discursos,
+nombres, marcas ni CTA concretos de un video.
 
 ```text
-python <skill>/scripts/workflow.py --project-dir <proyecto> stage-revision --creative <guion-candidato.md> --technical <brief-candidato.md> --summary-file <resumen.md>
+python <skill>/scripts/workflow.py --project-dir <encargo> stage-revision --creative <guion-candidato.md> --technical <brief-candidato.md> --summary-file <resumen.md>
+python <skill>/scripts/workflow.py --project-dir <encargo> apply-revision --confirmation <respuesta-real>
 ```
 
-Mostrar el resumen y preguntar «¿Es correcto este resumen?». Esperar respuesta.
-Si hay correcciones, archivar el pending y preparar otra propuesta; no confirmar
-una obsoleta. Para preferencias futuras agregar --profile-creative y
---profile-technical con dos plantillas generales. Conservar PENDIENTE_DE_GUION
-en la plantilla creativa: un nuevo video requiere la eleccion de su guion.
-Conservar la seccion «Preferencias creativas reutilizables»: use-default-script
-incorpora ese bloque confirmado al guion base. Las preferencias tecnicas se
-heredan en BRIEF-TECNICO.md. Las actualizaciones del paquete no pisan ese perfil.
+Si hay correcciones antes de confirmar, conservar/archivar la propuesta y preparar
+el resumen actualizado. Para guardar preferencias futuras, agregar a stage-revision
+--profile-creative y --profile-technical con las dos plantillas generales.
+Conservar PENDIENTE_DE_GUION en la plantilla creativa y su seccion «Preferencias
+creativas reutilizables»: se incorpora al crear la copia del guion predeterminado.
+La preferencia tecnica vive en BRIEF-TECNICO.md. Actualizar el paquete no pisa el perfil.
 
-```text
-python <skill>/scripts/workflow.py --project-dir <proyecto> apply-revision --confirmation <respuesta-real>
-```
+Se comprueban cambios concurrentes, se respaldan bytes originales en history,
+se actualizan ambos documentos y se registran sus hashes vigentes. Cada documento
+recibe sus cambios pertinentes; no inventar modificaciones para forzar una diferencia.
 
-Se comprueban cambios concurrentes, se archivan los originales en history y se
-actualizan ambos documentos y el perfil si estaba incluido. Cada documento recibe
-solo cambios pertinentes; no inventar modificaciones para forzar una diferencia.
-Guardar tareas y proximo paso. Una propuesta preparada no equivale a confirmada.
-
-Si existe transaction.json tras una interrupcion, no llamar APIs: leer su historial
-y restaurar los documentos y project-before.json, o completar la revision
-comprobando los archivos y el resumen. Conservar evidencia hasta verificar.
-
-Casos de comportamiento: instalar sin guion pide guion antes de pruebas; guion
-entregado se reutiliza; nuevo chat lee estado; nuevo video hereda estilo y pide
-contenido o acepta el guion por defecto; cambios se resumen y confirman antes de persistir como preferencias.
+Si existe transaction.json tras una interrupcion, detener produccion, leer el
+historial y restaurar documentos y project-before.json o completar la revision
+comprobada. Conservar evidencia hasta verificar. Guardar tareas, rutas y siguiente paso.

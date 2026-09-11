@@ -2,11 +2,12 @@
 
 ## Recepción
 
-Recibir un guion propio o la eleccion del profesional por defecto ANTES de APIs
-o edicion. Si dice «usa el guion por defecto», ejecutar use-default-script con
-esa respuesta y continuar sin volver a pedir guion ni otra confirmacion.
-Comprobar workflow.py gate y luego recibir los materiales. Reutilizar lo que
-ya se haya proporcionado. Pedir rutas o archivos con un mensaje normal; no pedir
+Seguir flujo-guiado.md: despues de instalar/conectar, recibir carpeta y seleccion,
+numero de salidas, brief tecnico, guion, Omni e imagenes. Mostrar siempre rutas
+absolutas editables del guion predeterminado y del brief. «No tengo guion» o
+«hazlo con el de defecto» permite activar el nuestro y continuar sin otra pregunta.
+Leer ENCARGO.md y ambos documentos completos. Comprobar workflow.py gate antes
+de analizar, generar o editar. Reutilizar lo que ya se haya proporcionado. Pedir rutas o archivos con un mensaje normal; no pedir
 subidas mediante una herramienta que solo admite respuestas de texto.
 
 Recoger en pocas preguntas:
@@ -33,6 +34,16 @@ origen/in/out, texto conservado, motivo del corte, tiempo de destino, encuadre,
 recurso único, subtítulo/énfasis, transición y audio.
 Trabajar en fotogramas de la línea de tiempo; distinguir fps de origen y destino.
 Para fps variable o mezcla de tasas, verificar conformado y sincronía.
+
+## Brief tecnico obligatorio
+
+LEER y APLICAR BRIEF-TECNICO.md durante montaje y QA. Convertir sus requisitos en
+comprobaciones por video: ruido, niveles, silencios accidentales, tartamudeos y
+repeticiones corregibles, palabras completas, transiciones, subtitulos y export.
+Si falta o cambio, actualizar su eleccion vigente antes de producir. No improvisar
+una edicion ignorandolo ni marcar defectos como corregidos sin escuchar/revisar.
+Un brief propio se aplica como criterio tecnico; conservar las correcciones base
+pertinentes que no contradigan sus decisiones y las excepciones explicitas.
 
 ## Montaje
 
@@ -97,7 +108,9 @@ Entregar MP4, DRP y preferentemente DRA/ZIP con medios, SRT, guion creativo y br
 Comprobar que el archivo de proyecto incluye recursos de Fusion/Loader y fuentes
 o instrucciones de sustitución. No prometer portabilidad por exportar un DRP solo.
 
-Cerrar la lista de tareas y dar la ruta absoluta exacta del video más reciente,
+Revisar la cantidad de salidas de ENCARGO.md. Repetir montaje, QA y export para
+cada video solicitado; no confundir una escena Omni con una salida completa.
+Cerrar la lista de tareas solo al entregar todos y dar la ruta absoluta de cada video,
 enlace para abrirlo y ruta del proyecto. No publicar ni enviar a terceros por defecto.
 
 

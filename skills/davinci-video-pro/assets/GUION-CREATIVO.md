@@ -1,9 +1,11 @@
 # Guion creativo
 
 Estado: PENDIENTE_DE_GUION. Recibir un guion propio o la eleccion del profesional por defecto.
-Si dice «usa el guion por defecto», ejecutar workflow.py use-default-script:
+Mostrar siempre la ruta editable del predeterminado mediante workflow.py documents.
+Si dice «usa el guion por defecto», «hazlo con el de defecto» o «no tengo guion», ejecutar workflow.py use-default-script:
 reemplaza esta plantilla por el guion profesional y registra la eleccion sin volver a preguntar.
-Para un guion propio, completar el contenido antes de editar o llamar APIs.
+Para un guion propio, completar el contenido antes de analizar, generar o editar.
+Las pruebas tecnicas de instalacion/conexion no requieren guion.
 
 ## Contenido de este video
 

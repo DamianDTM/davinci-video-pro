@@ -1,107 +1,121 @@
 ---
 name: davinci-video-pro
-description: Instala y conecta DaVinci Resolve con su MCP, Gemini y Omni en Codex o Claude Code; edita videos a partir del guion del usuario con subtitulos, recursos y exportacion. Usala al configurar este flujo, editar otro video o retomar un montaje.
+description: Instala y conecta DaVinci Resolve, su MCP y Gemini en Codex o Claude Code; organiza materiales y videos finales y edita con guion creativo y brief tecnico obligatorio, Omni e imagenes opcionales.
 metadata:
-  version: "2.1.0"
-  short-description: Guion primero, instalacion guiada y edicion profesional
+  version: "2.2.0"
+  short-description: Instalacion guiada y edicion con brief obligatorio
 ---
 
 # DaVinci Video Pro
 
-Skill portable para Codex y Claude Code con acceso local al equipo. Habla en el
-idioma del usuario. Lee [clientes](references/clientes.md) al instalar o cambiar
-de asistente. Cada persona aporta sus cuentas, claves, capacidades y materiales.
+Skill para Codex local y Claude Code con acceso al equipo de Resolve. Hablar en
+el idioma del usuario. Seguir [flujo guiado](references/flujo-guiado.md) al iniciar,
+instalar o recibir otro encargo. Reutilizar las respuestas, instalaciones y permisos
+vigentes; preguntar solo lo que falta. No detenerse al terminar la instalacion:
+continuar directamente con la recepcion del encargo.
 
-## Regla obligatoria: guion elegido antes de APIs o edicion
+## Orden de trabajo obligatorio
 
-ANTES de editar un video o llamar a cualquier API de este flujo, el usuario debe
-haber entregado un guion o elegido el guion profesional por defecto. Usalo como
-FUENTE PRINCIPAL de la edicion. Esto incluye consultas MCP
-de Resolve, pruebas de credenciales, catalogos de modelos, analisis Gemini,
-generacion Omni e imagenes. Una llamada de prueba tambien requiere guion.
+1. **Instalacion y conexion.** Preguntar si tiene Resolve y que version/edicion;
+   si no sabe, comprobar localmente. Reutilizar lo compatible. Si falta o requiere
+   cambio, preparar la version compatible y preguntar por su instalacion concreta.
+   Registrar el MCP en el cliente real, configurar la clave propia de Google
+   localmente y dar los pasos para abrir Resolve, un proyecto y activar el puente.
+   Verificar conexion. Leer [instalacion](references/instalacion.md) y
+   [clientes](references/clientes.md). No pedir guion para esta etapa tecnica.
+2. **Materiales y resultados.** Revisar la carpeta actual; si contiene videos,
+   mostrar inventario y preguntar todos o cuales. Si no, pedir la ruta. Preguntar
+   cuantos videos finales quiere y como distribuirlos. Recibir audios opcionales.
+3. **Brief tecnico.** Preguntar si aporta uno o usa el predeterminado. Mostrar
+   SIEMPRE su ruta absoluta editable y leerlo completo antes de producir.
+4. **Guion creativo.** Preguntar propio o predeterminado y mostrar SIEMPRE la ruta
+   absoluta de la copia predeterminada para leerla/editarla. Si no tiene uno, usar
+   nuestro guion profesional; «hazlo con el de defecto» permite seguir sin otra
+   confirmacion. Si ya lo eligio, mostrar la ruta y continuar sin volver a preguntar.
+5. **Recursos.** Preguntar si quiere escenas Omni; preguntar si quiere imagenes y
+   mostrar opciones de estilo y proveedores realmente disponibles. Concretar los
+   archivos a enviar y los costes antes de usar servicios con material del usuario.
+6. **Produccion y entrega.** Guardar las elecciones en ENCARGO.md, mostrar TAREAS.md
+   por cada video final, analizar, editar, revisar y exportar TODOS los solicitados.
 
-Si todavia no eligio: «Puedes pasarme tu guion, decir 'usa el guion por defecto'
-o contarme tu idea para preparar uno».
-Si ya lo entrego en este encargo, leelo y registralo; no lo pidas otra vez. Una
-plantilla o preferencias de otro video NO son el guion del nuevo video.
+No hacer todas las preguntas de instalacion y produccion de golpe. Agrupar
+preguntas relacionadas, avanzar por etapas y guardar el siguiente paso para reinicios.
+Si ya esta configurado, retomar desde materiales; una comprobacion tecnica breve
+no obliga a repetir la instalacion.
 
-«Usa el guion por defecto», «edita con nuestro guion profesional» o una eleccion
-equivalente ES suficiente: ejecutar workflow.py use-default-script con esa respuesta
-real. No volver a pedir un guion ni una segunda confirmacion. Este comando activa
-[el guion profesional](assets/GUION-POR-DEFECTO.md) en GUION-CREATIVO.md y conserva
-el BRIEF-TECNICO.md del proyecto. Los valores base de ambos proceden del montaje
-profesional y sus mejoras confirmadas: narrativa, recursos unicos, subtitulos con
-enfasis, CTA, titulares altos, transiciones y limpieza del discurso. Leer ambos.
-No reemplazarlo con otro guion generico. Mostrar brevemente el estilo que se usara
-y continuar con configuracion/materiales. Las autorizaciones de subida y gasto
-se concretan aparte. Si ya hay un guion propio, conservarlo y preparar la revision.
+## Dos requisitos para producir
 
-Si pide un guion propio pero no lo tiene, preparar un borrador desde sus indicaciones sin
-llamar servicios audiovisuales, presentarlo y esperar confirmacion. Si solo desea
-instalar, pueden copiarse la skill, registrarse el MCP localmente y revisarse archivos;
-esas operaciones no requieren guion. Las comprobaciones
-mediante API y los instaladores que hacen pruebas quedan pendientes del guion.
+El GUION-CREATIVO.md es la fuente principal del mensaje y apariencia.
+El BRIEF-TECNICO.md es OBLIGATORIO para ejecutar y revisar la edicion: LEERLO
+completo y traducir sus requisitos a tareas verificables. Nunca tratarlo como
+opcional ni reemplazarlo por decisiones improvisadas. Esto abarca ruidos, niveles
+de voz, silencios accidentales, tartamudeos corregibles, repeticiones, palabras
+completas, transiciones, subtitulos, enfasis, CTA, recursos unicos y exportacion.
+Respetar excepciones expresas del usuario; no prometer corregir material irrecuperable.
 
-Guardar el guion en GUION-CREATIVO.md, conservar su texto fuente y registrar la
-entrega/confirmacion con workflow.py confirm-script. Ejecutar workflow.py gate
-antes de APIs, instaladores con pruebas de conexion y operaciones de edicion.
-Los helpers de Google tambien lo verifican antes de crear clientes. Esto no
-autoriza subir toda una carpeta ni gastar sin limite.
+Antes de analizar materiales, generar imagenes/Omni, cortar, montar o exportar,
+registrar las elecciones del guion y del brief y ejecutar workflow.py gate.
+Los helpers de produccion comprueban ambos documentos y sus hashes. Si falta,
+cambio o esta pendiente una revision, leer su version vigente y resolverla antes
+de producir. Las pruebas tecnicas de Resolve y Gemini (autenticacion, catalogo y
+respuesta minima de prueba) pueden hacerse sin guion ni brief. Esta excepcion NO
+permite subir videos, analizarlos, generar recursos ni editar durante instalacion.
 
-## Documentos y continuidad
+Usar scripts/workflow.py --project-dir <carpeta> init y documents para crear y
+mostrar las copias locales. Enlazar rutas absolutas reales; no mostrar <carpeta>
+como si fuera una ruta util. Nunca pedir al usuario editar archivos del paquete.
+Leer [continuidad](references/continuidad.md) para comandos y revisiones.
 
-1. Inicializar una carpeta por video con scripts/workflow.py --project-dir <carpeta>
-   init. Leer [continuidad](references/continuidad.md). GUION-CREATIVO.md define
-   mensaje, estructura y apariencia. BRIEF-TECNICO.md define correcciones y calidad.
-   Los valores predeterminados se adaptan al guion del usuario.
-2. Al retomar leer ESTADO.md, los dos documentos, TAREAS.md y CAMBIOS-PENDIENTES.md.
-   Mantener pendientes, rutas y revisiones en disco. No crear otro task/chat salvo
-   peticion expresa; una lista de tareas es una lista de comprobacion.
-3. Recoger las mejoras durante el trabajo. Al cerrar una ronda, resumir por
-   documento los cambios y su alcance: este video o preferencias para futuros
-   videos. PREGUNTAR si el resumen es correcto y esperar la respuesta.
-4. Tras confirmar, actualizar ambos documentos de forma coordinada, cada uno con
-   sus cambios pertinentes, sustituyendo instrucciones obsoletas. Usar las
-   revisiones preparadas de workflow.py para conservar historial y estado.
-5. Actualizar plantillas compartidas solo con preferencias generales confirmadas.
-   Guardarlas fuera del paquete en ~/.davinci-video-pro/templates o en
-   DAVINCI_VIDEO_PRO_HOME. Cada video nuevo requiere elegir su guion propio o el predeterminado.
-   Nunca heredar claves, autorizaciones o presupuestos de otra persona/proyecto.
+«Usa el guion por defecto», «hazlo con el de defecto» o «no tengo guion» selecciona
+[nuestro guion profesional](assets/GUION-POR-DEFECTO.md): usar use-default-script
+con la respuesta real, sin pedir otro guion ni repetir confirmacion. Mostrar la
+ruta de GUION-CREATIVO.md una vez activado; si edito la copia de lectura antes de
+elegirla, incorporar esa copia. Un borrador nuevo a medida se confirma antes de uso.
 
-## Configuracion y produccion
+Para el brief, registrar confirm-brief con la eleccion real. Si dice «ambos por
+defecto», registrar ambas elecciones de esa misma respuesta. Si no tiene brief
+propio, ofrecer y aplicar el predeterminado elegido. No sobrescribir documentos
+propios ni preferencias de otros proyectos al seleccionar defaults.
 
-Con guion vigente, seguir [instalacion](references/instalacion.md). Ruta probada:
-Windows, Resolve Free 21.0.3.7 y MCP de Samuel Gursky 2.224.1. Verificar compatibilidad
-actual, reutilizar instalaciones funcionales y preservar proyectos al cambiar
-versiones. Guardar el avance antes de un reinicio. Al recibir «listo», comprobar.
+## Continuidad y mejoras
 
-- [Gemini](references/gemini.md): gemini-3.8-flash preferido. Comprender imagen y voz,
-  relacionar el material con el guion y verificar tiempos antes de cortar.
-- [Omni](references/omni.md): gemini-omni-1.1-flash preferido. Planificar perspectivas
-  por escena y presupuesto; revisar cada resultado antes de integrarlo.
-- [Recursos](references/recursos.md): imagenes distintas, pertinentes y coherentes.
-  Descubrir herramientas en cada cliente; Claude no hereda ImageGen de Codex.
-- [Edicion](references/edicion.md): recepcion, montaje, subtitulos, QA y entrega.
-- [Resolve practico](references/resolve-practico.md): API, Fusion y render; leer
-  al trabajar con esas operaciones.
+Al retomar leer ESTADO.md, ENCARGO.md si existe, guion, brief, TAREAS.md y
+CAMBIOS-PENDIENTES.md. Conservar decisiones y rutas; no crear otro task/chat salvo
+peticion expresa. Las salidas de un encargo pueden compartir materiales, pero
+necesitan objetivos, montajes y exports identificables.
 
-Conservar voz y significado; corregir silencios accidentales, repeticiones y
-tropiezos corregibles. Subtitulos con enfasis selectivo, CTA cuando la voz lo pida,
-recursos unicos y transiciones adecuadas al ritmo. No forzar recursos contra el
-guion ni prometer recuperar una toma real inexistente o sincronizacion generativa exacta.
+Recoger las mejoras durante el trabajo. Al cerrar una ronda, resumir por documento
+los cambios y su alcance: video actual o preferencias para futuros videos.
+Preguntar si el resumen es correcto y esperar respuesta. Tras confirmar, actualizar
+ambos documentos coordinadamente con workflow.py; cada uno recibe sus cambios
+pertinentes. Conservar historial y actualizar plantillas compartidas solo con
+preferencias generales confirmadas en ~/.davinci-video-pro/templates o
+DAVINCI_VIDEO_PRO_HOME. No heredar el discurso, autorizaciones o presupuestos de
+otro video. Una eleccion previa de defaults para este encargo se reutiliza.
+
+## Referencias de produccion
+
+- [Gemini](references/gemini.md): modelo preferido gemini-3.8-flash; verificar imagen,
+  voz, tiempos y relacion con guion y brief.
+- [Omni](references/omni.md): gemini-omni-1.1-flash preferido; solo si se eligio,
+  con plan, presupuesto y revision de cada resultado.
+- [Recursos](references/recursos.md): imagenes unicas y pertinentes; descubrir
+  capacidades en cada host. Claude no hereda ImageGen de Codex.
+- [Edicion](references/edicion.md): montaje, limpieza, subtitulos, QA y exports.
+- [Resolve practico](references/resolve-practico.md): API, Fusion y render.
+
+Ruta de referencia: Windows, Resolve Free 21.0.3.7 y MCP Samuel Gursky 2.224.1.
+Verificar compatibilidad actual y conservar instalaciones funcionales.
 
 ## Evidencia y entrega
 
-Mostrar TAREAS.md con pendiente/en curso/hecho/no aplicable justificado. Marcar
-hecho solo con evidencia: archivo, revision visual/auditiva, consulta o render
-verificado. Conexion, montaje y exportacion se comprueban por separado.
+Marcar tareas hechas solo con evidencia y separar configuracion, transporte MCP,
+respuesta de Resolve, montaje y exportacion. Aplicar el brief durante el montaje
+Y la revision final; documentar defectos pendientes, no declararlos corregidos.
 
-Entregar enlace y ruta absoluta del MP4 completo mas reciente, proyecto editable
-con recursos, SRT y ambos documentos vigentes. Conservar revisiones. Si quedan
-cambios documentales pendientes, mostrar el resumen y preguntar; no declararlos
-confirmados. Guardar el siguiente paso para otro chat.
-
-Pedir intervencion cuando sea necesaria indicando app, accion y resultado esperado.
-Reutilizar autorizaciones dadas. Tras dos fallos iguales sin evidencia nueva,
-registrar la causa y pedir la accion que falta. Ante un gasto incierto de Omni,
-inspeccionar el intento antes de otro. No publicar ni enviar a terceros por defecto.
+Entregar enlaces y rutas absolutas de TODOS los MP4 completos pedidos, proyectos
+editables con recursos, SRT y documentos vigentes. Dar un estado por salida y
+guardar el siguiente paso para otro chat. Si falta una salida o falla un requisito
+tecnico, no marcar el encargo completo. Ante dos fallos iguales sin evidencia
+nueva, registrar la causa y la accion necesaria. No publicar medios ni enviarlos
+a terceros por defecto.

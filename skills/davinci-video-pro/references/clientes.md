@@ -34,9 +34,9 @@ abrir otra sesion/recargar. No prometer activacion automatica en todas las frase
 ## Configurar el MCP correcto
 
 Registrar una entrada local no usa APIs y no requiere guion, tanto mediante
-configure_claude_mcp.py como mediante claude mcp add-json. Las consultas MCP,
-pruebas de conexion y los instaladores que las ejecutan SI requieren la puerta
-del guion (propio o predeterminado elegido). El instalador upstream distingue codex,
+configure_claude_mcp.py como mediante claude mcp add-json. Las pruebas tecnicas
+de conexion y los instaladores pueden ejecutarse antes del guion y brief. La
+produccion de medios requiere ambos documentos vigentes. El instalador upstream distingue codex,
 claude-code y claude-desktop. Elegir el host real; nunca --clients all por defecto.
 
 En la version comprobada, claude-code escribe .mcp.json en el directorio de trabajo
@@ -60,7 +60,8 @@ no demuestra transporte ni aprobaciones/permisos efectivos del cliente.
 
 Comprobar por separado registro, arranque del servidor MCP y respuesta real de
 Resolve. «Connected» en claude mcp list no demuestra que su API responda. Hacer
-esas pruebas solo despues de recibir el guion o registrar la eleccion del default.
+esas pruebas durante la instalacion sin guion. Despues continuar directamente
+con la recepcion de flujo-guiado.md.
 
 ## Capacidades por cliente
 

@@ -19,7 +19,7 @@ try:
     from google.genai import types
 except ImportError:
     genai = types = None
-from workflow import require_script, digest as file_hash
+from workflow import require_production, digest as file_hash
 
 ROOT = Path.cwd()
 SETTINGS = ROOT / 'gemini-settings.json'
@@ -154,7 +154,7 @@ def check(client: genai.Client, requested_model: str | None) -> None:
 
 
 def analyze(client: genai.Client, args: argparse.Namespace) -> None:
-    approved_script = require_script(args.project_dir)
+    approved_script = require_production(args.project_dir)
     source = Path(args.file).expanduser().resolve(strict=True)
     if not source.is_file():
         raise ValueError('El origen debe ser un archivo.')
@@ -179,6 +179,7 @@ def analyze(client: genai.Client, args: argparse.Namespace) -> None:
               approved_script.read_text(encoding='utf-8-sig') + '\n</guion>\n<brief-tecnico>\n' +
               (approved_script.parent / 'BRIEF-TECNICO.md').read_text(encoding='utf-8-sig') + '\n</brief-tecnico>')
     script_hash = file_hash(approved_script)
+    brief_hash = file_hash(approved_script.parent / 'BRIEF-TECNICO.md')
     before = source.stat()
     with source.open('rb') as source_stream:
         digest = hashlib.file_digest(source_stream, 'sha256').hexdigest()
@@ -221,6 +222,7 @@ def analyze(client: genai.Client, args: argparse.Namespace) -> None:
             raise RuntimeError('El archivo original cambio durante el analisis; hay que volver a revisarlo.')
         report = {'source_path': str(source), 'source_sha256': digest,
                   'script_sha256': script_hash,
+                  'brief_sha256': brief_hash,
                   'model': model, 'timestamp_basis': 'seconds_from_source_start_estimated',
                   'video_processing_requested': args.processing if mime.startswith('video/') else None,
                   'agentic_processing_observed': any(getattr(step, 'type', '') == 'processing_call' for step in (response.steps or [])),
@@ -259,8 +261,9 @@ def main() -> int:
     SETTINGS = ROOT / 'gemini-settings.json'
     key = ''
     try:
-        if args.command != 'status':
-            require_script(ROOT)
+        # Connection setup has no dependency on editorial decisions or media.
+        if args.command == 'analyze':
+            require_production(ROOT)
         key = read_key()
         if args.command == 'status':
             dump({'key_configured': True, 'model': configured_model() if SETTINGS.exists() else None})

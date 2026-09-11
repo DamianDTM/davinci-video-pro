@@ -3,6 +3,12 @@
 Valores por defecto derivados del guion profesional y sus mejoras confirmadas.
 Ejecutar el guion creativo vigente conservando mensaje, personalidad y voz.
 
+USO OBLIGATORIO: leer este brief completo antes de analizar, generar o editar y
+aplicar sus criterios durante todo el montaje y la revision de cada video final.
+Mostrar al usuario su ruta absoluta para leerlo o editarlo; registrar su eleccion.
+Corregir solo defectos recuperables, respetar excepciones expresas y documentar
+lo que requiera otra toma. No declarar una correccion sin comprobar el resultado.
+
 ## Analisis y preparacion
 
 - Revisar imagen y audio reales con Gemini y comprobar localmente los puntos

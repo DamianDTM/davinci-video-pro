@@ -1,9 +1,9 @@
-"""Create a new four-second reference clip after the script gate, preserving the source."""
+"""Create a new four-second clip after checking script and technical brief, preserving the source."""
 import argparse
 import json
 from pathlib import Path
 import subprocess
-from workflow import require_script, digest
+from workflow import require_production, digest
 
 
 def main():
@@ -13,7 +13,7 @@ def main():
     p.add_argument('--start', type=float, required=True)
     p.add_argument('--output', type=Path, required=True)
     a = p.parse_args()
-    require_script(a.project_dir)
+    require_production(a.project_dir)
     import av
     import imageio_ffmpeg
     source = a.source.expanduser().resolve(strict=True)

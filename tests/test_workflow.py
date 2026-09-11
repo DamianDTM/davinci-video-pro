@@ -23,6 +23,7 @@ import omni_video as omni
 import openai_image as images
 import configure_claude_mcp as mcp
 import diagnose
+import intake
 
 
 def load(name, path):
@@ -53,6 +54,7 @@ class Tests(unittest.TestCase):
     def approve(self):
         (self.project / w.DOCS[0]).write_text('# Guion\nExplicar como regar una planta en tres pasos. Mostrar agua y tierra. Cerrar invitando a comentar.', encoding='utf-8')
         w.confirm_script(self.project, 'Usa este guion para editar el video.')
+        w.confirm_brief(self.project, 'Usa el brief tecnico por defecto', source='default')
 
     def candidates(self):
         creative = self.root / 'creative.md'; technical = self.root / 'technical.md'
@@ -67,9 +69,22 @@ class Tests(unittest.TestCase):
         (self.project / w.DOCS[0]).write_text('Cambio posterior que no ha sido confirmado por el usuario.', encoding='utf-8')
         with self.assertRaises(ValueError): w.require_script(self.project)
 
-    def test_gemini_api_commands_stop_before_client_without_script(self):
+    def test_gemini_connection_commands_allow_setup_without_documents(self):
+        client = SimpleNamespace(models=SimpleNamespace(list=lambda: [SimpleNamespace(name='models/offline-model')]),
+                                 interactions=SimpleNamespace(create=lambda **kw: SimpleNamespace(output_text='OK', usage=None)))
         for command in ['models', 'check']:
-            with patch.object(g, 'client_for') as client, patch.object(g, 'read_key') as key, patch.object(sys, 'argv', ['gemini_video.py', '--project-dir', str(self.project), command]), contextlib.redirect_stdout(io.StringIO()):
+            argv = ['gemini_video.py', '--project-dir', str(self.project), command]
+            if command == 'check': argv += ['--model', 'offline-model']
+            with patch.object(g, 'client_for', return_value=contextlib.nullcontext(client)) as connect, patch.object(g, 'read_key', return_value='OFFLINE_KEY'), patch.object(sys, 'argv', argv), contextlib.redirect_stdout(io.StringIO()):
+                self.assertEqual(g.main(), 0)
+                connect.assert_called_once()
+        with self.assertRaises(ValueError): w.require_production(self.project)
+
+    def test_analysis_stops_before_client_without_both_documents(self):
+        argv = ['gemini_video.py', '--project-dir', str(self.project), 'analyze', '--file', 'missing.mp4', '--output', 'unused.json']
+        for has_script in (False, True):
+            if has_script: w.use_default_script(self.project, 'No tengo guion')
+            with patch.object(g, 'client_for') as client, patch.object(g, 'read_key') as key, patch.object(sys, 'argv', argv), contextlib.redirect_stdout(io.StringIO()):
                 self.assertEqual(g.main(), 1)
                 client.assert_not_called(); key.assert_not_called()
 
@@ -320,9 +335,17 @@ class Tests(unittest.TestCase):
         self.assertNotIn('OFFLINE_SECRET', json.dumps(report))
         self.assertFalse(report['claude-code']['mcp_transport']['tested'])
 
-    def test_resolve_probe_stops_without_script(self):
-        with patch.object(diagnose, 'key_present', return_value=False), patch.object(diagnose, 'windows_resolve', return_value={}), patch.object(sys, 'argv', ['diagnose.py', '--client', 'claude-code', '--project-dir', str(self.project), '--check-connection']):
-            with self.assertRaisesRegex(ValueError, 'guion vigente'): diagnose.main()
+    def test_resolve_probe_allows_setup_without_script(self):
+        repo = self.root / 'probe repo'; (repo / 'src').mkdir(parents=True)
+        (repo / 'src/server.py').write_text('# offline fixture')
+        resolve = SimpleNamespace(GetVersionString=lambda: 'offline-version', GetProjectManager=lambda: SimpleNamespace(GetCurrentProject=lambda: object()))
+        connection = unittest.mock.Mock(return_value=resolve)
+        capture = io.StringIO()
+        argv = ['diagnose.py', '--client', 'claude-code', '--repo', str(repo), '--check-connection']
+        with patch.object(diagnose, 'key_present', return_value=False), patch.object(diagnose, 'windows_resolve', return_value={}), patch.object(sys, 'argv', argv), patch.dict(sys.modules, {'src.utils.resolve_bridge_client': SimpleNamespace(connect=connection)}), contextlib.redirect_stdout(capture):
+            diagnose.main()
+        self.assertTrue(json.loads(capture.getvalue())['connection']['connected'])
+        connection.assert_called_once()
 
     def test_default_script_selection_enables_flow_without_second_confirmation(self):
         technical = (self.project / w.DOCS[1]).read_bytes()
@@ -349,6 +372,72 @@ class Tests(unittest.TestCase):
         self.approve(); before = (self.project / w.DOCS[0]).read_bytes()
         with self.assertRaises(ValueError): w.use_default_script(self.project, 'Usa el guion por defecto')
         self.assertEqual(before, (self.project / w.DOCS[0]).read_bytes())
+
+    def test_default_preview_is_editable_and_selected_without_overwrite(self):
+        paths = w.document_paths(self.project)
+        preview = Path(paths['default_script_editable'])
+        for value in paths.values():
+            self.assertTrue(Path(value).is_absolute() and Path(value).exists())
+        custom = preview.read_text(encoding='utf-8') + '\nPreferencia propia: tono documental y ejemplos de jardineria.\n'
+        preview.write_bytes(custom.encode('utf-8'))
+        w.document_paths(self.project)
+        self.assertEqual(preview.read_text(encoding='utf-8'), custom)
+        w.use_default_script(self.project, 'Hazlo con el de defecto')
+        self.assertIn('tono documental', (self.project / w.DOCS[0]).read_text(encoding='utf-8'))
+        with self.assertRaises(ValueError): w.require_production(self.project)
+        w.confirm_brief(self.project, 'Usa el brief por defecto', 'default')
+        self.assertTrue(w.require_production(self.project))
+
+    def test_changed_brief_blocks_production_and_confirmed_revision_restores_it(self):
+        self.approve()
+        (self.project / w.DOCS[1]).write_text('Cambios tecnicos nuevos que requieren lectura y eleccion vigente.', encoding='utf-8')
+        with self.assertRaises(ValueError): w.require_production(self.project)
+        c, t = self.candidates(); w.stage_revision(self.project, c, t, 'Cambiar guion y criterio tecnico')
+        w.apply_revision(self.project, 'Correcto, aplica el resumen')
+        self.assertTrue(w.require_production(self.project))
+        self.assertEqual(w.read_state(self.project)['brief_approval']['sha256'], w.digest(self.project / w.DOCS[1]))
+
+    def test_providers_refuse_missing_brief_before_keys_or_generation(self):
+        w.use_default_script(self.project, 'No tengo guion, usa el vuestro')
+        with patch.object(images, 'read_key') as key, self.assertRaises(ValueError): images.generate(SimpleNamespace(project_dir=self.project))
+        key.assert_not_called()
+        with self.assertRaises(ValueError): omni.generate(SimpleNamespace(project_dir=self.project))
+        argv = ['prepare_clip.py', '--project-dir', str(self.project), '--source', 'missing.mp4', '--output', 'unused.mp4', '--start', '0']
+        clip = load('clip_gate_fixture', SCRIPTS / 'prepare_clip.py')
+        with patch.object(sys, 'argv', argv), self.assertRaises(ValueError): clip.main()
+
+    def test_intake_inventory_scopes_folder_without_selecting_or_uploading(self):
+        media = self.root / 'media'; media.mkdir(); (media / 'sub').mkdir()
+        (media / 'one.MP4').write_bytes(b'offline video')
+        (media / 'voice.wav').write_bytes(b'offline audio')
+        (media / 'notes.txt').write_text('private non-media fixture')
+        (media / 'sub/two.mp4').write_bytes(b'other offline video')
+        found = intake.inventory(media)
+        self.assertEqual(len(found['files']), 2)
+        self.assertEqual({x['kind'] for x in found['files']}, {'video', 'audio'})
+        self.assertEqual(len(intake.inventory(media, True)['files']), 3)
+        self.assertFalse((w.metadata(self.project) / 'intake.json').exists())
+
+    def test_intake_tracks_exact_selected_files_and_multiple_outputs(self):
+        self.approve()
+        videos = []
+        for name in ['one.mp4', 'two.mp4', 'unused.mp4']:
+            path = self.root / name; path.write_bytes(b'offline fixture'); videos.append(str(path))
+        answers = {'videos': videos[:2], 'output_count': 2, 'omni': False, 'images': 'provided',
+                   'user_responses': ['Solo one y two, dos videos, sin Omni y con mis imagenes'],
+                   'outputs': [{'id': 'video-01', 'purpose': 'Primera explicacion', 'videos': [videos[0]]},
+                               {'id': 'video-02', 'purpose': 'Segunda explicacion', 'videos': [videos[1]]}]}
+        result = intake.save_intake(self.project, answers)
+        record = json.loads(Path(result['path']).read_text(encoding='utf-8'))
+        self.assertEqual(record['output_count'], 2)
+        self.assertFalse(record['omni'])
+        self.assertNotIn(videos[2], record['videos'])
+        self.assertIn('video-02', Path(result['summary']).read_text(encoding='utf-8'))
+        answers['outputs'][1]['videos'] = [videos[2]]
+        with self.assertRaises(ValueError): intake.save_intake(self.project, answers)
+        self.assertEqual(record, json.loads(Path(result['path']).read_text(encoding='utf-8')))
+        answers['output_count'] = 3
+        with self.assertRaises(ValueError): intake.save_intake(self.project, answers)
 
 
 if __name__ == '__main__':

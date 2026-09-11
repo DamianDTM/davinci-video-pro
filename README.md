@@ -1,130 +1,114 @@
-# DaVinci Video Pro 2.1
+# DaVinci Video Pro 2.2
 
-Skill portable para **Codex local y Claude Code**, pensada para guiar a una persona
-desde la configuracion de Resolve hasta un video completo exportado.
+Skill para **Codex local y Claude Code** que guia la instalacion y organiza un
+encargo de edicion profesional con DaVinci Resolve, Gemini y recursos opcionales.
 
-**Tu guion o el profesional por defecto.** Antes de editar o llamar APIs, el
-asistente usa el guion que entregues o el predeterminado que elijas. Basta decir
-**«usa el guion por defecto»**: esa eleccion permite seguir sin redactar otro ni
-confirmarlo dos veces. Si prefieres uno nuevo, prepara un borrador desde tu idea
-y lo confirma contigo. Una plantilla vacia sin elegir no permite continuar.
+Repositorio: [DamianDTM/davinci-video-pro](https://github.com/DamianDTM/davinci-video-pro).
+Descarga: [version 2.2.0](https://github.com/DamianDTM/davinci-video-pro/releases/tag/v2.2.0).
 
 ## Instalacion sencilla
 
-Repositorio: [DamianDTM/davinci-video-pro](https://github.com/DamianDTM/davinci-video-pro).
-Paquete descargable: [version 2.1.0](https://github.com/DamianDTM/davinci-video-pro/releases/tag/v2.1.0).
+Copia esto en Codex local o Claude Code:
 
-Para instalar desde GitHub, copia esto en **Codex local o Claude Code**:
+> Instala o actualiza DaVinci Video Pro desde https://github.com/DamianDTM/davinci-video-pro,
+> version v2.2.0. Lee el README y aplica la skill para el asistente que estoy usando.
+> Primero configura la conexion y despues guiame por materiales, cantidad de videos,
+> brief tecnico, guion y recursos. Muestrame las rutas editables de los documentos.
 
-> Instala DaVinci Video Pro desde https://github.com/DamianDTM/davinci-video-pro,
-> version v2.1.0. Lee su README e instala la skill para el asistente que estoy
-> usando. Despues aplicala para configurar DaVinci Resolve, su MCP y Gemini.
-> Usa el guion profesional por defecto y su brief tecnico como base. Mi eleccion
-> del guion ya esta dada; continua con la configuracion y pide los materiales cuando corresponda.
-
-La carpeta de la skill es `skills/davinci-video-pro`. El asistente puede instalarla
-desde esa ruta con su instalador de skills o descargar el paquete completo y usar
-install.py. Si descarga un ZIP, descomprimirlo antes de ejecutar el instalador.
-La instalacion local de la skill no requiere proporcionar una clave de Google.
-
-Tambien puedes descargar el ZIP manualmente:
-
-Descomprime el paquete completo y abre esta carpeta con Codex o Claude Code.
-Escribe:
-
-> Instala DaVinci Video Pro de esta carpeta para el asistente que estoy usando.
-> Despues aplicala usando el guion profesional por defecto y su brief tecnico.
-> Guiame cuando necesites que haga algo en mi computadora.
-
-El asistente ejecuta con Python 3.11 o posterior uno de estos comandos:
+El asistente descarga/clona esa version o descomprime su ZIP y usa Python >=3.11:
 
 ```text
 python install.py --client codex
 python install.py --client claude-code
 ```
 
-`--client both` instala para ambos cuando se solicita. `--update` conserva copia
-de la skill anterior antes de actualizar; revisar cambios locales primero.
-Para actualizar una instalacion existente, descargar esta version y ejecutar el
-mismo comando con --update. Las preferencias y los proyectos se conservan.
-El instalador copia la skill localmente y no llama APIs, guarda claves ni instala
-Resolve por su cuenta. La skill dirige esas fases despues de recibir o elegir el guion.
+Para actualizar, agregar --update al comando del cliente: conserva respaldo de la
+skill anterior y no reemplaza proyectos ni preferencias. --client both se usa
+solo si se pide instalar para ambos. La carpeta portable es skills/davinci-video-pro.
+El instalador copia la skill; no instala Resolve ni llama APIs por si solo.
 
-Una vez instalada, pedir «Quiero editar un video con DaVinci» o invocarla con
-`$davinci-video-pro` en Codex o `/davinci-video-pro` en Claude Code.
-Si no aparece, abrir otra sesion o recargar el cliente.
+Invocacion: $davinci-video-pro en Codex o /davinci-video-pro en Claude Code.
+Si no aparece, recargar o abrir otra sesion. Un chat web aislado no controla el
+Resolve local por recibir un enlace: requiere acceso local, scripts y MCP compatibles.
 
-## Que incluye
+## Que preguntara y hara
 
-- Instalacion guiada y comprobada del MCP de Samuel Gursky, segun el cliente.
-- Ruta de referencia Windows/Resolve Free 21.0.3.7 y MCP 2.224.1; se comprueba
-  compatibilidad actual y se reutilizan instalaciones que ya funcionan.
-- Gemini 3.8 Flash para comprender imagen, voz y contenido.
-- Omni 1.1 Flash para escenas de perspectiva alternativa, con plan acotado,
-  registro de intentos y revision de sincronizacion, apariencia y fondo.
-- Imagenes OpenAI mediante herramienta nativa cuando exista o helper API opcional
-  para Claude y otros hosts con clave propia. No incluye cuentas ni creditos.
-- Guion creativo y brief tecnico separados, editables y con historial.
-- Resumen de comentarios y confirmacion antes de actualizar ambos documentos
-  y las preferencias generales para proximos videos.
-- Subtitulos con enfasis, limpieza del discurso, recursos unicos, CTA, transiciones,
-  lista de tareas y entrega de MP4 completo, proyecto con medios y SRT.
+1. **Resolve:** si ya esta instalado y su version/edicion. Si no lo sabes, lo
+   detecta. Si falta o debe cambiarse, propone una version compatible concreta
+   y pregunta por instalarla, preservando proyectos y autorizaciones anteriores.
+2. **Conexion:** registra el MCP para tu cliente, configura/reutiliza tu API key
+   propia de Google mediante entrada local oculta, explica como abrir Resolve,
+   un proyecto y activar el puente, y comprueba la conexion.
+3. **Materiales:** revisa la carpeta actual. Si hay videos, muestra una lista y
+   pregunta si usa todos o cuales; si no hay, pide la ruta. Recibe audio opcional.
+4. **Resultados:** pregunta cuantos videos finales quieres y como distribuir
+   los materiales entre ellos.
+5. **Brief tecnico:** pregunta propio o predeterminado, muestra su ruta absoluta
+   editable y lo lee completo. Es obligatorio durante la edicion y la revision.
+6. **Guion:** pregunta propio o predeterminado y SIEMPRE muestra la ruta para
+   leerlo o editarlo. Si no tienes uno, usa nuestro guion profesional.
+   **«Hazlo con el de defecto» basta para seguir**, sin otra confirmacion.
+7. **Recursos:** pregunta por escenas Omni y por imagenes; ofrece sin imagenes,
+   material propio o generacion con estilos realistas, ilustracion, diagramas o
+   marca, segun las herramientas disponibles.
+8. **Produccion:** guarda ENCARGO.md y una lista de tareas por salida, analiza,
+   monta, corrige, revisa y entrega todos los videos completos solicitados.
 
-## El guion profesional por defecto
+Si ya respondiste algo, lo reutiliza. No termina la instalacion pidiendote que
+inicies otro encargo: continua directamente con la recepcion.
 
-Se deriva del guion del montaje profesional que dio origen a esta skill y de sus
-mejoras confirmadas. Se mantiene en dos documentos editables:
+## Nuestros documentos predeterminados
 
-- [Guion creativo](skills/davinci-video-pro/assets/GUION-POR-DEFECTO.md): apertura,
-  contexto, desarrollo, demostracion y cierre; planos, imagenes y CTA fieles al discurso.
-- [Brief tecnico](skills/davinci-video-pro/assets/BRIEF-TECNICO.md): limpieza de
-  silencios, tartamudeos corregibles y repeticiones; subtitulos blancos y palabras
-  clave doradas mas grandes, titulares altos, recursos sin repetir, fundidos suaves,
-  audio, color y comprobacion del export.
+- [Guion profesional](skills/davinci-video-pro/assets/GUION-POR-DEFECTO.md):
+  apertura, contexto, desarrollo, demostracion y cierre; planos, recursos y CTA
+  fieles a lo pronunciado.
+- [Brief tecnico](skills/davinci-video-pro/assets/BRIEF-TECNICO.md):
+  ruido, niveles de voz, silencios accidentales, tartamudeos y repeticiones
+  corregibles, palabras completas, subtitulos blancos con palabras clave doradas
+  mas grandes, titulares altos, recursos sin repetir, fundidos, color y QA del export.
 
-No contiene el tema, las frases ni los archivos de aquel video. Se aplica al
-material de cada persona y evoluciona con sus comentarios confirmados. Elegirlo
-no autoriza automaticamente subir archivos o gastar en generacion.
+Proceden del montaje profesional y de sus mejoras confirmadas. No contienen el
+discurso, las rutas ni los medios personales de aquel video. Se crean copias
+editables en la carpeta del encargo; el asistente muestra sus rutas locales reales.
+Si editas la copia predeterminada antes de elegirla, se usa tu contenido editado.
+Despues se trabaja en GUION-CREATIVO.md y BRIEF-TECNICO.md.
 
-La version 2.1 tambien corrige la restauracion de archivos en Windows, da un error
-claro si el SDK de Google no coincide y diagnostica Codex y Claude por separado.
-Registrar el MCP localmente no requiere guion; probar conexiones o APIs si.
-«Connected» en el cliente MCP no basta para afirmar que Resolve responde.
+El guion dirige mensaje/apariencia; el brief es un requisito tecnico obligatorio.
+Los helpers de produccion comprueban que ambos esten elegidos y vigentes.
+Las pruebas tecnicas de conexion pueden realizarse antes: no dependen del guion.
+Esta excepcion no permite analizar archivos, generar recursos o editar sin los
+documentos, ni autoriza subir material o gastar sin el alcance acordado.
 
-## El segundo video y los nuevos chats
+## Continuidad
 
-Cada video tiene su propia carpeta. Las preferencias generales confirmadas viven
-en `~/.davinci-video-pro/templates`, compartidas por Codex y Claude. El instalador
-no las reemplaza. Cambiar esta ubicacion con DAVINCI_VIDEO_PRO_HOME si se necesita.
+Cada encargo tiene su carpeta y registra seleccion, cantidad de salidas y recursos
+en ENCARGO.md. Un encargo puede producir varios videos, con montajes y exports
+identificables. Los comentarios se resumen por guion/brief y alcance; tras tu
+confirmacion se actualizan ambos con historial. Las preferencias generales viven
+en ~/.davinci-video-pro/templates o DAVINCI_VIDEO_PRO_HOME y sobreviven a actualizaciones.
 
-En un nuevo chat del proyecto: «Continua mi video leyendo el estado guardado».
-Para otro video: «Quiero editar otro video con mis preferencias. Mis materiales
-estan en [carpeta]. Este es el nuevo guion: ...».
-Tambien: «Quiero editar otro video. Usa el guion profesional por defecto y mis preferencias».
+Nuevo chat: «Continua mi encargo leyendo el estado guardado».
+Otro video: «Quiero editar otro video; usa mis preferencias y el guion por defecto».
+Siempre se muestran las rutas de los documentos y se piden solo los datos pendientes.
 
-## Alcance comprobado
+## Alcance y comprobaciones
 
-El flujo de origen uso Windows, Resolve, Gemini y una generacion Omni real.
-Los scripts nuevos se verifican localmente con servicios simulados, sin gastar
-creditos. Ver [VALIDACION.md](VALIDACION.md) para resultados y limites.
-La instalacion nueva en otro equipo, macOS/Linux y una sesion real de Claude
-requieren comprobacion en ese destino. Un chat web aislado no controla Resolve
-local solo por recibir el ZIP. En Claude Desktop/Cowork se necesitan capacidades
-locales y MCP compatibles; este paquete apunta a Claude Code.
+Ruta de referencia: Windows, Resolve Free 21.0.3.7 y MCP Samuel Gursky 2.224.1.
+El asistente verifica compatibilidad actual y reutiliza instalaciones funcionales.
+Gemini 3.8 Flash es el modelo preferido de comprension; Omni 1.1 Flash, para
+perspectivas sintetizadas, con presupuesto y revision. Los modelos requieren
+acceso real de la cuenta. Codex puede usar ImageGen nativo; Claude usa recursos
+aportados o un proveedor de imagenes conectado/configurado con su clave propia.
 
-Para una instalacion sin Python, el asistente debe localizar un runtime incluido
-en su app o guiar la instalacion oficial. Las claves se introducen localmente.
-La generacion y el analisis pueden consumir credito del proveedor elegido.
+Ver [VALIDACION.md](VALIDACION.md). Las pruebas de esta version son locales con
+servicios simulados y material sintetico. No garantizan ediciones sin errores:
+el asistente debe escuchar y revisar cada salida aplicando el brief.
+«Connected» en el cliente MCP no prueba por si solo que Resolve responda.
+macOS/Linux, Claude Desktop/Cowork y una instalacion desde cero en otro equipo
+requieren comprobacion en ese destino.
 
-## Compartir y mantener
-
-Esta carpeta esta preparada para un repositorio dedicado. Contiene instrucciones,
-scripts y plantillas; los proyectos personales se crean fuera de ella. No incluye
-instaladores propietarios, credenciales ni medios de usuarios. Las referencias
-enlazan las descargas oficiales. Las versiones descargables se publican en Releases.
-
-Los archivos siguen el formato abierto Agent Skills; no requieren un plugin
-especifico de un solo proveedor. Puede agregarse distribucion como plugin despues.
+No incluye claves, creditos, medios personales ni instaladores propietarios.
+Las claves se introducen localmente; analisis y generacion pueden consumir cuota.
 
 Fuentes: [Skills Codex](https://learn.chatgpt.com/docs/build-skills),
 [Skills Claude](https://code.claude.com/docs/en/skills),

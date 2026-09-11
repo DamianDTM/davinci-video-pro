@@ -1,8 +1,14 @@
 param([Parameter(Mandatory=$true)][string]$WorkDirectory,
-      [Parameter(Mandatory=$true)][string]$PythonExecutable)
+      [Parameter(Mandatory=$true)][string]$PythonExecutable,
+      [switch]$ValidateOnly)
 $ErrorActionPreference = 'Stop'
-& $PythonExecutable (Join-Path $PSScriptRoot 'workflow.py') --project-dir $WorkDirectory gate
-if ($LASTEXITCODE -ne 0) { throw 'Primero pide un guion o registra su eleccion del profesional por defecto. No se consulto Google.' }
+$projectRoot = [IO.Path]::GetFullPath($WorkDirectory)
+if (-not (Test-Path -LiteralPath $projectRoot -PathType Container)) { throw 'La carpeta de trabajo no existe.' }
+if (-not (Test-Path -LiteralPath $PythonExecutable -PathType Leaf)) { throw 'Indica la ruta del interprete Python del flujo.' }
+if ($ValidateOnly) {
+    @{local_parameters_valid=$true; script_required=$false; network_called=$false} | ConvertTo-Json
+    return
+}
 Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
@@ -63,8 +69,6 @@ $saveButton.Add_Click({
     $statusLabel.Text = 'Comprobando la clave con Google...'
     $form.Refresh()
     try {
-        & $PythonExecutable (Join-Path $PSScriptRoot 'workflow.py') --project-dir $WorkDirectory gate
-        if ($LASTEXITCODE -ne 0) { throw 'El guion cambio; confirma su version antes de consultar Google.' }
         $headers = @{ 'x-goog-api-key' = $apiKey }
         $catalog = Invoke-RestMethod -Uri 'https://generativelanguage.googleapis.com/v1beta/models?pageSize=1000' -Headers $headers -TimeoutSec 30
         $modelNames = @($catalog.models | ForEach-Object { $_.name })

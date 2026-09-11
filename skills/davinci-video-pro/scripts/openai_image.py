@@ -6,7 +6,7 @@ import math
 import os
 from pathlib import Path
 import urllib.request
-from workflow import require_script, digest, write_json, now
+from workflow import require_production, digest, write_json, now
 
 
 def read_key():
@@ -24,7 +24,7 @@ def read_key():
 
 
 def generate(args):
-    script = require_script(args.project_dir)
+    script = require_production(args.project_dir)
     if not args.confirmation.strip() or not all(math.isfinite(x) for x in (args.estimated_usd, args.max_usd)) or not 0 < args.estimated_usd <= args.max_usd:
         raise ValueError('Falta autorizacion real de esta imagen o su estimacion excede el tope acordado.')
     prompt = args.prompt_file.read_text(encoding='utf-8-sig').strip()
@@ -37,6 +37,7 @@ def generate(args):
     key = read_key()
     target.parent.mkdir(parents=True, exist_ok=True)
     record = {'status': 'requested', 'created_at': now(), 'script_sha256': digest(script),
+              'brief_sha256': digest(script.parent / 'BRIEF-TECNICO.md'),
               'model': args.model, 'prompt': prompt, 'estimated_usd': args.estimated_usd,
               'max_usd_for_this_image': args.max_usd, 'confirmation': args.confirmation}
     with state_path.open('x', encoding='utf-8') as stream:

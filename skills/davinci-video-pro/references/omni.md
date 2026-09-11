@@ -1,7 +1,8 @@
 # Perspectivas alternativas con Omni
 
-Requiere guion propio o profesional por defecto elegido y workflow.py gate. No
-volver a pedir guion si ya pasa la puerta. Modelo preferido
+Solo generar si el usuario eligio escenas Omni durante la recepcion. Requiere
+guion propio o predeterminado y brief tecnico vigentes; comprobar workflow.py gate.
+No volver a pedir documentos ya elegidos. Modelo preferido
 gemini-omni-1.1-flash, verificado en el flujo de origen. Es una sintesis de una
 perspectiva plausible; puede cambiar labios, manos, rostro o fondo. No es una
 segunda camara real ni garantiza sincronizacion exacta.

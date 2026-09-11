@@ -1,4 +1,4 @@
-"""Local project state, script gate and confirmed revisions. No network calls."""
+"""Local project state, script/brief requirements and confirmed revisions. No network calls."""
 from __future__ import annotations
 import argparse
 import hashlib
@@ -50,7 +50,7 @@ def metadata(project):
 def read_state(project):
     path = metadata(project) / 'project.json'
     if not path.is_file():
-        raise ValueError('Inicializa el proyecto y recibe un guion o la eleccion del profesional por defecto antes de APIs o edicion.')
+        raise ValueError('Inicializa el encargo y elige guion y brief tecnico antes de analizar, generar o editar.')
     return json.loads(path.read_text(encoding='utf-8'))
 
 
@@ -60,7 +60,7 @@ def profile_root(override=None):
 
 def meaningful(text):
     if len(text.strip()) < 30 or '{{' in text or 'PENDIENTE_DE_GUION' in text:
-        raise ValueError('Falta un guion concreto. Completa el borrador con el usuario; una plantilla vacia no habilita APIs.')
+        raise ValueError('El documento esta vacio o incompleto. Completarlo o usar el predeterminado antes de producir.')
 
 
 def require_script(project):
@@ -71,9 +71,56 @@ def require_script(project):
     script = project / DOCS[0]
     approved = state.get('script_approval') or {}
     if not script.is_file() or not approved.get('confirmation') or approved.get('sha256') != digest(script):
-        raise ValueError('No hay guion vigente confirmado. Recibe el guion, registra la eleccion del predeterminado con use-default-script o confirma el borrador antes de APIs o edicion.')
+        raise ValueError('No hay guion vigente confirmado. Recibe el propio o usa use-default-script con la respuesta real (incluso no tengo guion) antes de producir.')
     meaningful(script.read_text(encoding='utf-8-sig'))
     return script
+
+
+def require_brief(project):
+    project = Path(project).expanduser().resolve()
+    state = read_state(project)
+    path = project / DOCS[1]
+    approved = state.get('brief_approval') or {}
+    if not path.is_file() or not approved.get('confirmation') or approved.get('sha256') != digest(path):
+        raise ValueError('Falta elegir y leer un brief tecnico vigente. Muestra su ruta, recibe la eleccion del usuario y registra confirm-brief antes de producir.')
+    meaningful(path.read_text(encoding='utf-8-sig'))
+    return path
+
+
+def require_production(project):
+    script = require_script(project)
+    require_brief(project)
+    return script
+
+
+def confirm_brief(project, confirmation, source='user'):
+    if not confirmation.strip():
+        raise ValueError('Registra la eleccion real del brief tecnico por el usuario.')
+    state = read_state(project)
+    path = Path(project) / DOCS[1]
+    meaningful(path.read_text(encoding='utf-8-sig'))
+    if (metadata(project) / 'transaction.json').exists():
+        raise ValueError('Recupera la revision interrumpida antes de confirmar el brief.')
+    state['brief_approval'] = {'sha256': digest(path), 'confirmation': confirmation, 'at': now(), 'source': source}
+    write_json(metadata(project) / 'project.json', state)
+    update_status(project, state, 'Brief tecnico elegido; completar el encargo y comprobar gate antes de producir.')
+    return {'status': 'brief_confirmed', 'brief': str(path.resolve()), 'sha256': digest(path)}
+
+
+def document_paths(project):
+    project = Path(project).expanduser().resolve()
+    state = read_state(project)
+    preview = project / 'GUION-POR-DEFECTO.md'
+    if not preview.exists():
+        text = (ASSETS / preview.name).read_text(encoding='utf-8-sig')
+        template = Path(state['profile_home']) / 'templates' / DOCS[0]
+        preferences = re.search(r'^## Preferencias creativas reutilizables\s*\n(.*?)(?=^## |\Z)',
+                                template.read_text(encoding='utf-8-sig'), re.M | re.S)
+        if preferences and preferences.group(1).strip():
+            text += '\n## Preferencias creativas del perfil\n\n' + preferences.group(1).strip() + '\n'
+        atomic(preview, text)
+    return {'script': str(project / DOCS[0]), 'default_script_editable': str(preview),
+            'technical_brief_editable': str(project / DOCS[1])}
 
 
 def update_status(project, state, phase):
@@ -81,7 +128,7 @@ def update_status(project, state, phase):
            f'Fase: {phase}\n\nRevision: {state.get("revision", 0)}\n\n' +
            f'Perfil compartido local: {state["profile_home"]}\n\n' +
            'Leer GUION-CREATIVO.md, BRIEF-TECNICO.md, TAREAS.md y CAMBIOS-PENDIENTES.md al retomar.\n' +
-           'Comprobar workflow.py gate antes de editar o consultar servicios.\n<!-- davinci-status:end -->')
+           'Leer ENCARGO.md si existe. Comprobar workflow.py gate antes de analizar, generar o editar.\n<!-- davinci-status:end -->')
     path = Path(project) / 'ESTADO.md'
     if path.exists():
         current = path.read_text(encoding='utf-8')
@@ -97,7 +144,7 @@ def init_project(project, profile=None):
     if (metadata(project) / 'project.json').exists():
         return {'status': 'existing', 'project': str(project), 'state': read_state(project)}
     project.mkdir(parents=True, exist_ok=True)
-    for name in DOCS + ('TAREAS.md', 'ESTADO.md', 'CAMBIOS-PENDIENTES.md', 'AGENTS.md', 'CLAUDE.md'):
+    for name in DOCS + ('GUION-POR-DEFECTO.md', 'TAREAS.md', 'ESTADO.md', 'CAMBIOS-PENDIENTES.md', 'AGENTS.md', 'CLAUDE.md'):
         if (project / name).exists():
             raise ValueError(f'Ya existe {name}. Conserva su contenido y elige una carpeta nueva para inicializar.')
     shared = profile_root(profile)
@@ -114,18 +161,22 @@ def init_project(project, profile=None):
     atomic(project / 'CAMBIOS-PENDIENTES.md', '# Comentarios pendientes\n\nSin comentarios pendientes.\n')
     routing = ('# Edicion con DaVinci Video Pro\n\nPara editar videos usa la skill davinci-video-pro si esta disponible.\n'
                'Primero lee ESTADO.md, GUION-CREATIVO.md, BRIEF-TECNICO.md, TAREAS.md y CAMBIOS-PENDIENTES.md.\n'
-               'Antes de editar o llamar APIs, usa el guion propio o el profesional por defecto elegido por el usuario.\n'
-               'Si dice usa el guion por defecto, registra esa eleccion con use-default-script sin preguntar otra vez.\n'
-               'Comprueba workflow.py gate; si ya pasa, retoma sin volver a pedir guion.\n'
+               'Primero instalacion/conexion; despues materiales, numero de salidas, brief, guion, Omni e imagenes.\n'
+               'Las pruebas tecnicas de conexion no requieren guion. Producir requiere guion y brief tecnico vigente.\n'
+               'El brief tecnico es obligatorio: leerlo y aplicar todos sus criterios durante montaje y QA.\n'
+               'Mostrar siempre las rutas absolutas editables de guion y brief. Leer ENCARGO.md si existe.\n'
+               'Si dice no tengo guion o hazlo con el de defecto, usar use-default-script sin preguntar otra vez.\n'
+               'Registrar confirm-brief y comprobar workflow.py gate; si pasa, retomar sin repetir preguntas.\n'
                'El guion es la fuente principal; no reemplaces sus decisiones con el estilo predeterminado.\n'
                'Las revisiones de los dos documentos y las preferencias para futuros videos requieren un resumen confirmado.\n')
     for name in ('AGENTS.md', 'CLAUDE.md'):
         atomic(project / name, routing)
     state = {'version': 2, 'created_at': now(), 'profile_home': str(shared), 'revision': 0,
              'analysis_model': 'gemini-3.8-flash', 'angle_model': 'gemini-omni-1.1-flash',
-             'script_approval': None, 'omni_plan': None}
+             'script_approval': None, 'brief_approval': None, 'omni_plan': None}
     write_json(metadata(project) / 'project.json', state)
-    update_status(project, state, 'Esperando guion propio o eleccion del profesional por defecto; APIs y edicion pendientes.')
+    document_paths(project)
+    update_status(project, state, 'Completar instalacion y recepcion: materiales, salidas, brief, guion y recursos.')
     return {'status': 'initialized', 'project': str(project), 'profile_home': str(shared)}
 
 
@@ -137,7 +188,7 @@ def confirm_script(project, confirmation, source='user'):
     meaningful(path.read_text(encoding='utf-8-sig'))
     state['script_approval'] = {'sha256': digest(path), 'confirmation': confirmation, 'at': now(), 'source': source}
     write_json(metadata(project) / 'project.json', state)
-    update_status(project, state, 'Guion confirmado; comprobar instalacion y preparar el plan de edicion.')
+    update_status(project, state, 'Guion elegido; completar brief y encargo, comprobar gate y preparar el montaje.')
     return {'status': 'script_confirmed', 'sha256': digest(path)}
 
 
@@ -157,12 +208,7 @@ def use_default_script(project, confirmation):
     original = path.read_bytes()
     if 'PENDIENTE_DE_GUION' not in original.decode('utf-8-sig') or approval:
         raise ValueError('Ya existe un guion propio. Conserva su contenido y prepara una revision para cambiarlo.')
-    text = (ASSETS / 'GUION-POR-DEFECTO.md').read_text(encoding='utf-8-sig')
-    template = Path(state['profile_home']) / 'templates' / DOCS[0]
-    preferences = re.search(r'^## Preferencias creativas reutilizables\s*\n(.*?)(?=^## |\Z)',
-                            template.read_text(encoding='utf-8-sig'), re.M | re.S)
-    if preferences and preferences.group(1).strip():
-        text += '\n## Preferencias creativas del perfil\n\n' + preferences.group(1).strip() + '\n'
+    text = Path(document_paths(project)['default_script_editable']).read_text(encoding='utf-8-sig')
     meaningful(text)
     state_before = (meta / 'project.json').read_bytes()
     try:
@@ -182,7 +228,8 @@ def stage_revision(project, creative, technical, summary, profile_creative=None,
     candidates = [Path(creative), Path(technical)]
     texts = [p.read_text(encoding='utf-8-sig') for p in candidates]
     meaningful(texts[0])
-    if not texts[1].strip() or not summary.strip():
+    meaningful(texts[1])
+    if not summary.strip():
         raise ValueError('Faltan el brief tecnico o el resumen para el usuario.')
     revision = metadata(project) / 'pending'
     if revision.exists():
@@ -227,6 +274,7 @@ def apply_revision(project, confirmation):
             targets.append((target, pending_dir / 'templates' / name))
     texts = [source.read_text(encoding='utf-8-sig') for _, source in targets]
     meaningful(texts[0])
+    meaningful(texts[1])
     history = meta / 'history' / (pending['id'] + '-' + uuid.uuid4().hex[:8])
     history.mkdir(parents=True, exist_ok=False)
     originals = [(target, target.read_bytes()) for target, _ in targets]
@@ -240,6 +288,7 @@ def apply_revision(project, confirmation):
             atomic(target, content)
         state['revision'] += 1
         state['script_approval'] = {'sha256': digest(Path(project) / DOCS[0]), 'confirmation': confirmation, 'at': now()}
+        state['brief_approval'] = {'sha256': digest(Path(project) / DOCS[1]), 'confirmation': confirmation, 'at': now()}
         state['last_revision'] = {'id': pending['id'], 'summary': pending['summary'], 'confirmation': confirmation, 'at': now()}
         write_json(meta / 'project.json', state)
         write_json(history / 'confirmed.json', {**pending, 'confirmation': confirmation})
@@ -260,7 +309,7 @@ def apply_revision(project, confirmation):
 
 
 def set_omni_plan(project, scenes, cost, confirmation):
-    require_script(project)
+    require_production(project)
     if scenes < 1 or not math.isfinite(cost) or cost <= 0 or not confirmation.strip():
         raise ValueError('Indica escenas, tope de presupuesto y la autorizacion real del usuario.')
     state = read_state(project)
@@ -274,9 +323,11 @@ def main():
     p.add_argument('--project-dir', type=Path, required=True)
     sub = p.add_subparsers(dest='command', required=True)
     init = sub.add_parser('init'); init.add_argument('--profile-home', type=Path)
-    sub.add_parser('gate'); sub.add_parser('status')
+    sub.add_parser('gate'); sub.add_parser('status'); sub.add_parser('documents')
     accept = sub.add_parser('confirm-script'); accept.add_argument('--confirmation', required=True)
     default = sub.add_parser('use-default-script'); default.add_argument('--confirmation', required=True)
+    brief = sub.add_parser('confirm-brief'); brief.add_argument('--confirmation', required=True)
+    brief.add_argument('--source', choices=('user', 'default'), default='user')
     stage = sub.add_parser('stage-revision')
     stage.add_argument('--creative', required=True); stage.add_argument('--technical', required=True)
     stage.add_argument('--summary-file', required=True)
@@ -287,10 +338,12 @@ def main():
     a = p.parse_args(); project = a.project_dir.expanduser().resolve()
     try:
         if a.command == 'init': result = init_project(project, a.profile_home)
-        elif a.command == 'gate': result = {'script': str(require_script(project)), 'gate': 'passed'}
+        elif a.command == 'gate': result = {'script': str(require_production(project)), 'brief': str(require_brief(project)), 'gate': 'passed'}
         elif a.command == 'status': result = read_state(project)
+        elif a.command == 'documents': result = document_paths(project)
         elif a.command == 'confirm-script': result = confirm_script(project, a.confirmation)
         elif a.command == 'use-default-script': result = use_default_script(project, a.confirmation)
+        elif a.command == 'confirm-brief': result = confirm_brief(project, a.confirmation, a.source)
         elif a.command == 'stage-revision':
             result = stage_revision(project, a.creative, a.technical, Path(a.summary_file).read_text(encoding='utf-8-sig'), a.profile_creative, a.profile_technical)
         elif a.command == 'apply-revision': result = apply_revision(project, a.confirmation)

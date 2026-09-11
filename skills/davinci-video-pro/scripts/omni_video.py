@@ -9,11 +9,11 @@ from pathlib import Path
 import re
 import sys
 import time
-from workflow import require_script, read_state, metadata, write_json, digest, now
+from workflow import require_production, read_state, metadata, write_json, digest, now
 
 
 def reserve(project, scene, source, prompt, estimate):
-    require_script(project)
+    script = require_production(project)
     if not re.fullmatch(r'[a-z0-9][a-z0-9_-]{0,63}', scene):
         raise ValueError('Usa un identificador de escena sencillo, sin rutas.')
     state = read_state(project)
@@ -32,7 +32,8 @@ def reserve(project, scene, source, prompt, estimate):
         raise ValueError('El intento excede el plan autorizado. No se llamo a Google.')
     record = {'scene': scene, 'fingerprint': fingerprint, 'reserved_usd': estimate,
               'status': 'reserved', 'created_at': now(), 'model': state['angle_model'],
-              'source_sha256': digest(source), 'script_sha256': digest(require_script(project))}
+              'source_sha256': digest(source), 'script_sha256': digest(script),
+              'brief_sha256': digest(script.parent / 'BRIEF-TECNICO.md')}
     path = ledger / (scene + '.json')
     with path.open('x', encoding='utf-8') as stream:
         json.dump(record, stream, ensure_ascii=False, indent=2)
@@ -40,7 +41,7 @@ def reserve(project, scene, source, prompt, estimate):
 
 
 def generate(args):
-    script = require_script(args.project_dir)
+    script = require_production(args.project_dir)
     if not re.fullmatch(r'[a-z0-9][a-z0-9_-]{0,63}', args.scene):
         raise ValueError('Identificador de escena no valido.')
     if not args.upload_to_google:
@@ -81,7 +82,7 @@ def generate(args):
                     if remote.state and remote.state.name == 'FAILED': raise RuntimeError('Google no pudo procesar el fragmento.')
                     if time.monotonic() > deadline: raise TimeoutError('El fragmento no estuvo disponible en cinco minutos.')
                     time.sleep(5); remote = client.files.get(name=remote.name)
-                require_script(args.project_dir)
+                require_production(args.project_dir)
                 record['status'] = 'generation_requested'; write_json(record_path, record)
                 response = client.interactions.create(model=record['model'], store=False, background=False,
                     input=[{'type': 'video', 'uri': remote.uri, 'mime_type': 'video/mp4'}, {'type': 'text', 'text': prompt}],
