@@ -1,0 +1,6 @@
+interface:
+  display_name: "DaVinci Video Pro"
+  short_description: "Instala Resolve MCP y edita videos con guion"
+  default_prompt: "Usa $davinci-video-pro para pedirme primero el guion y usarlo como fuente principal antes de editar o llamar APIs; despues guiar la configuracion y edicion."
+policy:
+  allow_implicit_invocation: true

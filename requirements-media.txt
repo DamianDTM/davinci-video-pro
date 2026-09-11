@@ -1,0 +1,4 @@
+# Install in an isolated environment after receiving the user's script.
+google-genai==2.22.0
+av>=14,<17
+imageio-ffmpeg>=0.6,<0.7
