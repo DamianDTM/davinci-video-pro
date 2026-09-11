@@ -22,6 +22,7 @@ import workflow as w
 import omni_video as omni
 import openai_image as images
 import configure_claude_mcp as mcp
+import diagnose
 
 
 def load(name, path):
@@ -73,6 +74,9 @@ class Tests(unittest.TestCase):
                 client.assert_not_called(); key.assert_not_called()
 
     def test_sdk_does_not_retry_a_rate_limited_generation(self):
+        problem = g.sdk_problem()
+        if problem:
+            self.skipTest(problem)
         import httpx
         sent = []
         def reject(client, request, **kwargs):
@@ -89,7 +93,6 @@ class Tests(unittest.TestCase):
             with self.assertRaises(ValueError): images.generate(SimpleNamespace(project_dir=self.project))
             key.assert_not_called()
         with self.assertRaises(ValueError): omni.generate(SimpleNamespace(project_dir=self.project))
-        with self.assertRaises(ValueError): mcp.configure(self.project, self.root / 'absent.json')
 
     def test_revision_confirmation_and_profile_inheritance(self):
         self.approve(); creative, technical = self.candidates()
@@ -104,8 +107,8 @@ class Tests(unittest.TestCase):
         with self.assertRaises(ValueError): w.apply_revision(self.project, '')
         result = w.apply_revision(self.project, 'Si, es correcto; guardalo para los siguientes videos.')
         self.assertTrue(result['profile_updated'])
-        self.assertEqual((self.project / w.DOCS[0]).read_bytes(), creative.read_bytes())
-        self.assertEqual((self.project / w.DOCS[1]).read_bytes(), technical.read_bytes())
+        self.assertEqual((self.project / w.DOCS[0]).read_text(encoding='utf-8'), creative.read_text(encoding='utf-8'))
+        self.assertEqual((self.project / w.DOCS[1]).read_text(encoding='utf-8'), technical.read_text(encoding='utf-8'))
         self.assertTrue(w.require_script(self.project))
         self.assertIn('Detalle de configuracion', (self.project / 'ESTADO.md').read_text(encoding='utf-8'))
         new = self.root / 'video two'; w.init_project(new, self.profile)
@@ -154,7 +157,7 @@ class Tests(unittest.TestCase):
             self.assertTrue((self.root / 'client project' / folder / 'skills/davinci-video-pro/SKILL.md').is_file())
 
     def test_mcp_merge_preserves_other_servers(self):
-        self.approve(); path = self.project / '.mcp.json'
+        path = self.project / '.mcp.json'
         path.write_text(json.dumps({'otherSetting': True, 'mcpServers': {'other': {'command': 'preserve'}}}))
         entry = self.root / 'entry.json'
         entry.write_text(json.dumps({'mcpServers': {'davinci-resolve': {'command': sys.executable, 'args': ['server.py']}}}))
@@ -162,6 +165,7 @@ class Tests(unittest.TestCase):
         data = json.loads(path.read_text())
         self.assertTrue(data['otherSetting']); self.assertEqual(data['mcpServers']['other']['command'], 'preserve')
         self.assertEqual(mcp.configure(self.project, entry)['status'], 'already_configured')
+        with self.assertRaises(ValueError): w.require_script(self.project)
 
     def test_omni_budget_and_duplicate_attempts(self):
         self.approve(); source = self.root / 'synthetic.mp4'; source.write_bytes(b'fixture')
@@ -187,12 +191,13 @@ class Tests(unittest.TestCase):
             return SimpleNamespace(status='completed', output_text=json.dumps(valid), steps=[], usage=None)
         client = SimpleNamespace(files=Files(), interactions=SimpleNamespace(create=request))
         args = SimpleNamespace(project_dir=self.project, file=source, output=self.root / 'analysis.json', script=None, model='fixture-model', processing='static', max_output_tokens=512, upload_to_google=True)
-        with contextlib.redirect_stdout(io.StringIO()): g.analyze(client, args)
+        fake_types = SimpleNamespace(UploadFileConfig=lambda **kw: kw)
+        with patch.object(g, 'types', fake_types), contextlib.redirect_stdout(io.StringIO()): g.analyze(client, args)
         self.assertEqual(calls, ['upload', 'delete'])
         report = json.loads(args.output.read_text()); self.assertEqual(report['script_sha256'], w.digest(self.project / w.DOCS[0]))
         args.output = self.root / 'failed.json'
         client.interactions.create = lambda **kw: SimpleNamespace(status='completed', output_text='{}', steps=[], usage=None)
-        with contextlib.redirect_stdout(io.StringIO()), self.assertRaises(RuntimeError): g.analyze(client, args)
+        with patch.object(g, 'types', fake_types), contextlib.redirect_stdout(io.StringIO()), self.assertRaises(RuntimeError): g.analyze(client, args)
         self.assertEqual(calls, ['upload', 'delete', 'upload', 'delete'])
 
     def test_image_request_is_single_and_never_echoes_credentials(self):
@@ -228,7 +233,7 @@ class Tests(unittest.TestCase):
         fake_client = Client()
         fake_av = SimpleNamespace(time_base=1000000, open=lambda *a: contextlib.nullcontext(SimpleNamespace(streams=SimpleNamespace(video=[True]), duration=4000000)))
         args = SimpleNamespace(project_dir=self.project, file=source, prompt_file=prompt, scene='scene1', estimated_usd=0.5, upload_to_google=True, aspect_ratio='9:16')
-        with patch.dict(sys.modules, {'gemini_video': g, 'av': fake_av}), patch.object(g, 'read_key', return_value='OFFLINE_KEY'), patch.object(g, 'client_for', return_value=fake_client):
+        with patch.dict(sys.modules, {'gemini_video': g, 'av': fake_av}), patch.object(g, 'types', SimpleNamespace(UploadFileConfig=lambda **kw: kw)), patch.object(g, 'sdk_problem', return_value=None), patch.object(g, 'read_key', return_value='OFFLINE_KEY'), patch.object(g, 'client_for', return_value=fake_client):
             self.assertEqual(omni.generate(args)['status'], 'completed_needs_review')
             self.assertEqual(events, ['upload', 'generate', 'delete'])
             args.scene = 'scene2'; prompt.write_text('A different four second camera angle showing the same plant and original timing.')
@@ -238,6 +243,112 @@ class Tests(unittest.TestCase):
         failed = json.loads((w.metadata(self.project) / 'omni-attempts/scene2.json').read_text())
         self.assertTrue(failed['remote_input_deleted'])
         self.assertEqual(failed['status'], 'failed_or_uncertain')
+
+    def test_new_project_text_uses_lf_on_all_platforms(self):
+        for path in list(self.project.glob('*.md')) + [w.metadata(self.project) / 'project.json']:
+            self.assertNotIn(b'\r', path.read_bytes(), path.name)
+
+    def test_rollback_restores_exact_bytes_profiles_and_script_approval(self):
+        self.approve()
+        targets = [self.project / n for n in w.DOCS] + [self.profile / 'templates' / n for n in w.DOCS]
+        for index, target in enumerate(targets):
+            data = target.read_text(encoding='utf-8-sig').encode('utf-8')
+            if index % 2 == 0: data = data.replace(b'\n', b'\r\n')
+            if index < 2: data = b'\xef\xbb\xbf' + data
+            target.write_bytes(data)
+        w.confirm_script(self.project, 'Usa este guion')
+        state_path = w.metadata(self.project) / 'project.json'
+        state_path.write_bytes(state_path.read_bytes().replace(b'\n', b'\r\n'))
+        targets.append(state_path)
+        before = [p.read_bytes() for p in targets]
+        c, t = self.candidates()
+        w.stage_revision(self.project, c, t, 'Cambiar documentos y preferencias',
+                         self.profile / 'templates' / w.DOCS[0], self.profile / 'templates' / w.DOCS[1])
+        real = w.atomic
+        def fail_state(path, content):
+            if Path(path) == state_path: raise OSError('offline disk failure')
+            return real(path, content)
+        with patch.object(w, 'atomic', side_effect=fail_state), self.assertRaises(OSError):
+            w.apply_revision(self.project, 'Confirmo')
+        self.assertEqual(before, [p.read_bytes() for p in targets])
+        self.assertTrue(w.require_script(self.project))
+        history = next((w.metadata(self.project) / 'history').iterdir())
+        for index, target in enumerate(targets[:-1]):
+            self.assertEqual(before[index], (history / f'{index}-{target.name}').read_bytes())
+        self.assertEqual(before[-1], (history / 'project-before.json').read_bytes())
+
+    def test_incompatible_sdk_has_actionable_error_before_client(self):
+        fake = SimpleNamespace(Client=unittest.mock.Mock())
+        for version in ('1.74.0', '3.0.0'):
+            with self.subTest(version=version), patch.object(g, 'genai', fake), patch.object(g.metadata, 'version', return_value=version):
+                with self.assertRaisesRegex(RuntimeError, 'pip install google-genai==2.22.0'):
+                    g.client_for('OFFLINE_KEY')
+                fake.Client.assert_not_called()
+        with patch.object(g.metadata, 'version', side_effect=g.metadata.PackageNotFoundError):
+            self.assertIn('no instalado', g.sdk_problem())
+
+    def test_missing_interactions_configuration_closes_client(self):
+        client = SimpleNamespace(interactions=SimpleNamespace(), close=unittest.mock.Mock())
+        fake = SimpleNamespace(Client=unittest.mock.Mock(return_value=client))
+        fake_types = SimpleNamespace(HttpOptions=lambda **kw: kw, HttpRetryOptions=lambda **kw: kw)
+        with patch.object(g, 'sdk_problem', return_value=None), patch.object(g, 'genai', fake), patch.object(g, 'types', fake_types):
+            with self.assertRaisesRegex(RuntimeError, 'version del SDK'): g.client_for('OFFLINE_KEY')
+        client.close.assert_called_once()
+
+    def test_diagnostics_do_not_mistake_codex_for_claude(self):
+        codex = self.root / 'codex'; codex.mkdir()
+        (codex / 'config.toml').write_text('[mcp_servers.davinci-resolve]\ncommand="python"\n', encoding='utf-8')
+        claude = self.root / 'claude.json'
+        report = diagnose.inspect_clients('both', self.project, codex, claude)
+        self.assertTrue(report['codex']['mcp_config_present'])
+        self.assertFalse(report['claude-code']['mcp_config_present'])
+        self.assertEqual(list(diagnose.inspect_clients('claude-code', self.project, codex, claude)), ['claude-code'])
+
+    def test_diagnostics_read_claude_scopes_without_echoing_secrets(self):
+        repo = self.root / 'mcp repo'; (repo / 'src').mkdir(parents=True)
+        (repo / 'src/server.py').write_text('# offline fixture')
+        entry = {'command': sys.executable, 'args': [str(repo / 'src/server.py')], 'env': {'TOKEN': 'OFFLINE_SECRET'}}
+        claude = self.root / 'claude.json'
+        claude.write_text(json.dumps({'mcpServers': {'resolve-user': entry}, 'projects': {
+            str(self.project): {'mcpServers': {'resolve-local': entry}},
+            str(self.root / 'other'): {'mcpServers': {'resolve-other': entry}}}}))
+        (self.project / '.mcp.json').write_text(json.dumps({'mcpServers': {'resolve-project': entry}}))
+        report = diagnose.inspect_clients('claude-code', self.project, self.root / 'codex', claude)
+        servers = report['claude-code']['servers']
+        self.assertEqual({s['scope'] for s in servers}, {'user', 'local', 'project'})
+        self.assertTrue(all(s['repo_found'] for s in servers))
+        self.assertNotIn('OFFLINE_SECRET', json.dumps(report))
+        self.assertFalse(report['claude-code']['mcp_transport']['tested'])
+
+    def test_resolve_probe_stops_without_script(self):
+        with patch.object(diagnose, 'key_present', return_value=False), patch.object(diagnose, 'windows_resolve', return_value={}), patch.object(sys, 'argv', ['diagnose.py', '--client', 'claude-code', '--project-dir', str(self.project), '--check-connection']):
+            with self.assertRaisesRegex(ValueError, 'guion vigente'): diagnose.main()
+
+    def test_default_script_selection_enables_flow_without_second_confirmation(self):
+        technical = (self.project / w.DOCS[1]).read_bytes()
+        with self.assertRaises(ValueError): w.require_script(self.project)
+        result = subprocess.run([sys.executable, str(SCRIPTS / 'workflow.py'), '--project-dir', str(self.project),
+                                 'use-default-script', '--confirmation', 'Usa el guion por defecto'], capture_output=True, text=True)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        script = w.require_script(self.project)
+        self.assertIn('Estructura narrativa', script.read_text(encoding='utf-8'))
+        self.assertIn('Preferencias creativas del perfil', script.read_text(encoding='utf-8'))
+        self.assertEqual(technical, (self.project / w.DOCS[1]).read_bytes())
+        approval = w.read_state(self.project)['script_approval']
+        self.assertEqual(approval['confirmation'], 'Usa el guion por defecto')
+        self.assertEqual(approval['source'], 'default')
+        self.assertIsNone(w.read_state(self.project)['omni_plan'])
+        self.assertEqual(w.use_default_script(self.project, 'Usa el guion por defecto')['status'], 'default_already_selected')
+        other = self.root / 'other video'; w.init_project(other, self.profile)
+        with self.assertRaises(ValueError): w.require_script(other)
+
+    def test_default_selection_preserves_own_script_and_needs_user_choice(self):
+        before = (self.project / w.DOCS[0]).read_bytes()
+        with self.assertRaises(ValueError): w.use_default_script(self.project, '')
+        self.assertEqual(before, (self.project / w.DOCS[0]).read_bytes())
+        self.approve(); before = (self.project / w.DOCS[0]).read_bytes()
+        with self.assertRaises(ValueError): w.use_default_script(self.project, 'Usa el guion por defecto')
+        self.assertEqual(before, (self.project / w.DOCS[0]).read_bytes())
 
 
 if __name__ == '__main__':

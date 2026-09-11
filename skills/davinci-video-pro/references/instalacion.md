@@ -2,7 +2,8 @@
 
 ## Guion obligatorio y comprobacion inicial
 
-Pedir el guion antes de esta fase. Las consultas MCP, autenticacion y pruebas del
+Recibir el guion o registrar «usa el guion por defecto» antes de las APIs de esta
+fase. No pedir otro guion ni otra confirmacion si ya fue elegido. Las consultas MCP, autenticacion y pruebas del
 instalador requieren workflow.py gate. diagnose.py sin --check-connection solo
 lee archivos locales. Ver clientes.md para Codex y Claude Code.
 
@@ -15,7 +16,12 @@ actual del [repositorio](https://github.com/samuelgursky/davinci-resolve-mcp)
 antes de instalar o cambiar versiones. Para sintaxis de APIs o CLI usa Context7
 si está disponible; después consulta el código y las fuentes oficiales.
 
-Ejecuta `scripts/diagnose.py` con Python 3.11 o posterior. Es de solo lectura.
+Ejecuta `scripts/diagnose.py --client <codex-o-claude-code> --project-dir <trabajo>`
+con Python 3.11 o posterior. Sin --check-connection es de solo lectura local.
+El informe separa registros por cliente; no usa la configuracion de Codex como
+prueba de que Claude esta registrado. FFmpeg puede estar en PATH o incluido en
+imageio-ffmpeg: prepare_clip.py utiliza este ultimo; su ausencia en PATH no basta
+para declarar que falta FFmpeg.
 Si Codex ofrece `load_workspace_dependencies`, localiza allí Python antes de
 pedir que lo instalen. Registra sistema, Resolve, versión, edición comprobada o
 desconocida, Git/Python/Node, instalación MCP, clave presente (solo booleano) y
@@ -51,8 +57,8 @@ versión y reutiliza la conexión. Si solo falta exponer el servidor en esta ses
 guarda el estado y pide recargar Codex después de configurar.
 
 Para una instalación nueva preferir un checkout identificable por usuario:
-`<directorio de configuración de Codex>/integrations/davinci-resolve-mcp`.
-Obtén ese directorio de CODEX_HOME o del perfil local, nunca de este paquete.
+`<directorio de configuración del cliente>/integrations/davinci-resolve-mcp`.
+Obten ese directorio del perfil local del cliente elegido, nunca de este paquete.
 Si existe un checkout, verifica su remoto y estado. No hagas reset, pull forzado
 ni actualizaciones de una instalación funcional.
 
@@ -98,7 +104,7 @@ por nombre: identifica primero el dueño del puerto y conserva el trabajo abiert
 Prueba una consulta de versión y proyecto actual mediante el MCP.
 También puedes ejecutar:
 ```text
-<python> <skill>/scripts/diagnose.py --repo <repo> --project-dir <trabajo> --check-connection --output <trabajo>/diagnostico.json
+<python> <skill>/scripts/diagnose.py --client <codex-o-claude-code> --repo <repo> --project-dir <trabajo> --check-connection --output <trabajo>/diagnostico.json
 ```
 El cliente directo usa `connect(require_enabled=False, timeout=15)` y llama
 GetVersionString/GetProjectManager. Una respuesta autenticada demuestra transporte;

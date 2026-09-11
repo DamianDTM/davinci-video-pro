@@ -1,6 +1,7 @@
 # Gemini para comprender el material
 
-Primero pedir y registrar el guion; workflow.py gate debe pasar incluso antes de
+Primero registrar el guion propio o la eleccion del profesional por defecto;
+workflow.py gate debe pasar incluso antes de
 probar credenciales o listar modelos. Preferido: gemini-3.8-flash. Comprobar acceso
 y modalidad reales; no sustituir un modelo sin explicar el cambio al usuario.
 
@@ -13,6 +14,12 @@ variable o almacen de secretos del usuario sin imprimir su valor.
 
 Instalar google-genai==2.22.0 en un entorno aislado: esa version fue probada.
 Consultar documentacion oficial antes de cambiarla. No registrar entornos completos.
+El helper comprueba la version antes de construir el cliente. Si detecta otra o
+falta el SDK, indica el comando de instalacion en ese entorno, sin llamar a Google.
+El pin corresponde al SDK de Python, no al modelo Gemini 3.8. Interactions usa
+configuracion interna para impedir reintentos; no asumir compatibilidad con otras
+versiones. Las pruebas que necesitan el SDK exacto se omiten con un mensaje claro
+si no esta disponible; una omision no significa que esa integracion haya pasado.
 
 ```text
 python <skill>/scripts/gemini_video.py --project-dir <proyecto> status

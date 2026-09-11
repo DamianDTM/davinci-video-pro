@@ -1,7 +1,9 @@
 # Guion creativo
 
-Estado: PENDIENTE_DE_GUION. Completar con el usuario antes de editar o llamar APIs.
-Eliminar este marcador solo cuando exista un guion concreto entregado o confirmado.
+Estado: PENDIENTE_DE_GUION. Recibir un guion propio o la eleccion del profesional por defecto.
+Si dice «usa el guion por defecto», ejecutar workflow.py use-default-script:
+reemplaza esta plantilla por el guion profesional y registra la eleccion sin volver a preguntar.
+Para un guion propio, completar el contenido antes de editar o llamar APIs.
 
 ## Contenido de este video
 

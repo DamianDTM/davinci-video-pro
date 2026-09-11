@@ -33,7 +33,10 @@ abrir otra sesion/recargar. No prometer activacion automatica en todas las frase
 
 ## Configurar el MCP correcto
 
-Primero la puerta del guion. El instalador upstream distingue codex,
+Registrar una entrada local no usa APIs y no requiere guion, tanto mediante
+configure_claude_mcp.py como mediante claude mcp add-json. Las consultas MCP,
+pruebas de conexion y los instaladores que las ejecutan SI requieren la puerta
+del guion (propio o predeterminado elegido). El instalador upstream distingue codex,
 claude-code y claude-desktop. Elegir el host real; nunca --clients all por defecto.
 
 En la version comprobada, claude-code escribe .mcp.json en el directorio de trabajo
@@ -47,6 +50,17 @@ los otros servidores y hace backup. No copiar tokens ni rutas de otra persona.
 Para disponibilidad entre proyectos, usar el scope user mediante el comando
 claude mcp add-json documentado actualmente, pasando la entrada como argumento
 de subprocess, sin shell ni imprimir valores secretos. Verificar claude mcp --help.
+
+Diagnosticar el cliente elegido con diagnose.py --client claude-code --project-dir
+<proyecto>, o --client codex. Sin seleccion explicita, el informe separa ambos.
+Claude: scope user en ~/.claude.json, scope local bajo projects en ese archivo y
+scope project en <proyecto>/.mcp.json. Para otro perfil usar --claude-config si hace
+falta. No deducir el estado de Claude desde CODEX_HOME. El informe lee registros,
+no demuestra transporte ni aprobaciones/permisos efectivos del cliente.
+
+Comprobar por separado registro, arranque del servidor MCP y respuesta real de
+Resolve. «Connected» en claude mcp list no demuestra que su API responda. Hacer
+esas pruebas solo despues de recibir el guion o registrar la eleccion del default.
 
 ## Capacidades por cliente
 

@@ -4,12 +4,12 @@ import json
 from pathlib import Path
 import shutil
 import uuid
-from workflow import require_script, write_json
+from workflow import write_json
 
 
 def configure(project, entry_path):
     project = Path(project).resolve()
-    require_script(project)
+    # Registration only writes local JSON. API/connection checks still need a script.
     data = json.loads(Path(entry_path).read_text(encoding='utf-8-sig'))
     servers = data.get('mcpServers', data)
     selected = {name: entry for name, entry in servers.items() if 'resolve' in name.lower()}

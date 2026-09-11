@@ -1,56 +1,87 @@
-# Validacion de la version 2.0.0
+# Validacion de la version 2.1.0
 
-Fecha de preparacion: 10 de septiembre de 2026.
+## Correcciones verificadas
 
-## Comprobaciones locales
+La revision externa de Claude identifico un fallo real en 2.0.0: la restauracion
+de documentos cambiaba LF por CRLF en Windows. Se reprodujo con el codigo publicado.
+Las pruebas anteriores se habian ejecutado antes de normalizar los saltos de linea
+del paquete; su resultado no demostraba que el ZIP final restaurase los bytes.
 
-14 pruebas funcionales automatizadas con servicios simulados:
+2.1.0 escribe texto nuevo con LF y respalda/restaura bytes originales, incluyendo
+CRLF y BOM existentes, tanto en documentos como en preferencias y project.json.
+La verificacion de esta version se ejecuta desde el ZIP extraido, despues de
+normalizar y empaquetar. No se reutiliza el resultado anterior como evidencia.
 
-- Puerta del guion: rechaza ausencia, plantilla vacia y modificaciones sin confirmar.
-- Gemini models/check se detienen antes de crear un cliente o leer una clave si falta guion.
-- Omni, OpenAI Images y configuracion MCP de Claude respetan la misma puerta.
-- Gemini recibe el guion principal y retira el archivo remoto simulado incluso ante fallo.
-- Omni registra un intento unico, respeta el plan estimado y limpia entradas en exito/fallo.
-- El SDK real recibe un HTTP 429 simulado y no repite la generacion automaticamente.
-- Imagenes realiza una sola peticion simulada y no registra credenciales.
-- Confirmacion obligatoria del resumen; ambos documentos se actualizan juntos.
-- Un fallo de escritura restaura los documentos; una revision obsoleta no sobrescribe cambios.
-- Preferencias generales se heredan; guion y presupuesto del video anterior no se heredan.
-- Instalacion para Codex y Claude Code en sus respectivas rutas de proyecto.
-- Reinstalacion idempotente, deteccion de cambios existentes y backup al actualizar.
-- Configuracion MCP de Claude conserva otros servidores y ajustes.
+El SDK Google se comprueba antes de construir el cliente: una version distinta
+de google-genai==2.22.0 genera instrucciones de instalacion y no un AttributeError.
+Si falta su configuracion de Interactions, se cierra el cliente sin generar.
+El diagnostico lee Codex y Claude Code por separado (user/local/project), no imprime
+credenciales y distingue registro de comprobacion del transporte y de Resolve.
+Registrar JSON de MCP no requiere guion; las consultas de conexion y APIs si.
 
-Prueba de medios local: se crea un clip sintetico, se recorta a cuatro segundos,
-se comprueban 120 fotogramas a 30 fps, audio presente y fuente sin cambios.
-El formulario Windows se prueba con guion pendiente: termina antes de mostrar
-el campo de clave o consultar Google.
+## Pruebas locales
 
-Validacion adicional: sintaxis Python/PowerShell, frontmatter de la skill, enlaces
-internos, ausencia de claves/rutas personales y contenido del ZIP.
+23 pruebas funcionales, sin claves reales ni llamadas a proveedores:
 
-## Limites de estas pruebas
+- Ausencia de guion, plantilla incompleta y cambio sin confirmar bloquean APIs.
+- «Usa el guion por defecto» activa el guion profesional mediante el comando real,
+  conserva el brief tecnico y registra la eleccion sin otra confirmacion.
+- Un guion propio existente no se sobrescribe; otro video requiere elegir el suyo.
+- Puertas de Gemini, Omni, imagenes y consulta de Resolve antes de usar servicios.
+- Confirmacion de revisiones, rechazo de cambios concurrentes y persistencia del perfil.
+- Restauracion byte por byte tras fallo: documentos, plantillas, BOM, LF/CRLF y estado.
+- Instalacion Codex/Claude, copia de respaldo e idempotencia; MCP conserva otros ajustes.
+- Diagnostico Claude independiente de Codex, scopes correctos y secretos omitidos.
+- SDK incompatible detectado antes del cliente; capacidad faltante cierra el cliente.
+- HTTP 429 simulado con el SDK real: un solo envio, sin reintento automatico.
+- Analisis simulado usa el guion principal y limpia la entrada remota en exito/fallo.
+- Omni e imagenes simulados respetan intentos, costes estimados y recursos unicos.
 
-No se llamo a APIs de generacion para validar esta actualizacion ni se consumieron
-creditos. Las pruebas de servicios usan respuestas simuladas. La conexion con
-Resolve, el analisis Gemini y una generacion Omni reales se probaron en el flujo
-de origen, antes de empaquetar esta version.
+Resultado en Windows con Python 3.14.2 y google-genai 2.22.0: **23/23 aprobadas**.
+Con Python 3.11.15 sin google-genai: **22 aprobadas y 1 omitida**, indicando como
+instalar el SDK. La prueba omitida es la integracion con el SDK real; no se cuenta
+como aprobada. La deteccion de versiones incompatibles tambien usa casos simulados.
 
-No se ha completado una instalacion desde cero en otra computadora, una sesion
-real de Claude Code usando este paquete ni una generacion real con el helper
-opcional de OpenAI Images. Compatibilidad de formato y scripts comprobada localmente;
-el acceso efectivo depende de cuentas, herramientas y permisos en el destino.
-Windows es la ruta comprobada. macOS/Linux requieren adaptar y probar instalacion.
+Prueba de medios real y local: clip sintetico recortado a cuatro segundos,
+120 fotogramas a 30 fps, audio presente, fuente intacta. El formulario Windows
+con guion pendiente termina antes de abrir el campo de clave o consultar Google.
+FFmpeg se obtiene de imageio-ffmpeg; no necesita estar en PATH para este helper.
 
-El control de guion de los helpers es una comprobacion de flujo, no una barrera
-de seguridad del sistema. Las herramientas MCP/nativas externas dependen tambien
-de que el asistente siga SKILL.md. Los presupuestos limitan estimaciones locales,
-no configuran un limite duro de facturacion del proveedor.
+Verificaciones adicionales: sintaxis Python, frontmatter de skill, enlaces internos,
+contenido del ZIP, manifiesto SHA-256 y ausencia de claves/rutas personales.
 
-## Repetir pruebas
+## Limites
+
+No se llamo a APIs audiovisuales ni se consumieron creditos para esta actualizacion.
+El analisis Gemini, la conexion Resolve y una generacion Omni reales pertenecen
+al flujo de origen, antes de empaquetar; no son pruebas nuevas de 2.1.0.
+
+Claude informo instalacion y registro user de la version anterior en una sesion
+real. El diagnostico local tambien encuentra ese registro; no demuestra que se
+haya probado el puente de Resolve desde Claude. «Connected» del servidor MCP
+no equivale a respuesta de la API de la aplicacion.
+
+No se ha completado una instalacion desde cero en otro equipo, macOS/Linux ni una
+edicion real con la version 2.1.0 en Claude. El acceso efectivo depende del entorno,
+cuentas, permisos y capacidades presentes. Las herramientas externas dependen
+de que el asistente siga SKILL.md: el gate no es una barrera de seguridad del sistema.
+Los presupuestos controlan estimaciones locales, no el limite de facturacion del proveedor.
+
+## Repetir
+
+Desde el paquete extraido, con Python >=3.11:
 
 ```text
 python tests/test_workflow.py
 ```
 
-Requiere google-genai==2.22.0 instalado; no requiere claves ni acceso a proveedores.
-El instalador y el manejo de proyectos usan solo la biblioteca estandar de Python.
+Para incluir la prueba del SDK, usar un entorno aislado con:
+
+```text
+python -m pip install -r requirements-media.txt
+python tests/test_workflow.py
+```
+
+Sin google-genai las pruebas locales siguen funcionando y solo se omite la prueba
+del SDK. No se requieren claves ni acceso a proveedores. El instalador, el estado
+del proyecto y el registro de MCP usan la biblioteca estandar de Python.

@@ -66,8 +66,10 @@ def generate(args):
         stream.write('Un intento a la vez. Si se interrumpe, revisar su estado antes de retirar este bloqueo.')
     record_path = None; record = None; remote = None; key = ''
     try:
-        from gemini_video import client_for, read_key
-        from google.genai import types
+        from gemini_video import client_for, read_key, types, sdk_problem
+        problem = sdk_problem()
+        if problem:
+            raise ValueError(problem)
         key = read_key()
         record_path, record = reserve(args.project_dir, args.scene, source, prompt, args.estimated_usd)
         target.with_suffix('.prompt.txt').write_text(prompt, encoding='utf-8')
@@ -111,7 +113,8 @@ def generate(args):
             record.update(status='failed_or_uncertain', error_type=type(exc).__name__)
             write_json(record_path, record)
         # Do not echo arbitrary SDK errors, key material or base64 media.
-        raise RuntimeError(f'Omni no termino: {type(exc).__name__}. Revisa el intento guardado antes de otra generacion.') from None
+        detail = sdk_problem() if 'sdk_problem' in locals() else None
+        raise RuntimeError(detail or f'Omni no termino: {type(exc).__name__}. Revisa el intento guardado antes de otra generacion.') from None
     finally:
         lock.unlink(missing_ok=True)
 

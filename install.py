@@ -76,7 +76,7 @@ def main():
         elif os.environ.get('CODEX_HOME'): root = Path(os.environ['CODEX_HOME']) / 'skills'
         else: root = Path.home() / '.agents' / 'skills'
         results.append({'client': client, **install(root, a.update)})
-    print(json.dumps({'results': results, 'next': 'Invoca davinci-video-pro. Primero pide el guion; no llama APIs durante esta instalacion.'}, ensure_ascii=False, indent=2))
+    print(json.dumps({'results': results, 'next': 'Invoca davinci-video-pro. Usa el guion propio o registra la eleccion del profesional por defecto sin volver a preguntar. Esta instalacion no llama APIs.'}, ensure_ascii=False, indent=2))
 
 
 if __name__ == '__main__':

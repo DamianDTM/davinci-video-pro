@@ -2,8 +2,8 @@
 
 Estados: pendiente, en curso, hecho con evidencia, no aplicable con motivo.
 
-- [ ] Pedir y leer el guion; confirmar un borrador si no existe.
-- [ ] Guardar los dos documentos y confirmar el guion. Comprobar gate.
+- [ ] Recibir el guion propio o la eleccion «usa el guion por defecto»; confirmar solo borradores nuevos.
+- [ ] Guardar y leer guion creativo y brief tecnico. Registrar la eleccion real y comprobar gate.
 - [ ] Revisar instalacion local y preparar Resolve/MCP para el cliente elegido.
 - [ ] Comprobar la API de Resolve y el proyecto abierto.
 - [ ] Configurar clave propia y acceso a los modelos seleccionados.

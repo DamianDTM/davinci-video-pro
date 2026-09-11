@@ -7,7 +7,6 @@ import math
 import os
 import re
 from pathlib import Path
-import shutil
 import sys
 import uuid
 from datetime import datetime, timezone
@@ -25,11 +24,16 @@ def digest(path):
 
 
 def atomic(path, content):
+    # New text has the same bytes on Windows and Unix.
+    atomic_bytes(path, content.replace('\r\n', '\n').replace('\r', '\n').encode('utf-8'))
+
+
+def atomic_bytes(path, content):
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
     temporary = path.with_name(path.name + '.' + uuid.uuid4().hex + '.tmp')
     try:
-        temporary.write_text(content, encoding='utf-8')
+        temporary.write_bytes(content)
         os.replace(temporary, path)
     finally:
         temporary.unlink(missing_ok=True)
@@ -46,7 +50,7 @@ def metadata(project):
 def read_state(project):
     path = metadata(project) / 'project.json'
     if not path.is_file():
-        raise ValueError('Inicializa el proyecto y pide el guion al usuario antes de llamar APIs o editar.')
+        raise ValueError('Inicializa el proyecto y recibe un guion o la eleccion del profesional por defecto antes de APIs o edicion.')
     return json.loads(path.read_text(encoding='utf-8'))
 
 
@@ -67,7 +71,7 @@ def require_script(project):
     script = project / DOCS[0]
     approved = state.get('script_approval') or {}
     if not script.is_file() or not approved.get('confirmation') or approved.get('sha256') != digest(script):
-        raise ValueError('No hay guion vigente confirmado. Pidelo al usuario o confirma el borrador; no llames APIs ni edites.')
+        raise ValueError('No hay guion vigente confirmado. Recibe el guion, registra la eleccion del predeterminado con use-default-script o confirma el borrador antes de APIs o edicion.')
     meaningful(script.read_text(encoding='utf-8-sig'))
     return script
 
@@ -101,16 +105,18 @@ def init_project(project, profile=None):
     templates.mkdir(parents=True, exist_ok=True)
     for name in DOCS:
         if not (templates / name).exists():
-            shutil.copyfile(ASSETS / name, templates / name)
-        shutil.copyfile(templates / name, project / name)
+            atomic(templates / name, (ASSETS / name).read_text(encoding='utf-8-sig'))
+        atomic(project / name, (templates / name).read_text(encoding='utf-8-sig'))
     for folder in ('materiales/videos', 'materiales/audios', 'materiales/marca-y-referencias',
                    'generados/imagenes', 'generados/angulos-omni', 'analisis', 'proyecto-resolve', 'exportaciones'):
         (project / folder).mkdir(parents=True, exist_ok=True)
-    shutil.copyfile(ASSETS / 'TAREAS.md', project / 'TAREAS.md')
+    atomic(project / 'TAREAS.md', (ASSETS / 'TAREAS.md').read_text(encoding='utf-8-sig'))
     atomic(project / 'CAMBIOS-PENDIENTES.md', '# Comentarios pendientes\n\nSin comentarios pendientes.\n')
     routing = ('# Edicion con DaVinci Video Pro\n\nPara editar videos usa la skill davinci-video-pro si esta disponible.\n'
                'Primero lee ESTADO.md, GUION-CREATIVO.md, BRIEF-TECNICO.md, TAREAS.md y CAMBIOS-PENDIENTES.md.\n'
-               'Antes de editar o llamar cualquier API del flujo, pide el guion y comprueba su confirmacion vigente.\n'
+               'Antes de editar o llamar APIs, usa el guion propio o el profesional por defecto elegido por el usuario.\n'
+               'Si dice usa el guion por defecto, registra esa eleccion con use-default-script sin preguntar otra vez.\n'
+               'Comprueba workflow.py gate; si ya pasa, retoma sin volver a pedir guion.\n'
                'El guion es la fuente principal; no reemplaces sus decisiones con el estilo predeterminado.\n'
                'Las revisiones de los dos documentos y las preferencias para futuros videos requieren un resumen confirmado.\n')
     for name in ('AGENTS.md', 'CLAUDE.md'):
@@ -119,20 +125,54 @@ def init_project(project, profile=None):
              'analysis_model': 'gemini-3.8-flash', 'angle_model': 'gemini-omni-1.1-flash',
              'script_approval': None, 'omni_plan': None}
     write_json(metadata(project) / 'project.json', state)
-    update_status(project, state, 'Esperando guion del usuario; APIs y edicion pendientes.')
+    update_status(project, state, 'Esperando guion propio o eleccion del profesional por defecto; APIs y edicion pendientes.')
     return {'status': 'initialized', 'project': str(project), 'profile_home': str(shared)}
 
 
-def confirm_script(project, confirmation):
+def confirm_script(project, confirmation, source='user'):
     if not confirmation.strip():
         raise ValueError('Registra la respuesta real del usuario que entrega o confirma este guion.')
     state = read_state(project)
     path = Path(project) / DOCS[0]
     meaningful(path.read_text(encoding='utf-8-sig'))
-    state['script_approval'] = {'sha256': digest(path), 'confirmation': confirmation, 'at': now()}
+    state['script_approval'] = {'sha256': digest(path), 'confirmation': confirmation, 'at': now(), 'source': source}
     write_json(metadata(project) / 'project.json', state)
     update_status(project, state, 'Guion confirmado; comprobar instalacion y preparar el plan de edicion.')
     return {'status': 'script_confirmed', 'sha256': digest(path)}
+
+
+def use_default_script(project, confirmation):
+    if not confirmation.strip():
+        raise ValueError('Registra la peticion real de usar el guion por defecto.')
+    project = Path(project).expanduser().resolve()
+    state = read_state(project)
+    meta = metadata(project)
+    if (meta / 'transaction.json').exists() or (meta / 'pending').exists():
+        raise ValueError('Hay una revision pendiente; resuelvela antes de seleccionar otro guion.')
+    approval = state.get('script_approval') or {}
+    if approval.get('source') == 'default':
+        require_script(project)
+        return {'status': 'default_already_selected', 'script': str(project / DOCS[0])}
+    path = project / DOCS[0]
+    original = path.read_bytes()
+    if 'PENDIENTE_DE_GUION' not in original.decode('utf-8-sig') or approval:
+        raise ValueError('Ya existe un guion propio. Conserva su contenido y prepara una revision para cambiarlo.')
+    text = (ASSETS / 'GUION-POR-DEFECTO.md').read_text(encoding='utf-8-sig')
+    template = Path(state['profile_home']) / 'templates' / DOCS[0]
+    preferences = re.search(r'^## Preferencias creativas reutilizables\s*\n(.*?)(?=^## |\Z)',
+                            template.read_text(encoding='utf-8-sig'), re.M | re.S)
+    if preferences and preferences.group(1).strip():
+        text += '\n## Preferencias creativas del perfil\n\n' + preferences.group(1).strip() + '\n'
+    meaningful(text)
+    state_before = (meta / 'project.json').read_bytes()
+    try:
+        atomic(path, text)
+        confirm_script(project, confirmation, source='default')
+    except Exception:
+        atomic_bytes(path, original)
+        atomic_bytes(meta / 'project.json', state_before)
+        raise
+    return {'status': 'default_script_selected', 'script': str(path), 'sha256': digest(path)}
 
 
 def stage_revision(project, creative, technical, summary, profile_creative=None, profile_technical=None):
@@ -189,11 +229,11 @@ def apply_revision(project, confirmation):
     meaningful(texts[0])
     history = meta / 'history' / (pending['id'] + '-' + uuid.uuid4().hex[:8])
     history.mkdir(parents=True, exist_ok=False)
-    originals = [(target, target.read_text(encoding='utf-8')) for target, _ in targets]
+    originals = [(target, target.read_bytes()) for target, _ in targets]
     for index, (target, content) in enumerate(originals):
-        atomic(history / f'{index}-{target.name}', content)
-    saved_state = json.loads(json.dumps(state))
-    write_json(history / 'project-before.json', saved_state)
+        atomic_bytes(history / f'{index}-{target.name}', content)
+    saved_state = (meta / 'project.json').read_bytes()
+    atomic_bytes(history / 'project-before.json', saved_state)
     write_json(meta / 'transaction.json', {'history': str(history), 'targets': [str(p) for p, _ in targets]})
     try:
         for (target, _), content in zip(targets, texts):
@@ -205,8 +245,8 @@ def apply_revision(project, confirmation):
         write_json(history / 'confirmed.json', {**pending, 'confirmation': confirmation})
     except Exception:
         for target, content in originals:
-            atomic(target, content)
-        write_json(meta / 'project.json', saved_state)
+            atomic_bytes(target, content)
+        atomic_bytes(meta / 'project.json', saved_state)
         (meta / 'transaction.json').unlink(missing_ok=True)
         raise
     (meta / 'transaction.json').unlink()
@@ -236,6 +276,7 @@ def main():
     init = sub.add_parser('init'); init.add_argument('--profile-home', type=Path)
     sub.add_parser('gate'); sub.add_parser('status')
     accept = sub.add_parser('confirm-script'); accept.add_argument('--confirmation', required=True)
+    default = sub.add_parser('use-default-script'); default.add_argument('--confirmation', required=True)
     stage = sub.add_parser('stage-revision')
     stage.add_argument('--creative', required=True); stage.add_argument('--technical', required=True)
     stage.add_argument('--summary-file', required=True)
@@ -249,6 +290,7 @@ def main():
         elif a.command == 'gate': result = {'script': str(require_script(project)), 'gate': 'passed'}
         elif a.command == 'status': result = read_state(project)
         elif a.command == 'confirm-script': result = confirm_script(project, a.confirmation)
+        elif a.command == 'use-default-script': result = use_default_script(project, a.confirmation)
         elif a.command == 'stage-revision':
             result = stage_revision(project, a.creative, a.technical, Path(a.summary_file).read_text(encoding='utf-8-sig'), a.profile_creative, a.profile_technical)
         elif a.command == 'apply-revision': result = apply_revision(project, a.confirmation)

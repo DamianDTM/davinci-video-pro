@@ -2,7 +2,7 @@ param([Parameter(Mandatory=$true)][string]$WorkDirectory,
       [Parameter(Mandatory=$true)][string]$PythonExecutable)
 $ErrorActionPreference = 'Stop'
 & $PythonExecutable (Join-Path $PSScriptRoot 'workflow.py') --project-dir $WorkDirectory gate
-if ($LASTEXITCODE -ne 0) { throw 'Primero pide y registra el guion del usuario. No se consulto Google.' }
+if ($LASTEXITCODE -ne 0) { throw 'Primero pide un guion o registra su eleccion del profesional por defecto. No se consulto Google.' }
 Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12

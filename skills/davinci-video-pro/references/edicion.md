@@ -2,19 +2,22 @@
 
 ## Recepción
 
-Pedir el guion ANTES de configurar mediante APIs o editar. Comprobar workflow.py gate y luego recibir los materiales. Reutilizar lo que
+Recibir un guion propio o la eleccion del profesional por defecto ANTES de APIs
+o edicion. Si dice «usa el guion por defecto», ejecutar use-default-script con
+esa respuesta y continuar sin volver a pedir guion ni otra confirmacion.
+Comprobar workflow.py gate y luego recibir los materiales. Reutilizar lo que
 ya se haya proporcionado. Pedir rutas o archivos con un mensaje normal; no pedir
 subidas mediante una herramienta que solo admite respuestas de texto.
 
 Recoger en pocas preguntas:
-- Guion, mensaje central, público, plataforma, formato y duración objetivo.
+- Guion solo si aun no esta elegido; mensaje central, publico, plataforma, formato y duracion objetivo si faltan.
 - Videos, tomas alternativas, audio separado/voz en off, música, logo y marca.
   El audio separado es opcional; si solo hay video, revisar su pista original.
 - Generación: solo material aportado, imágenes ilustrativas, o también clips
   adicionales. Para generación de pago, proveedor y límite de créditos/presupuesto.
 - Preferencias que se aparten del estilo base; contenido que no debe recortarse.
 
-Mantener GUION-CREATIVO.md como fuente principal y BRIEF-TECNICO.md como criterios de ejecucion; leer continuidad.md para confirmar revisiones. Completar ambos desde las plantillas y completar un inventario con ruta,
+Mantener GUION-CREATIVO.md como fuente principal y BRIEF-TECNICO.md como criterios de ejecucion; leer continuidad.md para confirmar revisiones. Conservar los documentos ya activados y completar un inventario con ruta,
 duración, resolución, fps, audio, hash y función de cada archivo. No inventar
 duraciones, tomas o diálogos que aún no se han revisado.
 

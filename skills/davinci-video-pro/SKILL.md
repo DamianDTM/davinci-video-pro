@@ -2,7 +2,7 @@
 name: davinci-video-pro
 description: Instala y conecta DaVinci Resolve con su MCP, Gemini y Omni en Codex o Claude Code; edita videos a partir del guion del usuario con subtitulos, recursos y exportacion. Usala al configurar este flujo, editar otro video o retomar un montaje.
 metadata:
-  version: "2.0.0"
+  version: "2.1.0"
   short-description: Guion primero, instalacion guiada y edicion profesional
 ---
 
@@ -12,21 +12,34 @@ Skill portable para Codex y Claude Code con acceso local al equipo. Habla en el
 idioma del usuario. Lee [clientes](references/clientes.md) al instalar o cambiar
 de asistente. Cada persona aporta sus cuentas, claves, capacidades y materiales.
 
-## Regla obligatoria: pedir el guion antes de APIs o edicion
+## Regla obligatoria: guion elegido antes de APIs o edicion
 
-ANTES de editar un video o llamar a cualquier API de este flujo, pide al usuario
-su guion y usalo como FUENTE PRINCIPAL de la edicion. Esto incluye consultas MCP
+ANTES de editar un video o llamar a cualquier API de este flujo, el usuario debe
+haber entregado un guion o elegido el guion profesional por defecto. Usalo como
+FUENTE PRINCIPAL de la edicion. Esto incluye consultas MCP
 de Resolve, pruebas de credenciales, catalogos de modelos, analisis Gemini,
 generacion Omni e imagenes. Una llamada de prueba tambien requiere guion.
 
-Primera pregunta: «Pasame el guion que quieres seguir. Si no tienes uno, dime el
-objetivo, el mensaje y como quieres que se vea el video para preparar un borrador».
+Si todavia no eligio: «Puedes pasarme tu guion, decir 'usa el guion por defecto'
+o contarme tu idea para preparar uno».
 Si ya lo entrego en este encargo, leelo y registralo; no lo pidas otra vez. Una
 plantilla o preferencias de otro video NO son el guion del nuevo video.
 
-Si no hay guion, preparar un borrador desde las indicaciones del usuario sin
+«Usa el guion por defecto», «edita con nuestro guion profesional» o una eleccion
+equivalente ES suficiente: ejecutar workflow.py use-default-script con esa respuesta
+real. No volver a pedir un guion ni una segunda confirmacion. Este comando activa
+[el guion profesional](assets/GUION-POR-DEFECTO.md) en GUION-CREATIVO.md y conserva
+el BRIEF-TECNICO.md del proyecto. Los valores base de ambos proceden del montaje
+profesional y sus mejoras confirmadas: narrativa, recursos unicos, subtitulos con
+enfasis, CTA, titulares altos, transiciones y limpieza del discurso. Leer ambos.
+No reemplazarlo con otro guion generico. Mostrar brevemente el estilo que se usara
+y continuar con configuracion/materiales. Las autorizaciones de subida y gasto
+se concretan aparte. Si ya hay un guion propio, conservarlo y preparar la revision.
+
+Si pide un guion propio pero no lo tiene, preparar un borrador desde sus indicaciones sin
 llamar servicios audiovisuales, presentarlo y esperar confirmacion. Si solo desea
-instalar, pueden copiarse la skill y revisarse archivos locales; las comprobaciones
+instalar, pueden copiarse la skill, registrarse el MCP localmente y revisarse archivos;
+esas operaciones no requieren guion. Las comprobaciones
 mediante API y los instaladores que hacen pruebas quedan pendientes del guion.
 
 Guardar el guion en GUION-CREATIVO.md, conservar su texto fuente y registrar la
@@ -52,7 +65,7 @@ autoriza subir toda una carpeta ni gastar sin limite.
    revisiones preparadas de workflow.py para conservar historial y estado.
 5. Actualizar plantillas compartidas solo con preferencias generales confirmadas.
    Guardarlas fuera del paquete en ~/.davinci-video-pro/templates o en
-   DAVINCI_VIDEO_PRO_HOME. Cada video nuevo requiere contenido y guion propios.
+   DAVINCI_VIDEO_PRO_HOME. Cada video nuevo requiere elegir su guion propio o el predeterminado.
    Nunca heredar claves, autorizaciones o presupuestos de otra persona/proyecto.
 
 ## Configuracion y produccion

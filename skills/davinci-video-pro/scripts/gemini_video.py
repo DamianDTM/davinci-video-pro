@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+from importlib import metadata
 import json
 import os
 from pathlib import Path
@@ -13,13 +14,17 @@ try:
 except ImportError:
     winreg = None
 
-from google import genai
-from google.genai import types
+try:
+    from google import genai
+    from google.genai import types
+except ImportError:
+    genai = types = None
 from workflow import require_script, digest as file_hash
 
 ROOT = Path.cwd()
 SETTINGS = ROOT / 'gemini-settings.json'
 DEFAULT_MODEL = 'gemini-3.8-flash'
+SDK_VERSION = '2.22.0'
 MIME_TYPES = {
     '.mp4': 'video/mp4', '.mov': 'video/mov', '.mpeg': 'video/mpeg',
     '.mpg': 'video/mpg', '.avi': 'video/avi', '.webm': 'video/webm',
@@ -83,7 +88,22 @@ def read_key() -> str:
     return value
 
 
+def sdk_problem():
+    try:
+        installed = metadata.version('google-genai')
+    except metadata.PackageNotFoundError:
+        installed = 'no instalado'
+    if installed != SDK_VERSION or genai is None:
+        return (f'google-genai detectado: {installed}; este helper requiere {SDK_VERSION}. '
+                f'En el entorno aislado del flujo ejecuta: python -m pip install google-genai=={SDK_VERSION}. '
+                'Usa ese mismo Python para los helpers y las pruebas.')
+    return None
+
+
 def client_for(key: str) -> genai.Client:
+    problem = sdk_problem()
+    if problem:
+        raise RuntimeError(problem)
     client = genai.Client(
         api_key=key,
         http_options=types.HttpOptions(
@@ -94,8 +114,10 @@ def client_for(key: str) -> genai.Client:
     )
     # google-genai 2.22.0 translates the global attempt count differently for
     # Interactions. Disable retries on that resource, verified by an offline 429.
-    retry = client.interactions.sdk_configuration.retry_config
-    if not hasattr(retry, 'strategy'):
+    resource = getattr(client, 'interactions', None)
+    config = getattr(resource, 'sdk_configuration', None)
+    retry = getattr(config, 'retry_config', None)
+    if not hasattr(retry, 'strategy') or not hasattr(retry, 'max_retries'):
         client.close()
         raise RuntimeError('No se pudo desactivar el reintento de Interactions; revisa la version del SDK antes de generar.')
     retry.strategy = 'none'
