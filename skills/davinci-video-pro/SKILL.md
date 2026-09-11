@@ -2,7 +2,7 @@
 name: davinci-video-pro
 description: Instala y conecta DaVinci Resolve, su MCP y Gemini en Codex o Claude Code; organiza materiales y videos finales y edita con guion creativo y brief tecnico obligatorio, Omni e imagenes opcionales.
 metadata:
-  version: "2.3.0"
+  version: "2.3.1"
   short-description: Instalacion guiada y edicion con brief obligatorio
 ---
 
@@ -23,6 +23,9 @@ continuar directamente con la recepcion del encargo.
    localmente y dar los pasos para abrir Resolve, un proyecto y activar el puente.
    Verificar conexion. Leer [instalacion](references/instalacion.md) y
    [clientes](references/clientes.md). No pedir guion para esta etapa tecnica.
+   Si no puede inspeccionar el equipo, seguir el modo guiado de instalacion.md:
+   pedir solo los datos que falten, recomendar version/edicion para ese sistema,
+   dar enlace oficial concreto y pasos manuales. No detenerse en «no tengo acceso».
 2. **Materiales y resultados.** Revisar la carpeta actual; si contiene videos,
    mostrar inventario y preguntar todos o cuales. Si no, pedir la ruta. Preguntar
    cuantos videos finales quiere y como distribuirlos. Recibir audios opcionales.

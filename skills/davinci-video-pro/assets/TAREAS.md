@@ -6,6 +6,7 @@ Reutilizar respuestas y pasos comprobados. Anotar evidencia y siguiente paso.
 ## Instalacion y conexion
 
 - [ ] Preguntar si posee Resolve y version/edicion; si no sabe, detectar localmente.
+- [ ] Sin acceso local, pedir datos pendientes y dar version compatible, enlace oficial y pasos manuales.
 - [ ] Reutilizar lo compatible o acordar una instalacion concreta preservando proyectos.
 - [ ] Instalar/registrar el MCP en el cliente elegido y conservar otros ajustes.
 - [ ] Configurar o reutilizar API key Google mediante entrada local oculta.

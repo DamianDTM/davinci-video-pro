@@ -1,6 +1,13 @@
-# Validacion de la version 2.3.0
+# Validacion de la version 2.3.1
 
 ## Cambios y alcance
+
+Esta revision de instrucciones agrega instalacion guiada sin acceso al equipo:
+datos minimos, version recomendada, enlace oficial y siguiente paso manual. El
+catalogo de Blackmagic se consulto el 11-09-2026 y confirma Resolve 21.0.3 build 7
+para el formulario Windows incluido. Se distingue ese dato de comprobar el equipo
+o ejecutar una instalacion. Sin navegador se comunica la fecha de referencia.
+No cambia los helpers ni agrega pruebas que solo comprueben el texto de la guia.
 
 Omni elimina el presupuesto obligatorio de las instrucciones y los helpers.
 Una respuesta real habilita un intento; despues se muestran video y coste y
@@ -62,11 +69,11 @@ Tambien se revisan sintaxis, enlaces internos y ausencia de claves/rutas persona
 
 No se llamo a APIs audiovisuales ni se consumieron creditos en esta actualizacion.
 El flujo real anterior probo Resolve, Gemini y una generacion Omni; no constituye
-una prueba nueva de edicion completa con 2.3.0.
+una prueba nueva de edicion completa con 2.3.1.
 
 El usuario probo la version anterior en Claude y sus comentarios originaron esta
 actualizacion. No se ha ejecutado una nueva instalacion desde cero en otro equipo,
-una edicion real con 2.3.0 en Claude, ni una prueba interactiva nueva del formulario.
+una edicion real con 2.3.1 en Claude, ni una prueba interactiva nueva del formulario.
 Su entrada oculta y verificacion de catalogo se conservan; la comprobacion nueva
 del formulario solo valida parametros sin interfaz ni red.
 

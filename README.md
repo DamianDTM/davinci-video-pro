@@ -1,17 +1,17 @@
-# DaVinci Video Pro 2.3
+# DaVinci Video Pro 2.3.1
 
 Skill para **Codex local y Claude Code** que guia la instalacion y organiza un
 encargo de edicion profesional con DaVinci Resolve, Gemini y recursos opcionales.
 
 Repositorio: [DamianDTM/davinci-video-pro](https://github.com/DamianDTM/davinci-video-pro).
-Descarga: [version 2.3.0](https://github.com/DamianDTM/davinci-video-pro/releases/tag/v2.3.0).
+Descarga: [version 2.3.1](https://github.com/DamianDTM/davinci-video-pro/releases/tag/v2.3.1).
 
 ## Instalacion sencilla
 
 Copia esto en Codex local o Claude Code:
 
 > Instala o actualiza DaVinci Video Pro desde https://github.com/DamianDTM/davinci-video-pro,
-> version v2.3.0. Lee el README y aplica la skill para el asistente que estoy usando.
+> version v2.3.1. Lee el README y aplica la skill para el asistente que estoy usando.
 > Primero configura la conexion y despues guiame por materiales, cantidad de videos,
 > brief tecnico, guion y recursos. Muestrame las rutas editables de los documentos.
 
@@ -56,6 +56,14 @@ Resolve local por recibir un enlace: requiere acceso local, scripts y MCP compat
 
 Si ya respondiste algo, lo reutiliza. No termina la instalacion pidiendote que
 inicies otro encargo: continua directamente con la recepcion.
+
+Si el asistente no puede revisar tu equipo, sigue en modo guiado: pregunta solo
+sistema/arquitectura y datos pendientes, recomienda una version concreta, entrega
+el enlace oficial y explica cada paso que debas realizar. La
+[guia de instalacion](skills/davinci-video-pro/references/instalacion.md) incluye
+el formulario de Resolve Free 21.0.3 para Windows como referencia comprobada.
+Sin navegador, identifica la fecha de comprobacion del enlace; no simula una
+verificacion actual. Para controlar Resolve necesita acceso real al equipo.
 
 ## Omni sin pregunta de presupuesto
 

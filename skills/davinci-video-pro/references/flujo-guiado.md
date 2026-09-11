@@ -9,8 +9,11 @@ encargo. Nunca pedir claves en el chat. Usar lista de tareas visible y guardar e
 
 1. Si no hay informacion previa: «¿Ya tienes DaVinci Resolve? ¿Sabes que version
    tienes y si es Free o Studio? Si no lo sabes, lo reviso en tu equipo».
-   Ante desconocimiento, ejecutar diagnostico local; no mandar al usuario a
-   buscar algo que la IA puede leer. Si ya esta detectado, informar el resultado.
+   Ante desconocimiento y acceso al equipo, ejecutar diagnostico local; no mandar
+   al usuario a buscar algo que la IA puede leer. Si ya esta detectado, informarlo.
+   Sin acceso local, seguir el modo guiado de instalacion.md: pedir solo sistema,
+   arquitectura y version/edicion pendientes. Dar una recomendacion concreta con
+   enlace oficial y pasos manuales, sin afirmar que se inspecciono el ordenador.
 2. Elegir la via compatible leyendo instalacion.md. Si falta o requiere cambio,
    presentar version/edicion, descarga oficial y motivo. Preguntar por instalar
    esa version concreta, reutilizando autorizacion ya dada. Antes de cambiar una

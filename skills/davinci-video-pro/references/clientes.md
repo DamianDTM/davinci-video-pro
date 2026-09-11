@@ -6,6 +6,12 @@ Un chat web aislado puede leer instrucciones, pero no controla por eso el Resolv
 local. En Claude Desktop/Cowork solo ejecutar el flujo si existen acceso local,
 ejecucion de scripts y MCP compatibles; esa superficie no se ha probado aqui.
 
+Sin acceso al equipo, ofrecer el modo guiado de instalacion.md: recomendacion de
+version para el sistema conocido, enlace oficial y siguiente paso manual. No
+afirmar que se detecto, descargo, instalo o conecto algo desde un chat aislado.
+Pedir solo los datos que no puedan comprobarse; no bloquear la orientacion por
+carecer de terminal, permisos o navegador.
+
 ## Instalar la skill
 
 Desde la carpeta completa descargada, con Python >=3.11:

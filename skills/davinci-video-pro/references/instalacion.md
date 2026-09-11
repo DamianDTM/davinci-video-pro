@@ -12,6 +12,48 @@ de Resolve estan permitidas en esta fase. Analizar materiales, generar recursos
 y editar requieren despues guion y brief tecnico elegidos y workflow.py gate.
 diagnose.py sin --check-connection solo lee datos locales. Ver clientes.md.
 
+## Sin acceso para revisar el equipo: modo guiado
+
+Comprobar si las herramientas disponibles realmente acceden al equipo del usuario.
+Una terminal en la nube no demuestra el sistema ni los programas de su ordenador.
+Si no hay acceso local, no insistir con diagnosticos imposibles ni detenerse en
+«no puedo revisar». Continuar asi, reutilizando todo dato ya conocido:
+
+1. Pedir sistema operativo y arquitectura si faltan, y si Resolve esta instalado.
+   Si existe pero desconoce version/edicion, indicar Ayuda > Acerca de DaVinci Resolve
+   y pedir el texto de version y si dice Studio. No exigir este paso si no lo tiene.
+2. Recomendar una version y edicion concretas para el sistema indicado y explicar
+   la compatibilidad con el MCP. Dar un enlace oficial clicable y los pasos de
+   descarga/instalacion; no limitarse a «busca una version compatible».
+3. Para Windows estandar y la via gratuita, la referencia probada es DaVinci Resolve
+   21.0.3, compilacion 7 (21.0.3.7). [Formulario oficial de descarga para Windows](https://www.blackmagicdesign.com/support/download/f549d6da20df4cc98f57d4777d8c8a03/Windows).
+   Nombre, compilacion y plataforma se verificaron el 11-09-2026 en el
+   [catalogo oficial](https://www.blackmagicdesign.com/api/support/us/downloads.json).
+   El formulario requiere registro; no es el ZIP ni el instalador de Studio.
+   Confirmar arquitectura antes de dar este enlace como el instalador adecuado;
+   Windows ARM, macOS y Linux requieren su opcion correspondiente del catalogo.
+4. Si puede navegar, comprobar que enlace/version siguen disponibles y contrastar
+   soporte actual del puente en el repositorio. Si no puede navegar, presentar
+   la referencia fechada como previamente verificada, sin afirmar haber comprobado
+   disponibilidad actual. Si el enlace falla, dar el
+   [centro oficial de soporte](https://www.blackmagicdesign.com/support/family/davinci-resolve-and-fusion)
+   e indicar buscar «DaVinci Resolve 21.0.3 Update» y seleccionar el sistema adecuado.
+   No sustituirla automaticamente por la ultima Free: comprobar primero el puente.
+5. Indicar completar el formulario, descargar, extraer y ejecutar el instalador;
+   aceptar los permisos necesarios, abrir Resolve y comunicar la version instalada.
+   Para una instalacion existente, conservar proyectos antes de proponer un cambio.
+   Si no puede abrir el instalador por el usuario, explicar exactamente ese paso.
+6. Continuar con MCP y clave Google: automatizar lo que permita el acceso disponible
+   o dar los comandos locales de esta guia para el cliente/sistema correctos.
+   La clave se introduce en el formulario local o almacen de secretos; nunca en
+   el chat, aunque el asistente no tenga acceso. No afirmar que quedo guardada
+   o conectado sin evidencia. Terminar con el siguiente paso concreto del puente.
+
+Este modo permite orientar desde un chat sin acceso local. Controlar Resolve y
+comprobar su conexion requieren despues un asistente/cliente conectado al equipo,
+o que el usuario ejecute las comprobaciones y comunique resultados sin secretos.
+Guardar version recomendada, enlace, fecha/fuente y estado pendiente o comprobado.
+
 ## Alcance y comprobación inicial
 
 Ruta probada: Windows, Codex local, Resolve Free 21.0.3.7 y MCP 2.224.1.
