@@ -15,7 +15,8 @@ Recoger en pocas preguntas:
 - Videos, tomas alternativas, audio separado/voz en off, música, logo y marca.
   El audio separado es opcional; si solo hay video, revisar su pista original.
 - Generación: solo material aportado, imágenes ilustrativas, o también clips
-  adicionales. Para generación de pago, proveedor y límite de créditos/presupuesto.
+  adicionales. Para Omni, una generacion con video y coste para revisar antes de
+  otra, sin pedir presupuesto. Para otros proveedores, concretar el alcance aplicable.
 - Preferencias que se aparten del estilo base; contenido que no debe recortarse.
 
 Mantener GUION-CREATIVO.md como fuente principal y BRIEF-TECNICO.md como criterios de ejecucion; leer continuidad.md para confirmar revisiones. Conservar los documentos ya activados y completar un inventario con ruta,

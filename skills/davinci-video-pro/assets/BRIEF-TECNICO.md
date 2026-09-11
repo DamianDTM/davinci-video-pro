@@ -120,7 +120,9 @@ añadidos para que el proyecto pueda abrirse de nuevo.
 ## Perspectivas generadas y recursos unicos
 
 - Cada imagen o clip generado aparece una sola vez. Un recorte no es un recurso nuevo.
-- Para Omni: plan por escena, coste acotado y revision de rostro, manos, labios y fondo.
+- Para Omni: no pedir presupuesto; generar una escena, mostrar video y coste,
+  revisar rostro, manos, labios y fondo. Esperar la decision antes de generar otra.
+- Guardar GASTOS-OMNI.md; distinguir estimacion, cargo confirmado y coste desconocido.
 - Conservar la voz original y verificar su sincronizacion; no prometer una toma real inexistente.
 - Fuentes equivalentes si Segoe UI no esta disponible, manteniendo la jerarquia visual.
 - Exportar MP4 H.264/AAC, proyecto con medios y SRT. El SRT no conserva el estilo Fusion.

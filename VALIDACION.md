@@ -1,6 +1,13 @@
-# Validacion de la version 2.2.0
+# Validacion de la version 2.3.0
 
 ## Cambios y alcance
+
+Omni elimina el presupuesto obligatorio de las instrucciones y los helpers.
+Una respuesta real habilita un intento; despues se muestran video y coste y
+se espera la decision sobre otro. El registro persiste entre chats; los planes
+antiguos no habilitan lotes. Un reintento identico necesita una peticion explicita.
+GASTOS-OMNI.md registra estimaciones con fuente/fecha, componentes parciales e
+intentos de coste desconocido. No afirma conocer cargos reales de Google.
 
 Se ordena el flujo en instalacion/conexion, recepcion y produccion. Las pruebas
 tecnicas de conexion pueden ejecutarse sin guion ni brief por peticion expresa.
@@ -17,7 +24,7 @@ subir archivos ni gastar; no sustituye la comprobacion final de cada export.
 
 ## Pruebas locales del paquete
 
-29 pruebas funcionales sin claves reales ni llamadas a proveedores:
+33 pruebas funcionales sin claves reales ni llamadas a proveedores:
 
 - Gemini models/check funcionan sin documentos mediante cliente simulado; no analizan medios.
 - La consulta tecnica de Resolve funciona sin guion mediante puente simulado.
@@ -35,9 +42,13 @@ subir archivos ni gastar; no sustituye la comprobacion final de cada export.
 - SDK incompatible produce un error util antes de crear cliente.
 - SDK real ante HTTP 429 simulado: una sola peticion, sin reintento.
 - Gemini/Omni simulados limpian entradas en exito/fallo; imagenes e intentos no se duplican.
+- Omni funciona sin presupuesto por CLI; otra generacion se bloquea antes de claves/subidas.
+- Revisar la escena anterior y pedir otra habilita un intento; reintentos identicos son explicitos.
+- Un plan de presupuesto antiguo no permite generar automaticamente.
+- Costes por tokens/duracion, subtotales parciales y fallo incierto sin afirmar coste cero.
 
-Windows, Python 3.14.2 con google-genai==2.22.0: **29/29 aprobadas**.
-Python 3.11.15 sin google-genai: **28 aprobadas y 1 omitida** con instrucciones
+Windows, Python 3.14.2 con google-genai==2.22.0: **33/33 aprobadas**.
+Python 3.11.15 sin google-genai: **32 aprobadas y 1 omitida** con instrucciones
 de instalacion. La prueba omitida corresponde al SDK real, no se cuenta como aprobada.
 
 Las comprobaciones se ejecutan desde el ZIP extraido despues de empaquetarlo:
@@ -51,19 +62,21 @@ Tambien se revisan sintaxis, enlaces internos y ausencia de claves/rutas persona
 
 No se llamo a APIs audiovisuales ni se consumieron creditos en esta actualizacion.
 El flujo real anterior probo Resolve, Gemini y una generacion Omni; no constituye
-una prueba nueva de edicion completa con 2.2.0.
+una prueba nueva de edicion completa con 2.3.0.
 
 El usuario probo la version anterior en Claude y sus comentarios originaron esta
 actualizacion. No se ha ejecutado una nueva instalacion desde cero en otro equipo,
-una edicion real con 2.2.0 en Claude, ni una prueba interactiva nueva del formulario.
+una edicion real con 2.3.0 en Claude, ni una prueba interactiva nueva del formulario.
 Su entrada oculta y verificacion de catalogo se conservan; la comprobacion nueva
 del formulario solo valida parametros sin interfaz ni red.
 
 El gate comprueba documentos y versiones, pero no garantiza calidad ni obliga a
 un modelo a leer con atencion: el asistente debe aplicar el brief y verificar
 auditiva/visualmente cada resultado. Las herramientas MCP/nativas externas dependen
-tambien de seguir SKILL.md. El control de presupuestos es local y estimado, no
-un limite de facturacion del proveedor.
+tambien de seguir SKILL.md. El control Omni limita intentos por decision registrada,
+no la facturacion del proveedor. Las estimaciones usan una tarifa de referencia
+fechada y deben revisarse si cambia; los impuestos/descuentos/cargos reales no se
+consultan. No se ha contrastado este calculo nuevo con una factura real.
 
 «Connected» del cliente MCP y una clave guardada no prueban por si solos la
 conexion real de Resolve ni la comprension audiovisual. Windows es la ruta de

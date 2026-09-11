@@ -3,7 +3,6 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
-import math
 import os
 import re
 from pathlib import Path
@@ -168,6 +167,7 @@ def init_project(project, profile=None):
                'Si dice no tengo guion o hazlo con el de defecto, usar use-default-script sin preguntar otra vez.\n'
                'Registrar confirm-brief y comprobar workflow.py gate; si pasa, retomar sin repetir preguntas.\n'
                'El guion es la fuente principal; no reemplaces sus decisiones con el estilo predeterminado.\n'
+               'Omni: no pedir presupuesto; generar uno, mostrar video y coste, esperar decision antes del siguiente.\n'
                'Las revisiones de los dos documentos y las preferencias para futuros videos requieren un resumen confirmado.\n')
     for name in ('AGENTS.md', 'CLAUDE.md'):
         atomic(project / name, routing)
@@ -308,14 +308,35 @@ def apply_revision(project, confirmation):
     return {'status': 'revision_applied', 'revision': state['revision'], 'profile_updated': bool(pending['profile_baseline'])}
 
 
-def set_omni_plan(project, scenes, cost, confirmation):
+def omni_attempts(project):
+    return [json.loads(p.read_text(encoding='utf-8'))
+            for p in sorted((metadata(project) / 'omni-attempts').glob('*.json'))]
+
+
+def authorize_omni_next(project, confirmation, reviewed_scene=None, retry_of=None):
+    """Record an actual user choice for one attempt, without asking for a budget."""
     require_production(project)
-    if scenes < 1 or not math.isfinite(cost) or cost <= 0 or not confirmation.strip():
-        raise ValueError('Indica escenas, tope de presupuesto y la autorizacion real del usuario.')
+    if not confirmation.strip():
+        raise ValueError('Registra la respuesta real que pide usar Omni o continuar tras ver el resultado y coste.')
+    if (metadata(project) / 'omni.lock').exists():
+        raise ValueError('Hay un intento en curso o interrumpido. Revisarlo antes de continuar.')
+    attempts = omni_attempts(project)
+    previous = max(attempts, key=lambda x: x['created_at']) if attempts else None
+    if previous:
+        if previous['status'] not in ('completed', 'failed_or_uncertain'):
+            raise ValueError('El intento anterior no esta resuelto. Consultar su estado sin volver a generarlo.')
+        if reviewed_scene != previous['scene']:
+            raise ValueError('Muestra el resultado y coste anterior, espera la decision y registra --reviewed-scene.')
+    elif reviewed_scene:
+        raise ValueError('No hay una escena anterior para revisar.')
+    if retry_of and retry_of != reviewed_scene:
+        raise ValueError('Un reintento debe referirse al resultado que acaba de revisar el usuario.')
     state = read_state(project)
-    state['omni_plan'] = {'max_attempts': scenes, 'budget_usd': cost, 'confirmation': confirmation, 'at': now()}
+    state['omni_approval'] = {'id': uuid.uuid4().hex, 'confirmation': confirmation, 'at': now(),
+                              'reviewed_scene': reviewed_scene, 'retry_of': retry_of,
+                              'previous_scenes': sorted(x['scene'] for x in attempts)}
     write_json(metadata(project) / 'project.json', state)
-    return {'status': 'omni_plan_saved', 'plan': state['omni_plan']}
+    return {'status': 'one_omni_attempt_authorized', 'approval': state['omni_approval']}
 
 
 def main():
@@ -333,8 +354,8 @@ def main():
     stage.add_argument('--summary-file', required=True)
     stage.add_argument('--profile-creative'); stage.add_argument('--profile-technical')
     apply = sub.add_parser('apply-revision'); apply.add_argument('--confirmation', required=True)
-    omni = sub.add_parser('omni-plan'); omni.add_argument('--max-attempts', type=int, required=True)
-    omni.add_argument('--budget-usd', type=float, required=True); omni.add_argument('--confirmation', required=True)
+    omni = sub.add_parser('omni-next'); omni.add_argument('--confirmation', required=True)
+    omni.add_argument('--reviewed-scene'); omni.add_argument('--retry-of')
     a = p.parse_args(); project = a.project_dir.expanduser().resolve()
     try:
         if a.command == 'init': result = init_project(project, a.profile_home)
@@ -347,7 +368,7 @@ def main():
         elif a.command == 'stage-revision':
             result = stage_revision(project, a.creative, a.technical, Path(a.summary_file).read_text(encoding='utf-8-sig'), a.profile_creative, a.profile_technical)
         elif a.command == 'apply-revision': result = apply_revision(project, a.confirmation)
-        else: result = set_omni_plan(project, a.max_attempts, a.budget_usd, a.confirmation)
+        else: result = authorize_omni_next(project, a.confirmation, a.reviewed_scene, a.retry_of)
         print(json.dumps(result, ensure_ascii=False, indent=2)); return 0
     except Exception as exc:
         print(json.dumps({'success': False, 'error': str(exc)}, ensure_ascii=False)); return 1

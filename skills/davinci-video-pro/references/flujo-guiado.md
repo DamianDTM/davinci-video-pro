@@ -91,9 +91,13 @@ del usuario para usarlo, sin reinstalar ni repetir toda la recepcion.
 ## D. Omni e imagenes
 
 Preguntar «¿Quieres generar escenas con otros angulos mediante Omni?» con opciones:
-no; si, propon escenas adecuadas. Elegir si no autoriza intentos ilimitados:
-concretar clips, plan de escenas y coste antes de generar. Si elige no, omitir Omni
-y usar planos aportados o reencuadres que respeten la resolucion.
+no; si, propon escenas adecuadas. Si elige si, registrar esa respuesta para UNA
+generacion con omni-next; no preguntar presupuesto, tope ni cantidad de intentos.
+Concretar el fragmento que se enviara a Google dentro del alcance ya acordado.
+Mostrar cada resultado y su coste disponible; preguntar si lo conserva, desea
+ajustarlo/reintentarlo, generar otra escena o detener Omni. Esperar la respuesta
+antes de volver a gastar. Conservar la toma por si solo no autoriza otra llamada.
+Si elige no, omitir Omni y usar planos aportados o reencuadres con nitidez suficiente.
 
 Preguntar «¿Quieres imagenes de apoyo para el video?» y mostrar opciones:
 
@@ -137,7 +141,7 @@ python <skill>/scripts/intake.py save --project-dir <encargo> --answers <respues
 ```
 
 ENCARGO.md conserva seleccion, numero y objetivos de las salidas, documentos y
-elecciones de recursos. No habilita subidas ni presupuestos por si solo. No exige
+elecciones de recursos. No habilita subidas ni generaciones ilimitadas por si solo. No exige
 otra confirmacion global si las preguntas ya quedaron respondidas.
 Continuar con gate, analisis, tabla de montaje y TAREAS.md por cada salida. Aplicar
 el brief durante TODA la produccion y comprobar sus criterios al revisar cada export.

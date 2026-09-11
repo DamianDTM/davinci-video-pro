@@ -3,8 +3,10 @@
 Antes de generar, comprobar que el usuario eligio imagenes en ENCARGO.md,
 leer guion y brief tecnico vigentes y pasar workflow.py gate. No pedir documentos
 ya elegidos. Mostrar estilos y vias disponibles segun flujo-guiado.md. Pedir la preferencia de generación durante la recepción. Si el usuario ya pidió
-imágenes acompañantes, generarlas dentro de ese alcance. Para clips de pago,
-concretar duración, cantidad y presupuesto antes de gastar créditos.
+imágenes acompañantes, generarlas dentro de ese alcance. Para Omni seguir
+[su ciclo de revision](omni.md): una generacion, mostrar video y coste, esperar
+decision antes de otra; no pedir presupuesto. Con otros proveedores de clips,
+concretar duracion, cantidad y alcance de gasto antes de consumir creditos.
 
 Planificar primero una lista por inserto: frase, representación, formato, duración,
 estilo, origen, estado y archivo final. Cada recurso generado será distinto.

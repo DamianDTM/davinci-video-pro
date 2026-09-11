@@ -31,7 +31,9 @@ Reutilizar respuestas y pasos comprobados. Anotar evidencia y siguiente paso.
 
 - [ ] Analizar material seleccionado con Gemini, guion y brief; verificar tiempos localmente.
 - [ ] Crear tabla de montaje y criterios del brief para esta salida.
-- [ ] Crear solo recursos elegidos; imagenes unicas y escenas Omni revisadas.
+- [ ] Crear solo recursos elegidos; imagenes unicas y una escena Omni por turno de revision.
+- [ ] Mostrar cada video Omni y su coste disponible; guardar GASTOS-OMNI.md, sin pedir presupuesto.
+- [ ] Esperar decision del usuario antes de otra generacion o reintento Omni.
 - [ ] Aplicar el brief: ruido, niveles, silencios, tartamudeos y repeticiones corregibles.
 - [ ] Escuchar empalmes, conservar palabras completas, respiracion y significado.
 - [ ] Aplicar subtitulos, enfasis, CTA, titulares, transiciones, audio y color.

@@ -1,57 +1,103 @@
 # Perspectivas alternativas con Omni
 
-Solo generar si el usuario eligio escenas Omni durante la recepcion. Requiere
-guion propio o predeterminado y brief tecnico vigentes; comprobar workflow.py gate.
-No volver a pedir documentos ya elegidos. Modelo preferido
-gemini-omni-1.1-flash, verificado en el flujo de origen. Es una sintesis de una
-perspectiva plausible; puede cambiar labios, manos, rostro o fondo. No es una
-segunda camara real ni garantiza sincronizacion exacta.
+Solo generar si el usuario eligio Omni. Requiere guion y brief tecnico vigentes;
+comprobar workflow.py gate y reutilizar las elecciones ya dadas. Modelo preferido:
+gemini-omni-1.1-flash. Es una perspectiva sintetizada plausible; puede cambiar
+labios, manos, rostro o fondo. No garantiza una segunda camara ni sincronizacion exacta.
 
-Planificar en el guion las escenas apropiadas. Como punto de partida, fragmentos
-de cuatro segundos a 720p, con un cambio moderado de 30–45 grados. Cantidad segun
-duracion/ritmo y presupuesto, no una toma forzada en cada escena. Mantener identidad,
-ropa y decorado en el prompt, derivado de la escena aprobada. No inventar dialogo.
+Planificar en el guion fragmentos pertinentes de cuatro segundos a 720p y cambios
+moderados de 30–45 grados. Mantener identidad, ropa, decorado y dialogo original.
+No forzar una toma en cada escena. La cantidad de videos finales no equivale a
+una autorizacion para generar esa cantidad de tomas Omni automaticamente.
 
-## Presupuesto y ejecucion
+## Un intento y una decision cada vez
 
-Consultar tarifas vigentes despues de la puerta del guion; concretar envio a
-Google y plan de gasto. El helper reserva una estimacion por intento; esto NO es
-un limite de facturacion del proveedor. Usar estimaciones conservadoras incluyendo
-entrada, salida y margen. Si no se puede estimar, acordar un ensayo acotado.
-No repetir solicitudes inciertas para comprobar si la primera se completo.
+NO preguntar presupuesto, tope de gasto ni numero maximo de intentos. La respuesta
+real que elige Omni habilita UNA generacion; no pedir una segunda confirmacion
+si ya se conoce el fragmento y esta acordado enviarlo a Google. Registrar esa
+misma respuesta con omni-next. Nunca inventar una respuesta ni tratar la espera
+como permiso. Conservar cualquier limite que el usuario establezca expresamente.
 
 ```text
-python <skill>/scripts/workflow.py --project-dir <proyecto> omni-plan --max-attempts <cantidad> --budget-usd <tope-acordado> --confirmation <respuesta-real>
+python <skill>/scripts/workflow.py --project-dir <proyecto> omni-next --confirmation <respuesta-real-que-elige-Omni>
 python <skill>/scripts/prepare_clip.py --project-dir <proyecto> --source <video> --start <segundos> --output <fragmento-nuevo.mp4>
-python <skill>/scripts/omni_video.py --project-dir <proyecto> --file <fragmento-nuevo.mp4> --scene angulo-01 --prompt-file <prompt.md> --estimated-usd <estimacion-con-margen> --upload-to-google
+python <skill>/scripts/omni_video.py --project-dir <proyecto> --file <fragmento-nuevo.mp4> --scene angulo-01 --prompt-file <prompt.md> --upload-to-google
 ```
 
-El helper usa Interactions con salida video, cuatro segundos, 720p y 9:16 o 16:9.
-En SDK 2.22.0 client_for desactiva el reintento en la configuracion del recurso
-Interactions (strategy=none). El ajuste global se traduce de forma diferente ahi;
-la prueba HTTP 429 verifica que no se reenvia. Volver a probar al cambiar el SDK.
-Requiere PyAV para verificar la entrada. Guarda prompt, hash del guion, intento y
-uso; rechaza escenas duplicadas y exceso del plan. No hay reintentos automaticos.
+Tras cada intento, incluso si falla:
+
+1. Mostrar el clip completo reproducible o abrirlo en el visor del cliente; dar
+   tambien su ruta absoluta. Si fallo, explicar que no hay un resultado util.
+2. Mostrar su coste disponible y enlazar GASTOS-OMNI.md. Indicar si es estimado,
+   parcial, desconocido o confirmado con evidencia de facturacion.
+3. Preguntar si quiere conservar la toma, ajustarla/reintentar, generar otra escena
+   o parar Omni. Esperar su respuesta antes de otra llamada. La revision de la IA
+   o la aprobacion de conservar la toma no sustituyen una peticion de generar otra.
+4. Registrar la respuesta que pide continuar y la escena revisada. Usar otro id
+   de escena para conservar el resultado y coste anteriores.
+
+```text
+python <skill>/scripts/workflow.py --project-dir <proyecto> omni-next --reviewed-scene angulo-01 --confirmation <respuesta-real-que-pide-otra-generacion>
+```
+
+Si pide repetir exactamente la misma peticion, agregar --retry-of angulo-01 a
+omni-next. Solo despues de revisar ese resultado; nunca usarlo para saltar un
+fallo automatico. El siguiente intento debe usar un identificador nuevo.
+No generar lotes ni variantes de fondo mientras el usuario revisa. Puede continuar
+trabajo local independiente, conservando como pendiente la decision sobre Omni.
+
+El helper comprueba una autorizacion de un solo uso y conserva intentos, prompt,
+hashes de guion/brief, uso, respuesta del usuario y costes entre chats. Los antiguos
+omni-plan, --budget-usd y --estimated-usd ya no son necesarios ni se usan para Omni.
+Un plan anterior no habilita un lote; al actualizar, mostrar el ultimo intento
+existente y retomar desde la decision pendiente sin volver a pedir presupuesto.
+
+## Costes transparentes
+
+Interactions entrega tokens de uso, no un recibo en dolares. omni_costs.py calcula
+una estimacion local y guarda la tarifa, fecha y fuente usadas. Consultar las
+[tarifas oficiales](https://ai.google.dev/gemini-api/docs/pricing#gemini-omni-flash)
+al ejecutar: si cambiaron, actualizar PRICING en el helper o marcar la estimacion
+como pendiente de recalcular. La IA hace esta consulta; no pide un presupuesto
+al usuario. No confundir Standard con Batch, promociones ni otros modelos.
+
+Referencia verificada el 11-09-2026 para Omni 1.1 Flash Standard: entrada USD 1.50
+por millon de tokens; salida de texto USD 9.00; salida de video USD 17.50.
+A 720p, 5792 tokens por segundo de video. El helper usa los tokens devueltos;
+si faltan, estima solo la salida de video a partir de la duracion del MP4 recibido.
+Entrada, pensamiento u otros componentes ausentes/ambiguos quedan pendientes.
+No sumar pensamiento dos veces ni considerar campos ausentes como cero.
+
+Presentacion: «Video generado. Coste estimado: USD ... (subtotal parcial, si aplica).
+Cargo confirmado por Google: pendiente. Aqui puedes revisar la toma».
+Mostrar un total estimado solo si los componentes estan completos y conciliados.
+Sin datos suficientes, decir «coste desconocido»; un timeout no significa coste cero.
+El registro suma componentes conocidos e identifica intentos sin coste conocido;
+no presentarlo como saldo, gasto total real ni limite de facturacion. No buscar
+credenciales adicionales de facturacion ni comprar creditos para habilitar este flujo.
+
+## Ejecucion, revision e integracion
+
+Interactions genera un video de cuatro segundos, 720p, 9:16 o 16:9. Requiere PyAV.
+En SDK 2.22.0 client_for desactiva los reintentos en el recurso Interactions;
+la prueba HTTP 429 verifica una sola peticion. Volver a probar al cambiar el SDK.
+No reenviar una solicitud incierta para averiguar si termino. Si queda omni.lock
+por interrupcion, consultar ledger/proveedor antes de retirarlo; conservar evidencia.
 Files se retira al finalizar incluso ante fallo. Si queda una copia, informar.
-Si queda omni.lock por interrupcion, revisar ledger/proveedor antes de retirarlo.
 
-## Revision e integracion
+Revisar inicio, medio, final y reproduccion completa: apariencia, boca con audio
+original, manos, pizarra/textos, continuidad y nitidez. Mostrar el resultado al
+usuario aunque requiera ajustes. Solo integrar una toma que pase la revision;
+si falla, explicar el limite y esperar su decision sobre otra generacion.
 
-Revisar cuadro a cuadro muestras de inicio, medio y final, mas reproduccion completa:
-apariencia, boca con audio original, manos, pizarra/textos, continuidad y nitidez.
-Una toma generada no se marca terminada hasta pasar esta revision. Si falla, usar
-otra solucion permitida por el guion y explicar el limite; otra generacion requiere
-estar dentro del alcance y presupuesto autorizado.
-
-Conformar fps/resolucion a la linea de tiempo y RESTAURAR el audio del original.
-Preservar posicion temporal del discurso. Preferir cortes en limites de frases.
-Crear una linea de tiempo nueva, conservar subtitulos y transiciones del montaje,
-exportar el video completo y comprobarlo. Una comparativa corta no reemplaza el
-video completo cuando eso pidio el usuario.
+Conformar fps/resolucion y RESTAURAR el audio original. Preservar posicion temporal
+del discurso y cortar en limites de frases. Crear una linea de tiempo nueva,
+conservar subtitulos/transiciones y exportar el video completo solicitado.
+Una comparativa o clip de prueba no reemplaza el montaje completo.
 
 La prueba de origen produjo 720x1280/24fps y una perspectiva lateral clara, con
 sincronia aproximada y cambios en pizarra. Se uso el audio original al montar.
 
 Fuentes: [Omni](https://ai.google.dev/gemini-api/docs/omni),
-[Tarifas](https://ai.google.dev/gemini-api/docs/pricing#gemini-omni-flash),
+[SDK Usage](https://github.com/googleapis/python-genai/blob/main/google/genai/_gaos/types/interactions/usage.py),
 [Guia de prompts](https://deepmind.google/models/gemini-omni/prompt-guide/).

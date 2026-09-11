@@ -89,7 +89,7 @@ def save_intake(project, answers):
               'image_style': str(answers.get('image_style', 'por acordar')),
               'user_responses': responses, 'script_sha256': digest(script),
               'brief_sha256': digest(script.parent / 'BRIEF-TECNICO.md'),
-              'note': 'La seleccion local no autoriza subidas ni presupuesto. Ver los acuerdos de cada proveedor.'}
+              'note': 'La seleccion local no autoriza subidas ni generaciones ilimitadas. Omni: un resultado y coste para revisar antes de otra generacion, sin pedir presupuesto.'}
     path = metadata(project) / 'intake.json'
     if path.exists():
         atomic_bytes(metadata(project) / 'intake-history' / (uuid.uuid4().hex + '.json'), path.read_bytes())

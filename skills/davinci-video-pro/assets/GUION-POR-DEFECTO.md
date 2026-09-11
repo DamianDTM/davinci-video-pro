@@ -49,9 +49,11 @@ Estos recursos simulan una edición con varios planos. Una perspectiva lateral
 auténtica requiere otra toma; un recorte conserva la perspectiva de la cámara
 original. Limitar los acercamientos según la resolución y nitidez disponibles.
 
-Para perspectivas nuevas generadas, planificar escenas con Omni segun el mensaje y el
-presupuesto autorizado. Son interpretaciones generadas; revisar rostro, labios,
-manos, fondo y continuidad. Mantener el audio original y comprobar sincronizacion.
+Para perspectivas nuevas generadas, planificar escenas con Omni segun el mensaje.
+Si se elige Omni, generar una toma sin pedir presupuesto, mostrarla junto con su
+coste disponible y esperar la decision del usuario antes de otra generacion.
+Son interpretaciones generadas; revisar rostro, labios, manos, fondo y continuidad.
+Mantener el audio original y comprobar sincronizacion.
 
 ## Imagenes y representaciones visuales
 

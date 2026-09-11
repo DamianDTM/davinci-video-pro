@@ -1,37 +1,45 @@
-"""One bounded Omni alternate-angle generation, gated by the user's script and plan."""
+"""One Omni generation, then show the video and cost and wait for user review."""
 from __future__ import annotations
 import argparse
 import base64
 import hashlib
 import json
-import math
 from pathlib import Path
 import re
 import sys
 import time
-from workflow import require_production, read_state, metadata, write_json, digest, now
+from workflow import require_production, read_state, metadata, write_json, digest, now, omni_attempts
+from omni_costs import estimate_cost, write_cost_report
 
 
-def reserve(project, scene, source, prompt, estimate):
+def require_next_attempt(project):
+    require_production(project)
+    approval = read_state(project).get('omni_approval') or {}
+    existing = omni_attempts(project)
+    if (not approval.get('confirmation') or not approval.get('id')
+            or approval.get('previous_scenes') != sorted(x['scene'] for x in existing)
+            or any(x.get('approval', {}).get('id') == approval['id'] for x in existing)):
+        raise ValueError('Omni genera uno por vez. Muestra el resultado y coste; registra la decision real con omni-next antes de continuar.')
+    return approval, existing
+
+
+def reserve(project, scene, source, prompt):
     script = require_production(project)
     if not re.fullmatch(r'[a-z0-9][a-z0-9_-]{0,63}', scene):
         raise ValueError('Usa un identificador de escena sencillo, sin rutas.')
     state = read_state(project)
-    plan = state.get('omni_plan')
-    if not plan or not plan.get('confirmation'):
-        raise ValueError('Falta un plan de escenas y presupuesto autorizado para Omni.')
-    if not math.isfinite(estimate) or estimate <= 0:
-        raise ValueError('Indica una estimacion conservadora segun las tarifas vigentes.')
+    approval, existing = require_next_attempt(project)
     ledger = metadata(project) / 'omni-attempts'
     ledger.mkdir(parents=True, exist_ok=True)
-    existing = [json.loads(p.read_text(encoding='utf-8')) for p in ledger.glob('*.json')]
     fingerprint = hashlib.sha256((digest(source) + prompt + state['angle_model']).encode()).hexdigest()
-    if any(x.get('fingerprint') == fingerprint or x['scene'] == scene for x in existing):
-        raise ValueError('Esta escena ya tiene un intento. Revisa el resultado; no se reintenta automaticamente.')
-    if len(existing) >= plan['max_attempts'] or sum(x['reserved_usd'] for x in existing) + estimate > plan['budget_usd'] + 1e-9:
-        raise ValueError('El intento excede el plan autorizado. No se llamo a Google.')
-    record = {'scene': scene, 'fingerprint': fingerprint, 'reserved_usd': estimate,
+    if any(x['scene'] == scene for x in existing):
+        raise ValueError('Esta escena ya tiene un intento. Usa un identificador nuevo para conservarlo.')
+    duplicates = [x for x in existing if x.get('fingerprint') == fingerprint]
+    if duplicates and approval.get('retry_of') not in [x['scene'] for x in duplicates]:
+        raise ValueError('Peticion duplicada. Solo repetir si el usuario lo pide tras revisarla; registrar --retry-of.')
+    record = {'scene': scene, 'fingerprint': fingerprint, 'approval': approval,
               'status': 'reserved', 'created_at': now(), 'model': state['angle_model'],
+              'resolution': '720p',
               'source_sha256': digest(source), 'script_sha256': digest(script),
               'brief_sha256': digest(script.parent / 'BRIEF-TECNICO.md')}
     path = ledger / (scene + '.json')
@@ -42,6 +50,7 @@ def reserve(project, scene, source, prompt, estimate):
 
 def generate(args):
     script = require_production(args.project_dir)
+    require_next_attempt(args.project_dir)
     if not re.fullmatch(r'[a-z0-9][a-z0-9_-]{0,63}', args.scene):
         raise ValueError('Identificador de escena no valido.')
     if not args.upload_to_google:
@@ -72,7 +81,7 @@ def generate(args):
         if problem:
             raise ValueError(problem)
         key = read_key()
-        record_path, record = reserve(args.project_dir, args.scene, source, prompt, args.estimated_usd)
+        record_path, record = reserve(args.project_dir, args.scene, source, prompt)
         target.with_suffix('.prompt.txt').write_text(prompt, encoding='utf-8')
         with client_for(key) as client:
             try:
@@ -89,14 +98,22 @@ def generate(args):
                     response_format={'type': 'video', 'aspect_ratio': args.aspect_ratio, 'resolution': '720p', 'duration': '4s'})
                 record['interaction_id'] = getattr(response, 'id', None)
                 record['usage'] = response.usage.model_dump(mode='json') if response.usage else None
+                record['cost'] = estimate_cost(record)
+                write_json(record_path, record)
                 video = response.output_video
                 if response.status != 'completed' or not video or not video.data:
                     raise RuntimeError('La respuesta no incluye un video completo. No se reintentara automaticamente.')
                 content = base64.b64decode(video.data, validate=True)
                 if b'ftyp' not in content[:48]: raise ValueError('La respuesta no parece un MP4.')
                 with target.open('xb') as stream: stream.write(content)
-                record.update(status='completed', output=str(target), bytes=len(content),
+                record.update(output=str(target), bytes=len(content))
+                write_json(record_path, record)
+                with av.open(str(target)) as generated:
+                    output_seconds = generated.duration / av.time_base if generated.duration is not None else None
+                record.update(status='completed',
+                              output_seconds=output_seconds,
                               needs_visual_review=True, original_audio_must_be_restored=True)
+                record['cost'] = estimate_cost(record)
                 write_json(record_path, record)
             finally:
                 if remote and remote.name:
@@ -108,11 +125,16 @@ def generate(args):
                         record['cleanup_file_name'] = remote.name
                         print('No se pudo retirar la entrada temporal de Google. Revisa el registro.', file=sys.stderr)
                     write_json(record_path, record)
-        return {'status': 'completed_needs_review', 'file': str(target), 'script': str(script), 'record': str(record_path)}
+        return {'status': 'completed_needs_review', 'file': str(target), 'script': str(script),
+                'record': str(record_path), 'cost': record['cost'],
+                'cost_report': write_cost_report(args.project_dir),
+                'next_action': 'Mostrar el video y coste al usuario. Esperar su decision antes de otra generacion.'}
     except Exception as exc:
         if record_path:
             record.update(status='failed_or_uncertain', error_type=type(exc).__name__)
+            record['cost'] = estimate_cost(record)
             write_json(record_path, record)
+            write_cost_report(args.project_dir)
         # Do not echo arbitrary SDK errors, key material or base64 media.
         detail = sdk_problem() if 'sdk_problem' in locals() else None
         raise RuntimeError(detail or f'Omni no termino: {type(exc).__name__}. Revisa el intento guardado antes de otra generacion.') from None
@@ -125,7 +147,6 @@ def main():
     p.add_argument('--project-dir', type=Path, required=True)
     p.add_argument('--file', type=Path, required=True); p.add_argument('--scene', required=True)
     p.add_argument('--prompt-file', type=Path, required=True)
-    p.add_argument('--estimated-usd', type=float, required=True)
     p.add_argument('--aspect-ratio', choices=('9:16', '16:9'), default='9:16')
     p.add_argument('--upload-to-google', action='store_true')
     a = p.parse_args()

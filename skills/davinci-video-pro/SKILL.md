@@ -2,7 +2,7 @@
 name: davinci-video-pro
 description: Instala y conecta DaVinci Resolve, su MCP y Gemini en Codex o Claude Code; organiza materiales y videos finales y edita con guion creativo y brief tecnico obligatorio, Omni e imagenes opcionales.
 metadata:
-  version: "2.2.0"
+  version: "2.3.0"
   short-description: Instalacion guiada y edicion con brief obligatorio
 ---
 
@@ -34,7 +34,7 @@ continuar directamente con la recepcion del encargo.
    confirmacion. Si ya lo eligio, mostrar la ruta y continuar sin volver a preguntar.
 5. **Recursos.** Preguntar si quiere escenas Omni; preguntar si quiere imagenes y
    mostrar opciones de estilo y proveedores realmente disponibles. Concretar los
-   archivos a enviar y los costes antes de usar servicios con material del usuario.
+   archivos a enviar. Para Omni, no pedir presupuesto: usar el ciclo siguiente.
 6. **Produccion y entrega.** Guardar las elecciones en ENCARGO.md, mostrar TAREAS.md
    por cada video final, analizar, editar, revisar y exportar TODOS los solicitados.
 
@@ -42,6 +42,22 @@ No hacer todas las preguntas de instalacion y produccion de golpe. Agrupar
 preguntas relacionadas, avanzar por etapas y guardar el siguiente paso para reinicios.
 Si ya esta configurado, retomar desde materiales; una comprobacion tecnica breve
 no obliga a repetir la instalacion.
+
+## Omni: generar, mostrar y esperar
+
+NO pedir presupuesto, tope de gasto ni numero de intentos para habilitar Omni.
+La eleccion real «si, usar Omni» permite preparar y generar UNA escena del guion;
+reutilizarla sin otra pregunta de permiso si el envio a Google ya esta acordado.
+Despues mostrar el video reproducible, su coste disponible y el registro
+GASTOS-OMNI.md. Esperar la decision del usuario sobre conservarlo, ajustar/reintentar,
+generar otra escena o parar. Aceptar la toma no autoriza otra generacion.
+No generar lotes, alternativas ni reintentos mientras espera su revision.
+
+Leer [Omni](references/omni.md): registrar la respuesta real con omni-next,
+que habilita un solo intento. Distinguir cargo confirmado, estimacion y coste
+desconocido; nunca presentar una estimacion parcial como total pagado.
+Esta regla reemplaza el requisito generico de presupuesto de versiones/plantillas
+anteriores. Conservar un limite que el usuario haya impuesto expresamente.
 
 ## Dos requisitos para producir
 
@@ -98,7 +114,7 @@ otro video. Una eleccion previa de defaults para este encargo se reutiliza.
 - [Gemini](references/gemini.md): modelo preferido gemini-3.8-flash; verificar imagen,
   voz, tiempos y relacion con guion y brief.
 - [Omni](references/omni.md): gemini-omni-1.1-flash preferido; solo si se eligio,
-  con plan, presupuesto y revision de cada resultado.
+  una generacion por vez, mostrando video y coste antes de decidir la siguiente.
 - [Recursos](references/recursos.md): imagenes unicas y pertinentes; descubrir
   capacidades en cada host. Claude no hereda ImageGen de Codex.
 - [Edicion](references/edicion.md): montaje, limpieza, subtitulos, QA y exports.

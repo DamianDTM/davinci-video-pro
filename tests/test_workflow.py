@@ -182,15 +182,68 @@ class Tests(unittest.TestCase):
         self.assertEqual(mcp.configure(self.project, entry)['status'], 'already_configured')
         with self.assertRaises(ValueError): w.require_script(self.project)
 
-    def test_omni_budget_and_duplicate_attempts(self):
+    def test_omni_one_at_a_time_without_budget_and_explicit_retry(self):
         self.approve(); source = self.root / 'synthetic.mp4'; source.write_bytes(b'fixture')
-        with self.assertRaises(ValueError): omni.reserve(self.project, 'scene', source, 'prompt', 0.5)
-        w.set_omni_plan(self.project, 2, 1.0, 'Autorizo dos intentos con este presupuesto')
-        omni.reserve(self.project, 'scene', source, 'prompt one', 0.6)
-        with self.assertRaises(ValueError): omni.reserve(self.project, 'scene', source, 'prompt two', 0.2)
-        with self.assertRaises(ValueError): omni.reserve(self.project, 'scene2', source, 'prompt one', 0.2)
-        with self.assertRaises(ValueError): omni.reserve(self.project, 'scene2', source, 'prompt two', 0.6)
-        self.assertEqual(len(list((w.metadata(self.project) / 'omni-attempts').glob('*.json'))), 1)
+        with self.assertRaises(ValueError): omni.reserve(self.project, 'scene', source, 'prompt')
+        w.authorize_omni_next(self.project, 'Si, quiero escenas Omni')
+        path, record = omni.reserve(self.project, 'scene', source, 'prompt one')
+        with self.assertRaises(ValueError): omni.reserve(self.project, 'scene2', source, 'prompt two')
+        with self.assertRaises(ValueError): w.authorize_omni_next(self.project, 'Otra', 'scene')
+        record['status'] = 'completed'; w.write_json(path, record)
+        with self.assertRaises(ValueError): w.authorize_omni_next(self.project, 'Otra')
+        w.authorize_omni_next(self.project, 'He visto el video y coste, genera otro', 'scene')
+        with self.assertRaises(ValueError): omni.reserve(self.project, 'scene2', source, 'prompt one')
+        w.authorize_omni_next(self.project, 'Reintenta esa toma', 'scene', retry_of='scene')
+        with self.assertRaises(ValueError): omni.reserve(self.project, 'scene', source, 'prompt one')
+        omni.reserve(self.project, 'scene2', source, 'prompt one')
+        with self.assertRaises(ValueError): omni.reserve(self.project, 'scene3', source, 'prompt three')
+        self.assertEqual(len(w.omni_attempts(self.project)), 2)
+
+    def test_old_omni_budget_does_not_authorize_a_batch(self):
+        self.approve()
+        state = w.read_state(self.project)
+        state['omni_plan'] = {'max_attempts': 100, 'budget_usd': 100, 'confirmation': 'Old batch'}
+        w.write_json(w.metadata(self.project) / 'project.json', state)
+        with self.assertRaises(ValueError): omni.require_next_attempt(self.project)
+
+    def test_omni_next_cli_requires_no_budget(self):
+        self.approve()
+        result = subprocess.run([sys.executable, str(w.__file__), '--project-dir', str(self.project),
+                                 'omni-next', '--confirmation', 'Si, usar Omni'], capture_output=True, text=True)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertEqual(json.loads(result.stdout)['status'], 'one_omni_attempt_authorized')
+
+    def test_omni_costs_known_usage_and_unknowns(self):
+        record = {'scene': 'test', 'model': 'gemini-omni-1.1-flash', 'resolution': '720p',
+                  'status': 'completed', 'output_seconds': 4}
+        cost = omni.estimate_cost(record)
+        self.assertAlmostEqual(cost['estimated_subtotal_usd'], .40544)
+        self.assertIsNone(cost['estimated_total_usd']); self.assertIsNone(cost['billed_usd'])
+        usage = {'total_input_tokens': 1000, 'total_output_tokens': 23268,
+                 'output_tokens_by_modality': [{'modality': 'video', 'tokens': 23168}, {'modality': 'text', 'tokens': 100}],
+                 'total_thought_tokens': 0, 'total_cached_tokens': 0, 'total_tool_use_tokens': 0}
+        record['usage'] = usage
+        cost = omni.estimate_cost(record)
+        self.assertAlmostEqual(cost['estimated_total_usd'], .40784)
+        self.assertEqual(cost['status'], 'usage_estimate'); self.assertIsNone(cost['billed_usd'])
+        usage['total_thought_tokens'] = 250
+        self.assertIsNone(omni.estimate_cost(record)['estimated_total_usd'])
+        record['model'] = 'unknown-model'
+        self.assertIsNone(omni.estimate_cost(record)['estimated_subtotal_usd'])
+
+    def test_omni_uncertain_cost_is_not_reported_as_free(self):
+        self.approve()
+        record = {'scene': 'uncertain', 'created_at': w.now(), 'model': 'gemini-omni-1.1-flash',
+                  'resolution': '720p', 'status': 'failed_or_uncertain', 'usage': None}
+        cost = omni.estimate_cost(record)
+        self.assertIsNone(cost['estimated_subtotal_usd']); self.assertIsNone(cost['billed_usd'])
+        w.write_json(w.metadata(self.project) / 'omni-attempts/uncertain.json', record)
+        report = Path(omni.write_cost_report(self.project)).read_text(encoding='utf-8')
+        self.assertIn('desconocido / pendiente', report)
+        self.assertIn('intentos sin coste conocido: 1', report)
+        with self.assertRaises(ValueError): w.authorize_omni_next(self.project, 'Sigue')
+        w.authorize_omni_next(self.project, 'He revisado el fallo y coste desconocido, prueba otra toma', 'uncertain')
+        self.assertTrue(omni.require_next_attempt(self.project))
 
     def test_gemini_analysis_uses_script_and_cleans_remote_on_failure(self):
         self.approve(); source = self.root / 'fixture.mp4'; source.write_bytes(b'never uploaded')
@@ -227,7 +280,7 @@ class Tests(unittest.TestCase):
         self.assertNotIn('OFFLINE_NOT_A_REAL_KEY', args.output.with_suffix('.request.json').read_text())
 
     def test_omni_success_and_failure_cleanup_without_real_service(self):
-        self.approve(); w.set_omni_plan(self.project, 2, 2.0, 'Autorizacion ficticia del test local')
+        self.approve(); w.authorize_omni_next(self.project, 'Autorizacion ficticia del test local')
         source = self.root / 'fixture.mp4'; source.write_bytes(b'local fixture never sent')
         prompt = self.root / 'angle.txt'; prompt.write_text('A four second view of the same plant from a different camera angle.')
         events = []
@@ -247,17 +300,26 @@ class Tests(unittest.TestCase):
                 return SimpleNamespace(status='completed', id=None, usage=None, output_video=SimpleNamespace(data=base64.b64encode(b'\x00\x00\x00\x18ftypisom-fixture').decode()))
         fake_client = Client()
         fake_av = SimpleNamespace(time_base=1000000, open=lambda *a: contextlib.nullcontext(SimpleNamespace(streams=SimpleNamespace(video=[True]), duration=4000000)))
-        args = SimpleNamespace(project_dir=self.project, file=source, prompt_file=prompt, scene='scene1', estimated_usd=0.5, upload_to_google=True, aspect_ratio='9:16')
+        args = SimpleNamespace(project_dir=self.project, file=source, prompt_file=prompt, scene='scene1', upload_to_google=True, aspect_ratio='9:16')
         with patch.dict(sys.modules, {'gemini_video': g, 'av': fake_av}), patch.object(g, 'types', SimpleNamespace(UploadFileConfig=lambda **kw: kw)), patch.object(g, 'sdk_problem', return_value=None), patch.object(g, 'read_key', return_value='OFFLINE_KEY'), patch.object(g, 'client_for', return_value=fake_client):
-            self.assertEqual(omni.generate(args)['status'], 'completed_needs_review')
+            result = omni.generate(args)
+            self.assertEqual(result['status'], 'completed_needs_review')
+            self.assertAlmostEqual(result['cost']['estimated_subtotal_usd'], .40544)
+            self.assertTrue(Path(result['cost_report']).is_file())
             self.assertEqual(events, ['upload', 'generate', 'delete'])
             args.scene = 'scene2'; prompt.write_text('A different four second camera angle showing the same plant and original timing.')
+            with patch.object(g, 'read_key') as no_key, self.assertRaises(ValueError): omni.generate(args)
+            no_key.assert_not_called()
+            self.assertEqual(events, ['upload', 'generate', 'delete'])
+            w.authorize_omni_next(self.project, 'Vi el resultado y coste, genera otra escena', 'scene1')
             fake_client.fail = True
             with self.assertRaises(RuntimeError): omni.generate(args)
         self.assertEqual(events, ['upload', 'generate', 'delete', 'upload', 'generate', 'delete'])
         failed = json.loads((w.metadata(self.project) / 'omni-attempts/scene2.json').read_text())
         self.assertTrue(failed['remote_input_deleted'])
         self.assertEqual(failed['status'], 'failed_or_uncertain')
+        self.assertIsNone(failed['cost']['estimated_subtotal_usd'])
+        with self.assertRaises(ValueError): omni.require_next_attempt(self.project)
 
     def test_new_project_text_uses_lf_on_all_platforms(self):
         for path in list(self.project.glob('*.md')) + [w.metadata(self.project) / 'project.json']:

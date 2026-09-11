@@ -1,17 +1,17 @@
-# DaVinci Video Pro 2.2
+# DaVinci Video Pro 2.3
 
 Skill para **Codex local y Claude Code** que guia la instalacion y organiza un
 encargo de edicion profesional con DaVinci Resolve, Gemini y recursos opcionales.
 
 Repositorio: [DamianDTM/davinci-video-pro](https://github.com/DamianDTM/davinci-video-pro).
-Descarga: [version 2.2.0](https://github.com/DamianDTM/davinci-video-pro/releases/tag/v2.2.0).
+Descarga: [version 2.3.0](https://github.com/DamianDTM/davinci-video-pro/releases/tag/v2.3.0).
 
 ## Instalacion sencilla
 
 Copia esto en Codex local o Claude Code:
 
 > Instala o actualiza DaVinci Video Pro desde https://github.com/DamianDTM/davinci-video-pro,
-> version v2.2.0. Lee el README y aplica la skill para el asistente que estoy usando.
+> version v2.3.0. Lee el README y aplica la skill para el asistente que estoy usando.
 > Primero configura la conexion y despues guiame por materiales, cantidad de videos,
 > brief tecnico, guion y recursos. Muestrame las rutas editables de los documentos.
 
@@ -57,6 +57,18 @@ Resolve local por recibir un enlace: requiere acceso local, scripts y MCP compat
 Si ya respondiste algo, lo reutiliza. No termina la instalacion pidiendote que
 inicies otro encargo: continua directamente con la recepcion.
 
+## Omni sin pregunta de presupuesto
+
+Al elegir Omni, genera una escena y te muestra el video y su coste disponible.
+Espera a que lo revises y decidas si conservarlo, ajustar/reintentar, generar otra
+escena o parar. No pide presupuesto ni genera varias opciones mientras esperas.
+Conservar una toma no autoriza una generacion adicional.
+
+Guarda el historial en GASTOS-OMNI.md y distingue estimaciones, subtotales parciales
+y costes desconocidos. La API devuelve uso, no un recibo: no presenta una cifra
+estimada como importe pagado. No hay reintentos automaticos tras un fallo.
+Este ciclo se aplica en Codex y Claude Code, tambien al retomar otro chat.
+
 ## Nuestros documentos predeterminados
 
 - [Guion profesional](skills/davinci-video-pro/assets/GUION-POR-DEFECTO.md):
@@ -96,7 +108,7 @@ Siempre se muestran las rutas de los documentos y se piden solo los datos pendie
 Ruta de referencia: Windows, Resolve Free 21.0.3.7 y MCP Samuel Gursky 2.224.1.
 El asistente verifica compatibilidad actual y reutiliza instalaciones funcionales.
 Gemini 3.8 Flash es el modelo preferido de comprension; Omni 1.1 Flash, para
-perspectivas sintetizadas, con presupuesto y revision. Los modelos requieren
+perspectivas sintetizadas, con revision y coste visible por generacion. Los modelos requieren
 acceso real de la cuenta. Codex puede usar ImageGen nativo; Claude usa recursos
 aportados o un proveedor de imagenes conectado/configurado con su clave propia.
 
