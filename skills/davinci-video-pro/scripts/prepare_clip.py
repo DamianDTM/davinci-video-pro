@@ -1,15 +1,18 @@
-"""Create a new four-second clip after checking script and technical brief, preserving the source."""
+"""Extract four seconds from a reviewed, corrected audiovisual edit for Omni."""
 import argparse
 import json
 from pathlib import Path
 import subprocess
 from workflow import require_production, digest
+from omni_input import corrected_input_record
 
 
 def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('--project-dir', type=Path, required=True)
     p.add_argument('--source', type=Path, required=True)
+    p.add_argument('--review-file', type=Path, required=True,
+                   help='Informe del agente tras revisar la voz, imagen y cortes del montaje corregido; no requiere otra aprobacion del usuario.')
     p.add_argument('--start', type=float, required=True)
     p.add_argument('--output', type=Path, required=True)
     a = p.parse_args()
@@ -17,10 +20,16 @@ def main():
     import av
     import imageio_ffmpeg
     source = a.source.expanduser().resolve(strict=True)
+    review = a.review_file.expanduser().resolve(strict=True)
+    if not review.read_text(encoding='utf-8-sig').strip():
+        raise ValueError('Revisa el montaje corregido y documenta el resultado antes de preparar Omni.')
+    source_hash = digest(source)
     target = a.output.expanduser().resolve()
     if target.exists() or target.with_suffix('.source.json').exists() or target.suffix.lower() != '.mp4':
         raise ValueError('Elige un MP4 nuevo; se preservan los archivos existentes.')
     with av.open(str(source)) as media:
+        if not media.streams.video or not media.streams.audio:
+            raise ValueError('La entrada de Omni debe incluir la imagen y la voz ya corregidas y sincronizadas.')
         video = media.streams.video[0]
         duration = media.duration / av.time_base if media.duration else None
         if a.start < 0 or duration is None or a.start + 4 > duration + 0.01:
@@ -28,12 +37,13 @@ def main():
         scale = 'scale=720:-2:out_range=tv' if video.width <= video.height else 'scale=-2:720:out_range=tv'
     target.parent.mkdir(parents=True, exist_ok=True)
     command = [imageio_ffmpeg.get_ffmpeg_exe(), '-hide_banner', '-loglevel', 'error', '-nostdin', '-n',
-               '-i', str(source), '-ss', str(a.start), '-t', '4', '-map', '0:v:0', '-map', '0:a:0?',
+               '-i', str(source), '-ss', str(a.start), '-t', '4', '-map', '0:v:0', '-map', '0:a:0',
                '-vf', scale, '-r', '30', '-c:v', 'libx264', '-crf', '18', '-pix_fmt', 'yuv420p',
                '-c:a', 'aac', '-b:a', '192k', '-movflags', '+faststart', str(target)]
     subprocess.run(command, check=True, capture_output=True, timeout=180)
-    record = {'source': str(source), 'source_sha256': digest(source), 'start_seconds': a.start,
-              'duration_seconds': 4, 'output': str(target), 'note': 'Restore this original audio after Omni generation.'}
+    if digest(source) != source_hash:
+        raise ValueError('El montaje cambio durante la preparacion; revisalo antes de enviarlo a Omni.')
+    record = corrected_input_record(a.project_dir, source, target, review, a.start)
     target.with_suffix('.source.json').write_text(json.dumps(record, indent=2), encoding='utf-8')
     print(json.dumps(record))
 

@@ -11,6 +11,11 @@ lo que requiera otra toma. No declarar una correccion sin comprobar el resultado
 
 ## Analisis y preparacion
 
+- La duracion objetivo o intervalo por video lo define el usuario. Preguntarla
+  antes del montaje si falta. Conservar ideas, ejemplos y desarrollo util al
+  limpiar; no imponer un resumen breve. Si no puede hilarse o no alcanza la
+  duracion solicitada con calidad, explicar el maximo viable y acordar el cambio.
+
 - Revisar imagen y audio reales con Gemini y comprobar localmente los puntos
   importantes. Identificar tema, intención, audiencia probable e ideas centrales.
 - Transcribir el discurso y ubicar frases, silencios, errores, repeticiones,
@@ -93,6 +98,60 @@ forma limpia, preservando una voz natural.
   una palabra, conservar la acción real sin inventar una palabra clave ni una
   promesa que el presentador no haya hecho.
 
+## Recursos aportados y voz en off
+
+- Preguntar junto con las imagenes por HTML/CSS, PDF, documentos o presentaciones;
+  aceptar archivos o carpeta. Son OPCIONALES y no bloquean la edicion si no tiene.
+- Abrir los HTML en un navegador, cargar CSS/fuentes/imagenes, inspeccionar y
+  guardar capturas reales. Mantener su diseno, no solo su texto. Si se replica
+  para animar, conservar HTML/CSS y comparar con la fuente antes de usarla.
+- Renderizar e inspeccionar paginas relevantes de PDF y documentos conservando
+  su diagramacion. Preservar los originales y registrar fuente, pagina/seccion,
+  captura, frase relacionada y tiempos del montaje corregido en RECURSOS.md.
+- Insertar informacion cuando corresponda al discurso y aporte valor. No forzar
+  coincidencias ni insertar todo por obligacion. Respetar ubicaciones solicitadas.
+- Resaltar palabras, cifras o bloques con marcador, subrayado o sombreado suave
+  sincronizado con la voz. Mantener texto, colores, fuentes y composicion del
+  documento; el efecto no debe ocultar la lectura ni los subtitulos.
+- Mantener la propia voz YA CORREGIDA como voz en off sobre documentos e imagenes.
+  Conservar el discurso continuo sin generar una narracion distinta por defecto.
+
+## Musica opcional
+
+- Preguntar si quiere musica: pasar MP3/otro audio, indicar carpeta de canciones
+  o seguir sin musica. Reutilizar la respuesta; no exigir una pista para continuar.
+- Si entrega carpeta, registrar su pista elegida o su decision de delegar la
+  seleccion. Distinguir musica de audios de voz; no activar APIs musicales de pago.
+- Adaptar tramo y duracion a la pieza, entradas/salidas suaves y nivel por debajo
+  de la voz. Revisar que ninguna palabra quede tapada; evitar bucles o cortes bruscos.
+
+## Validacion previa y publicacion opcional
+
+- Terminado el montaje y QA, dar proyecto, timeline/revision y pasos para abrirlo
+  y reproducirlo. Esperar el visto bueno del usuario antes del export final.
+  Las muestras se identifican como previsualizacion; tras ajustes, mostrar la revision.
+- Tras validar, preguntar si desea solo los archivos o tambien publicacion directa
+  en TikTok, YouTube, Facebook e Instagram, en las redes/cuentas que elija.
+- El usuario puede escribir el titulo y descripcion en este brief o al cierre.
+  Reutilizar su texto exacto; pedir solo lo que falta si elige publicar. Si no
+  quiere publicar, esos campos son opcionales. No inventar textos o hashtags.
+- Registrar en PUBLICACION.md el archivo/revision, cuenta, texto, visibilidad,
+  respuesta que autoriza y estado/id/enlace por destino. Mostrar el contenido
+  concreto antes de enviar; reutilizar autorizacion explicita que ya lo cubra.
+- Comprobar acceso real. No usar la clave de Gemini como permiso de redes ni
+  prometer publicacion sin conexion. Si falta acceso, entregar MP4 y textos con
+  pasos manuales y estado pendiente. Una subida o borrador no son un post publicado.
+- Consultar estado remoto antes de reintentar una respuesta incierta para evitar
+  duplicados. Conservar exports locales. No heredar permisos ni textos de otro video.
+- La validacion y la pregunta de publicacion al cierre son excepciones expresas
+  a cualquier limite anterior de preguntas solo al inicio.
+
+### Textos de publicacion aportados por el usuario (opcionales hasta elegir publicar)
+
+Por cada video se puede completar: titulo, descripcion y redes/cuentas deseadas.
+Dejar pendiente si prefiere responder al terminar. Escribir estos datos no publica
+ni autoriza enviar nada por si solo. El detalle final se guarda en PUBLICACION.md.
+
 ## Revision y entrega
 
 Revisar el montaje completo, imagen y audio, antes de darlo por terminado:
@@ -102,6 +161,8 @@ Revisar el montaje completo, imagen y audio, antes de darlo por terminado:
 - Las palabras están completas y los empalmes suenan naturales.
 - Los cambios de encuadre conservan nitidez y una composición coherente.
 - Las imágenes ilustran lo que se dice en ese momento.
+- Los documentos conservan su diseno original, sus resaltados se leen y la musica
+  elegida no tapa la voz en off ni el dialogo.
 - Los recursos generados de apoyo son distintos en cada inserto y no se repiten.
 - Los subtítulos cubren todo el discurso, coinciden con el audio final y resaltan
   palabras clave con claridad.
@@ -122,8 +183,14 @@ añadidos para que el proyecto pueda abrirse de nuevo.
 - Cada imagen o clip generado aparece una sola vez. Un recorte no es un recurso nuevo.
 - Para Omni: no pedir presupuesto; generar una escena, mostrar video y coste,
   revisar rostro, manos, labios y fondo. Esperar la decision antes de generar otra.
+- Antes de Omni, limpiar y revisar imagen y audio del tramo: ruido, silencios,
+  tartamudeos, reinicios y repeticiones; mantener ambos sincronizados. Preparar el
+  fragmento desde el montaje corregido con un informe de revision, nunca desde
+  la grabacion bruta. Tambien se exige para una prueba de angulo.
 - Guardar GASTOS-OMNI.md; distinguir estimacion, cargo confirmado y coste desconocido.
-- Conservar la voz original y verificar su sincronizacion; no prometer una toma real inexistente.
+- Conservar la voz original YA CORREGIDA de ese fragmento al mostrar e integrar
+  Omni; no recuperar su version sin limpiar. Verificar boca, continuidad y ausencia
+  de nuevos errores; no prometer una toma real inexistente.
 - Fuentes equivalentes si Segoe UI no esta disponible, manteniendo la jerarquia visual.
 - Exportar MP4 H.264/AAC, proyecto con medios y SRT. El SRT no conserva el estilo Fusion.
 

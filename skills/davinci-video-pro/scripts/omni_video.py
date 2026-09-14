@@ -10,6 +10,7 @@ import sys
 import time
 from workflow import require_production, read_state, metadata, write_json, digest, now, omni_attempts
 from omni_costs import estimate_cost, write_cost_report
+from omni_input import require_corrected_input
 
 
 def require_next_attempt(project):
@@ -58,11 +59,13 @@ def generate(args):
     source = args.file.expanduser().resolve(strict=True)
     if source.suffix.lower() != '.mp4':
         raise ValueError('Prepara un fragmento MP4 de cuatro segundos para esta ruta comprobada.')
+    # Validate before credentials, upload or consuming the one-attempt authorization.
+    corrected_input = require_corrected_input(args.project_dir, source)
     # Probe locally before spending or reserving an attempt.
     import av
     with av.open(str(source)) as media:
-        if not media.streams.video or media.duration is None or not 3.8 <= media.duration / av.time_base <= 4.3:
-            raise ValueError('Este helper requiere un fragmento de aproximadamente cuatro segundos.')
+        if not media.streams.video or not media.streams.audio or media.duration is None or not 3.8 <= media.duration / av.time_base <= 4.3:
+            raise ValueError('Este helper requiere imagen y audio corregidos en un fragmento de aproximadamente cuatro segundos.')
     prompt = args.prompt_file.read_text(encoding='utf-8-sig').strip()
     if len(prompt) < 30 or len(prompt) > 12000:
         raise ValueError('Prepara un prompt concreto, derivado del guion, de 30 a 12000 caracteres.')
@@ -82,6 +85,8 @@ def generate(args):
             raise ValueError(problem)
         key = read_key()
         record_path, record = reserve(args.project_dir, args.scene, source, prompt)
+        record['corrected_input'] = corrected_input
+        write_json(record_path, record)
         target.with_suffix('.prompt.txt').write_text(prompt, encoding='utf-8')
         with client_for(key) as client:
             try:
@@ -112,7 +117,8 @@ def generate(args):
                     output_seconds = generated.duration / av.time_base if generated.duration is not None else None
                 record.update(status='completed',
                               output_seconds=output_seconds,
-                              needs_visual_review=True, original_audio_must_be_restored=True)
+                              needs_visual_review=True, corrected_audio_must_be_restored=True,
+                              audio_to_restore_from=str(source))
                 record['cost'] = estimate_cost(record)
                 write_json(record_path, record)
             finally:
@@ -128,7 +134,7 @@ def generate(args):
         return {'status': 'completed_needs_review', 'file': str(target), 'script': str(script),
                 'record': str(record_path), 'cost': record['cost'],
                 'cost_report': write_cost_report(args.project_dir),
-                'next_action': 'Mostrar el video y coste al usuario. Esperar su decision antes de otra generacion.'}
+                'next_action': 'Restaurar la voz corregida del fragmento de entrada, revisar sincronizacion y mostrar video/coste. Esperar decision antes de otra generacion.'}
     except Exception as exc:
         if record_path:
             record.update(status='failed_or_uncertain', error_type=type(exc).__name__)

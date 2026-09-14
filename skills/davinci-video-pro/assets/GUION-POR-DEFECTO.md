@@ -8,7 +8,9 @@ personalidad y voz, con un discurso limpio y una presentación dinámica.
 
 Este documento dirige el montaje. Las palabras concretas, imágenes y tiempos
 de corte se definirán después de analizar el video y escuchar su contenido.
-La duración final será la que necesite el mensaje una vez depurado.
+La duracion objetivo la indica el usuario. Conservar el desarrollo util al limpiar;
+si el material no alcanza con calidad y coherencia, proponer el maximo viable
+segun el brief y esperar su decision antes de cambiar la duracion.
 
 Este guion incorpora las preferencias confirmadas durante el montaje de referencia: subtítulos
 obligatorios con palabras clave resaltadas, llamadas visuales a comentar,
@@ -53,7 +55,9 @@ Para perspectivas nuevas generadas, planificar escenas con Omni segun el mensaje
 Si se elige Omni, generar una toma sin pedir presupuesto, mostrarla junto con su
 coste disponible y esperar la decision del usuario antes de otra generacion.
 Son interpretaciones generadas; revisar rostro, labios, manos, fondo y continuidad.
-Mantener el audio original y comprobar sincronizacion.
+Antes de generar, preparar el tramo con imagen y voz ya corregidas y revisar
+empalmes y sincronizacion. Omni recibe esa pieza, no la grabacion bruta. Mantener
+la voz corregida al mostrar e integrar el resultado; verificar que no reaparezcan errores.
 
 ## Imagenes y representaciones visuales
 
@@ -78,6 +82,17 @@ Mantener el audio original y comprobar sincronizacion.
 - Comprobar pertinencia, calidad, legibilidad y derechos de uso de los recursos.
 
 ## Subtitulos, titulares y cierre
+
+Los HTML/CSS, PDF y documentos aportados son recursos opcionales. Mostrar su
+apariencia original mediante capturas fieles o replicas revisadas; escoger sus
+pasajes por relacion con el discurso y animar resaltados/sombreado de lectura.
+Mantener la voz corregida del presentador en off sobre esos recursos. Preguntar
+si quiere musica desde MP3/carpeta o ninguna; el montaje conserva claridad de voz.
+
+Al terminar, mostrar como reproducir cada montaje y esperar validacion antes del
+export final. Preguntar entonces por publicacion opcional en las redes elegidas.
+Titulo y descripcion proceden del brief o de lo que indique el usuario al cierre;
+no son requisitos para editar si todavia no ha elegido publicar.
 
 Subtitular todo el discurso: texto blanco y palabras fundamentales doradas,
 mas grandes y con peso e inclinacion diferenciados. Mantener una composicion

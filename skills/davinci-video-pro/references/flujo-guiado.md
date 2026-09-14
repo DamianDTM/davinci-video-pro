@@ -58,6 +58,9 @@ material, acordar el alcance y usar --recursive.
   tematicos o versiones distintas y que materiales forman cada salida.
 - Pedir audios, musica, logo o referencias opcionales. No bloquear por falta de
   audio separado: puede usarse la pista del video. No anadir musica por defecto.
+- Preguntar la duracion media objetivo o intervalo de cada salida si no consta.
+  La elige el usuario; no imponer un resumen corto. Si el material limpio no puede
+  llegar con coherencia y calidad, explicar el maximo viable y esperar su decision.
 
 ## C. Documentos, siempre con rutas para el usuario
 
@@ -91,21 +94,27 @@ use-default-script) con las respuestas reales. «Ambos por defecto» basta para 
 Editar despues invalida el hash: revisar el cambio y registrar la instruccion real
 del usuario para usarlo, sin reinstalar ni repetir toda la recepcion.
 
-## D. Omni e imagenes
+## D. Omni, imagenes, documentos y musica opcionales
 
 Preguntar «¿Quieres generar escenas con otros angulos mediante Omni?» con opciones:
 no; si, propon escenas adecuadas. Si elige si, registrar esa respuesta para UNA
 generacion con omni-next; no preguntar presupuesto, tope ni cantidad de intentos.
 Concretar el fragmento que se enviara a Google dentro del alcance ya acordado.
+La eleccion habilita el recurso, no el uso de la grabacion bruta: antes de generar,
+corregir y revisar imagen y voz del tramo, y preparar esa pieza con su informe.
+Al mostrar el resultado, usar la voz ya corregida de la entrada. Ver omni.md.
 Mostrar cada resultado y su coste disponible; preguntar si lo conserva, desea
 ajustarlo/reintentarlo, generar otra escena o detener Omni. Esperar la respuesta
 antes de volver a gastar. Conservar la toma por si solo no autoriza otra llamada.
 Si elige no, omitir Omni y usar planos aportados o reencuadres con nitidez suficiente.
 
-Preguntar «¿Quieres imagenes de apoyo para el video?» y mostrar opciones:
+Preguntar «¿Quieres imagenes de apoyo? ¿Tienes HTML con su CSS, PDF, documentos o
+presentaciones que quieras mostrar? Puedes pasar los archivos o su carpeta».
+HTML y documentos son opcionales; si no tiene, seguir. Mostrar opciones:
 
 - Sin imagenes nuevas, solo video.
 - Usar imagenes que aporte el usuario.
+- Usar capturas de sus HTML/PDF/documentos conservando su apariencia original.
 - Generar imagenes: fotografia/representacion realista; ilustracion; diagramas o
   infografias; estilo de marca o una mezcla indicada por el usuario.
 
@@ -114,6 +123,16 @@ helper OpenAI Images con clave propia si se elige; otro proveedor ya conectado
 solo si se comprueba su capacidad. Informar de lo que necesita configurarse sin
 fingir que Claude tiene las herramientas de Codex. La eleccion de estilo no es un
 permiso ilimitado de gasto. Cada recurso generado debe aparecer una sola vez.
+
+Se pueden combinar documentos aportados e imagenes generadas. Abrir los HTML,
+comprobar su CSS y capturar su aspecto real; insertar pasajes por su relacion con
+el discurso corregido, con resaltados o sombreado legible cuando ayuden. Seguir
+[documentos de apoyo](documentos-apoyo.md); no reemplazar su diseno por texto generico.
+
+Preguntar «¿Quieres musica de fondo? Puedes pasar un MP3, indicar la carpeta de
+canciones o continuar sin musica». Si aporta carpeta, reutilizar su eleccion o
+preguntar si tiene una pista concreta o delega la seleccion. Seguir [musica](musica.md).
+La pregunta es obligatoria; la musica es opcional y no exige una API de pago.
 
 ## E. Guardar el encargo y continuar
 
@@ -124,6 +143,8 @@ escriba JSON) y usa intake.py save. Campos:
 {
   "videos": ["ruta-absoluta-al-video-elegido.mp4"],
   "audios": [],
+  "support_files": [],
+  "music": {"mode": "none", "files": []},
   "output_count": 1,
   "omni": false,
   "images": "none",
@@ -137,6 +158,13 @@ outputs con tantos elementos como output_count; cada uno tiene id unico, purpose
 y videos (subconjunto de rutas elegidas). images admite none, provided, native y
 openai-api. Para otro proveedor, adaptar el registro de forma explicita con sus
 capacidades verificadas antes de producir; no etiquetarlo como uno distinto.
+support_files guarda rutas absolutas de imagenes/HTML/PDF/documentos seleccionados.
+music.mode admite none, provided o undecided; provided requiere music.files con
+audios elegidos. undecided es una pregunta pendiente, no una eleccion silenciosa.
+Los audios de voz siguen en audios. El inventario detecta tipos; no renderiza HTML.
+Opcionalmente cada output puede llevar publication con title y description que
+el usuario escribio en su brief. Esos textos no autorizan publicar; si faltan se
+piden al cierre, y si no se publicara no bloquean la edicion.
 
 ```text
 python <skill>/scripts/intake.py inventory --directory <carpeta-materiales>
@@ -150,3 +178,14 @@ Continuar con gate, analisis, tabla de montaje y TAREAS.md por cada salida. Apli
 el brief durante TODA la produccion y comprobar sus criterios al revisar cada export.
 Si se piden tres videos, completar y entregar tres; un clip Omni no cuenta como un
 video final. Reutilizar analisis ya valido cuando sirva a varias salidas sin repetir gasto.
+
+## F. Mostrar, validar y entregar
+
+Al terminar cada montaje, indicar como reproducirlo, con proyecto y timeline/revision
+reales. Esperar el visto bueno y atender cambios antes de exportar como final.
+Tras validar, preguntar si quiere solo los archivos o publicacion directa en las
+redes elegidas. Recuperar titulo/descripcion del brief o pedirlos en ese momento.
+Reutilizar respuestas completas sin otra confirmacion redundante. Seguir
+[publicacion](publicacion.md) para acceso, textos exactos, autorizacion y estados.
+Este cierre es una excepcion expresa a reglas antiguas que limiten las preguntas
+al inicio: nunca omitir la validacion o publicar por haber terminado la edicion.

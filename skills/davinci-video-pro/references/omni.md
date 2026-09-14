@@ -10,6 +10,28 @@ moderados de 30–45 grados. Mantener identidad, ropa, decorado y dialogo origin
 No forzar una toma en cada escena. La cantidad de videos finales no equivale a
 una autorizacion para generar esa cantidad de tomas Omni automaticamente.
 
+## Primero corregir la pieza de entrada
+
+Antes de llamar a Omni, limpiar el tramo elegido: silencios accidentales, ruido,
+tartamudeos, reinicios y repeticiones involuntarias. Aplicar los mismos cortes a
+imagen y voz, conservar palabras completas y revisar empalmes y sincronizacion.
+Exportar una pieza intermedia desde ese montaje corregido. Basta preparar el
+tramo elegido; no hace falta terminar todos los videos ni los subtitulos.
+
+Omni debe recibir la imagen Y EL AUDIO de esa pieza, nunca la grabacion inicial
+con los errores. Pedir en el prompt que quite los errores no reemplaza limpiarlos
+antes. Mantener visible al presentador; preparar la base sin subtitulos ni recursos
+superpuestos que puedan ser reinterpretados por la generacion.
+
+La IA escribe un informe local de la revision realizada: pieza y tramo revisados,
+correcciones aplicadas, resultado de la escucha/reproduccion y sincronizacion.
+No es una pregunta adicional al usuario. Pasarlo a prepare_clip.py con
+--review-file. El helper conserva los hashes de montaje, fragmento, informe,
+guion y brief; omni_video.py rechaza una entrada sin registro vigente antes de
+leer claves, subirla o consumir el intento. Es un control de trazabilidad:
+no certifica por si solo que la voz este libre de errores; revisar de verdad.
+Si cambia el montaje o el fragmento, revisar otra vez y preparar un registro nuevo.
+
 ## Un intento y una decision cada vez
 
 NO preguntar presupuesto, tope de gasto ni numero maximo de intentos. La respuesta
@@ -20,8 +42,8 @@ como permiso. Conservar cualquier limite que el usuario establezca expresamente.
 
 ```text
 python <skill>/scripts/workflow.py --project-dir <proyecto> omni-next --confirmation <respuesta-real-que-elige-Omni>
-python <skill>/scripts/prepare_clip.py --project-dir <proyecto> --source <video> --start <segundos> --output <fragmento-nuevo.mp4>
-python <skill>/scripts/omni_video.py --project-dir <proyecto> --file <fragmento-nuevo.mp4> --scene angulo-01 --prompt-file <prompt.md> --upload-to-google
+python <skill>/scripts/prepare_clip.py --project-dir <proyecto> --source <montaje-audiovisual-corregido.mp4> --review-file <revision-del-montaje.md> --start <segundos-del-montaje-corregido> --output <fragmento-corregido-nuevo.mp4>
+python <skill>/scripts/omni_video.py --project-dir <proyecto> --file <fragmento-corregido-nuevo.mp4> --scene angulo-01 --prompt-file <prompt.md> --upload-to-google
 ```
 
 Tras cada intento, incluso si falla:
@@ -85,18 +107,24 @@ No reenviar una solicitud incierta para averiguar si termino. Si queda omni.lock
 por interrupcion, consultar ledger/proveedor antes de retirarlo; conservar evidencia.
 Files se retira al finalizar incluso ante fallo. Si queda una copia, informar.
 
-Revisar inicio, medio, final y reproduccion completa: apariencia, boca con audio
-original, manos, pizarra/textos, continuidad y nitidez. Mostrar el resultado al
+Revisar inicio, medio, final y reproduccion completa: apariencia, boca con la voz
+ya corregida, manos, pizarra/textos, continuidad y nitidez. Comprobar que Omni no
+introdujo nuevos tropiezos visuales o movimientos repetidos. Mostrar el resultado al
 usuario aunque requiera ajustes. Solo integrar una toma que pase la revision;
 si falla, explicar el limite y esperar su decision sobre otra generacion.
 
-Conformar fps/resolucion y RESTAURAR el audio original. Preservar posicion temporal
-del discurso y cortar en limites de frases. Crear una linea de tiempo nueva,
+Conformar fps/resolucion y RESTAURAR LA VOZ YA CORREGIDA del fragmento enviado.
+No recuperar el audio de la grabacion bruta ni conservar una voz regenerada que
+reintroduzca tartamudeos. Hacer esta mezcla antes de mostrar la toma al usuario.
+Preservar la posicion temporal del discurso corregido y cortar en limites de frases.
+Si cambia su duracion despues de generar, revisar la sincronia antes de integrar;
+no generar de nuevo sin una peticion del usuario. Crear una linea de tiempo nueva,
 conservar subtitulos/transiciones y exportar el video completo solicitado.
 Una comparativa o clip de prueba no reemplaza el montaje completo.
 
 La prueba de origen produjo 720x1280/24fps y una perspectiva lateral clara, con
-sincronia aproximada y cambios en pizarra. Se uso el audio original al montar.
+sincronia aproximada y cambios en pizarra. Aquella prueba uso el audio original;
+el flujo vigente exige limpiarlo y revisarlo antes de generar, para no heredar errores.
 
 Fuentes: [Omni](https://ai.google.dev/gemini-api/docs/omni),
 [SDK Usage](https://github.com/googleapis/python-genai/blob/main/google/genai/_gaos/types/interactions/usage.py),

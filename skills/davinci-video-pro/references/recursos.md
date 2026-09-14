@@ -1,5 +1,10 @@
 # Imágenes y clips adicionales
 
+Preguntar tambien por HTML/CSS, PDF, documentos y presentaciones aportados, todos
+opcionales. Si existen, seguir [documentos de apoyo](documentos-apoyo.md) para
+leer/renderizar, capturar fielmente su diseno y sincronizar insertos y resaltados.
+Para canciones aportadas y voz en off, leer [musica](musica.md).
+
 Antes de generar, comprobar que el usuario eligio imagenes en ENCARGO.md,
 leer guion y brief tecnico vigentes y pasar workflow.py gate. No pedir documentos
 ya elegidos. Mostrar estilos y vias disponibles segun flujo-guiado.md. Pedir la preferencia de generación durante la recepción. Si el usuario ya pidió

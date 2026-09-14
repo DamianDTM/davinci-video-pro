@@ -20,6 +20,7 @@ SCRIPTS = ROOT / 'skills/davinci-video-pro/scripts'
 sys.path.insert(0, str(SCRIPTS))
 import workflow as w
 import omni_video as omni
+from omni_input import corrected_input_record, require_corrected_input
 import openai_image as images
 import configure_claude_mcp as mcp
 import diagnose
@@ -279,9 +280,75 @@ class Tests(unittest.TestCase):
             self.assertEqual(call.call_count, 1)
         self.assertNotIn('OFFLINE_NOT_A_REAL_KEY', args.output.with_suffix('.request.json').read_text())
 
+    def corrected_input_fixture(self):
+        source = self.root / 'prepared.mp4'; source.write_bytes(b'four seconds from corrected edit')
+        reviewed = self.root / 'reviewed.mp4'; reviewed.write_bytes(b'corrected audiovisual edit')
+        review = self.root / 'review.md'; review.write_text('Offline fixture: image and voice reviewed, cuts synchronized.')
+        record = corrected_input_record(self.project, reviewed, source, review, 0)
+        w.write_json(source.with_suffix('.source.json'), record)
+        return source, reviewed, review, record
+
+    def test_omni_rejects_raw_legacy_and_malformed_inputs_before_service(self):
+        self.approve(); w.authorize_omni_next(self.project, 'Genera una escena de prueba local')
+        source, reviewed, review, record = self.corrected_input_fixture()
+        sidecar = source.with_suffix('.source.json')
+        args = SimpleNamespace(project_dir=self.project, file=source, scene='scene1', upload_to_google=True)
+        approval = w.read_state(self.project)['omni_approval']
+        for contents in (None, '{}', '[]', 'null', '{broken json', json.dumps({'source': str(reviewed)})):
+            with self.subTest(contents=contents):
+                if contents is None: sidecar.unlink(missing_ok=True)
+                else: sidecar.write_text(contents, encoding='utf-8')
+                with patch.dict(sys.modules, {'gemini_video': g}), patch.object(g, 'read_key') as key, patch.object(g, 'client_for') as client:
+                    with self.assertRaisesRegex(ValueError, 'imagen y audio ya corregidos'): omni.generate(args)
+                    key.assert_not_called(); client.assert_not_called()
+                self.assertFalse(w.omni_attempts(self.project))
+                self.assertFalse((w.metadata(self.project) / 'omni.lock').exists())
+                self.assertEqual(approval, w.read_state(self.project)['omni_approval'])
+
+    def test_omni_review_is_bound_to_media_project_and_current_documents(self):
+        self.approve()
+        source, reviewed, review, record = self.corrected_input_fixture()
+        self.assertEqual(require_corrected_input(self.project, source), record)
+        for path in (source, reviewed, review):
+            with self.subTest(changed=path.name):
+                before = path.read_bytes()
+                path.write_bytes(before + b' altered after review')
+                with self.assertRaises(ValueError): require_corrected_input(self.project, source)
+                path.write_bytes(before)
+                self.assertEqual(require_corrected_input(self.project, source), record)
+        for field, value in (('project_dir', str(self.root)), ('output', str(reviewed)),
+                             ('source_kind', 'raw_camera_clip'), ('audio_to_restore', 'raw_audio')):
+            with self.subTest(field=field):
+                w.write_json(source.with_suffix('.source.json'), {**record, field: value})
+                with self.assertRaises(ValueError): require_corrected_input(self.project, source)
+        w.write_json(source.with_suffix('.source.json'), record)
+        c, t = self.candidates(); w.stage_revision(self.project, c, t, 'Nueva revision para prueba local')
+        w.apply_revision(self.project, 'Aplica esta revision de prueba')
+        self.assertTrue(w.require_production(self.project))
+        with self.assertRaises(ValueError): require_corrected_input(self.project, source)
+        with self.assertRaisesRegex(ValueError, 'informe'):
+            review.write_text('   ')
+            corrected_input_record(self.project, reviewed, source, review, 0)
+
+    def test_omni_input_requires_both_tracks_before_key_or_attempt(self):
+        self.approve(); w.authorize_omni_next(self.project, 'Genera una escena de prueba local')
+        source, reviewed, review, record = self.corrected_input_fixture()
+        args = SimpleNamespace(project_dir=self.project, file=source, scene='scene1', upload_to_google=True)
+        for video, audio in (([True], []), ([], [True])):
+            fake_av = SimpleNamespace(time_base=1000000, open=lambda *a: contextlib.nullcontext(
+                SimpleNamespace(streams=SimpleNamespace(video=video, audio=audio), duration=4000000)))
+            with self.subTest(video=video, audio=audio), patch.dict(sys.modules, {'gemini_video': g, 'av': fake_av}), patch.object(g, 'read_key') as key:
+                with self.assertRaisesRegex(ValueError, 'imagen y audio corregidos'): omni.generate(args)
+                key.assert_not_called()
+            self.assertFalse(w.omni_attempts(self.project))
+            self.assertFalse((w.metadata(self.project) / 'omni.lock').exists())
+
     def test_omni_success_and_failure_cleanup_without_real_service(self):
         self.approve(); w.authorize_omni_next(self.project, 'Autorizacion ficticia del test local')
         source = self.root / 'fixture.mp4'; source.write_bytes(b'local fixture never sent')
+        reviewed = self.root / 'reviewed-edit.mp4'; reviewed.write_bytes(b'corrected audiovisual fixture')
+        review = self.root / 'review.md'; review.write_text('Offline fixture: corrected image and voice reviewed, cuts synchronized.')
+        w.write_json(source.with_suffix('.source.json'), corrected_input_record(self.project, reviewed, source, review, 0))
         prompt = self.root / 'angle.txt'; prompt.write_text('A four second view of the same plant from a different camera angle.')
         events = []
         class Files:
@@ -299,11 +366,15 @@ class Tests(unittest.TestCase):
                 if self.fail: raise TimeoutError('Uncertain fake response')
                 return SimpleNamespace(status='completed', id=None, usage=None, output_video=SimpleNamespace(data=base64.b64encode(b'\x00\x00\x00\x18ftypisom-fixture').decode()))
         fake_client = Client()
-        fake_av = SimpleNamespace(time_base=1000000, open=lambda *a: contextlib.nullcontext(SimpleNamespace(streams=SimpleNamespace(video=[True]), duration=4000000)))
+        fake_av = SimpleNamespace(time_base=1000000, open=lambda *a: contextlib.nullcontext(SimpleNamespace(streams=SimpleNamespace(video=[True], audio=[True]), duration=4000000)))
         args = SimpleNamespace(project_dir=self.project, file=source, prompt_file=prompt, scene='scene1', upload_to_google=True, aspect_ratio='9:16')
         with patch.dict(sys.modules, {'gemini_video': g, 'av': fake_av}), patch.object(g, 'types', SimpleNamespace(UploadFileConfig=lambda **kw: kw)), patch.object(g, 'sdk_problem', return_value=None), patch.object(g, 'read_key', return_value='OFFLINE_KEY'), patch.object(g, 'client_for', return_value=fake_client):
             result = omni.generate(args)
             self.assertEqual(result['status'], 'completed_needs_review')
+            saved = json.loads(Path(result['record']).read_text())
+            self.assertEqual(saved['corrected_input']['review_file'], str(review.resolve()))
+            self.assertEqual(saved['audio_to_restore_from'], str(source.resolve()))
+            self.assertTrue(saved['corrected_audio_must_be_restored'])
             self.assertAlmostEqual(result['cost']['estimated_subtotal_usd'], .40544)
             self.assertTrue(Path(result['cost_report']).is_file())
             self.assertEqual(events, ['upload', 'generate', 'delete'])
@@ -464,7 +535,7 @@ class Tests(unittest.TestCase):
         with patch.object(images, 'read_key') as key, self.assertRaises(ValueError): images.generate(SimpleNamespace(project_dir=self.project))
         key.assert_not_called()
         with self.assertRaises(ValueError): omni.generate(SimpleNamespace(project_dir=self.project))
-        argv = ['prepare_clip.py', '--project-dir', str(self.project), '--source', 'missing.mp4', '--output', 'unused.mp4', '--start', '0']
+        argv = ['prepare_clip.py', '--project-dir', str(self.project), '--source', 'missing.mp4', '--review-file', 'review.md', '--output', 'unused.mp4', '--start', '0']
         clip = load('clip_gate_fixture', SCRIPTS / 'prepare_clip.py')
         with patch.object(sys, 'argv', argv), self.assertRaises(ValueError): clip.main()
 
@@ -472,7 +543,7 @@ class Tests(unittest.TestCase):
         media = self.root / 'media'; media.mkdir(); (media / 'sub').mkdir()
         (media / 'one.MP4').write_bytes(b'offline video')
         (media / 'voice.wav').write_bytes(b'offline audio')
-        (media / 'notes.txt').write_text('private non-media fixture')
+        (media / 'notes.log').write_text('private non-media fixture')
         (media / 'sub/two.mp4').write_bytes(b'other offline video')
         found = intake.inventory(media)
         self.assertEqual(len(found['files']), 2)
@@ -500,6 +571,79 @@ class Tests(unittest.TestCase):
         self.assertEqual(record, json.loads(Path(result['path']).read_text(encoding='utf-8')))
         answers['output_count'] = 3
         with self.assertRaises(ValueError): intake.save_intake(self.project, answers)
+
+    def test_inventory_includes_visual_documents_without_rendering_or_changing_sources(self):
+        folder = self.root / 'support'; folder.mkdir()
+        fixtures = {'design.HTML': 'html', 'report.PDF': 'pdf', 'report.docx': 'document',
+                    'slides.pptx': 'document', 'notes.txt': 'document', 'image.PNG': 'image'}
+        for name in fixtures:
+            (folder / name).write_bytes(b'offline source fixture')
+        css = folder / 'style.css'; css.write_text('body { color: red; }')
+        before = {p.name: p.read_bytes() for p in folder.iterdir()}
+        found = intake.inventory(folder)
+        self.assertEqual({Path(x['path']).name: x['kind'] for x in found['files']}, fixtures)
+        self.assertEqual(before, {p.name: p.read_bytes() for p in folder.iterdir()})
+        self.assertFalse((w.metadata(self.project) / 'intake.json').exists())
+
+    def test_intake_support_is_optional_and_selected_files_are_preserved(self):
+        self.approve()
+        video = self.root / 'source.mp4'; video.write_bytes(b'offline video')
+        html = self.root / 'design.html'; html.write_text('<h1>Original design</h1>')
+        pdf = self.root / 'report.pdf'; pdf.write_bytes(b'offline PDF fixture')
+        answers = {'videos': [str(video)], 'output_count': 1, 'omni': False, 'images': 'none',
+                   'user_responses': ['Un video sin generar imagenes; mostrar mis documentos']}
+        path = Path(intake.save_intake(self.project, answers)['path'])
+        self.assertEqual(json.loads(path.read_text())['support_files'], [])
+        answers['support_files'] = [str(html), str(pdf)]
+        record = intake.save_intake(self.project, answers)
+        before = path.read_bytes()
+        self.assertEqual(json.loads(before)['support_files'], [str(html.resolve()), str(pdf.resolve())])
+        self.assertIn(str(html.resolve()), Path(record['summary']).read_text(encoding='utf-8'))
+        for invalid in ([str(html), str(html)], [str(video)], ['relative.html']):
+            answers['support_files'] = invalid
+            with self.assertRaises(ValueError): intake.save_intake(self.project, answers)
+            self.assertEqual(before, path.read_bytes())
+
+    def test_intake_music_is_explicit_and_separate_from_voice_audio(self):
+        self.approve()
+        video = self.root / 'video.mp4'; video.write_bytes(b'offline video')
+        voice = self.root / 'voice.wav'; voice.write_bytes(b'offline voice')
+        music = self.root / 'song.mp3'; music.write_bytes(b'offline music')
+        answers = {'videos': [str(video)], 'audios': [str(voice)], 'output_count': 1, 'omni': False,
+                   'images': 'none', 'user_responses': ['Usa la voz separada y la cancion elegida']}
+        path = Path(intake.save_intake(self.project, answers)['path'])
+        self.assertEqual(json.loads(path.read_text())['music'], {'mode': 'undecided', 'files': []})
+        for choice in ({'mode': 'none', 'files': []}, {'mode': 'provided', 'files': [str(music)]}):
+            answers['music'] = choice; intake.save_intake(self.project, answers)
+            saved = json.loads(path.read_text())
+            self.assertEqual(saved['music'], choice)
+            self.assertEqual(saved['audios'], [str(voice)])
+        before = path.read_bytes()
+        for invalid in ({'mode': 'provided', 'files': []}, {'mode': 'none', 'files': [str(music)]},
+                        {'mode': 'provided', 'files': [str(video)]}, {'mode': 'generate-paid', 'files': []}):
+            answers['music'] = invalid
+            with self.assertRaises(ValueError): intake.save_intake(self.project, answers)
+            self.assertEqual(before, path.read_bytes())
+
+    def test_intake_keeps_exact_publication_text_without_authorizing_a_post(self):
+        self.approve()
+        video = self.root / 'video.mp4'; video.write_bytes(b'offline video')
+        title = 'Mi titulo: "ejemplo"'
+        description = 'Primera linea.\n\nSegunda linea con #etiqueta y acentos: edición.'
+        answers = {'videos': [str(video)], 'output_count': 1, 'omni': False, 'images': 'none',
+                   'user_responses': ['Estos textos son del brief; decidir publicar al final'],
+                   'outputs': [{'id': 'video-01', 'purpose': 'Explicar', 'videos': [str(video)],
+                                'publication': {'title': title, 'description': description}}]}
+        result = intake.save_intake(self.project, answers)
+        path = Path(result['path']); before = path.read_bytes()
+        self.assertEqual(json.loads(before)['outputs'][0]['publication'], {'title': title, 'description': description})
+        self.assertIn(description, Path(result['summary']).read_text(encoding='utf-8'))
+        self.assertFalse((self.project / 'PUBLICACION.md').exists())
+        self.assertNotIn('publication_approval', w.read_state(self.project))
+        for invalid in ({'title': 123}, {'title': title, 'publish_now': True}):
+            answers['outputs'][0]['publication'] = invalid
+            with self.assertRaises(ValueError): intake.save_intake(self.project, answers)
+            self.assertEqual(before, path.read_bytes())
 
 
 if __name__ == '__main__':

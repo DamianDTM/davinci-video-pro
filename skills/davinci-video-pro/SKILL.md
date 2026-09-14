@@ -1,8 +1,8 @@
 ---
 name: davinci-video-pro
-description: Instala y conecta DaVinci Resolve, su MCP y Gemini en Codex o Claude Code; organiza materiales y videos finales y edita con guion creativo y brief tecnico obligatorio, Omni e imagenes opcionales.
+description: Instala y conecta DaVinci Resolve, su MCP y Gemini en Codex o Claude Code; edita con guion y brief tecnico, documentos visuales, musica y Omni opcionales, revision previa y publicacion autorizada en redes.
 metadata:
-  version: "2.3.1"
+  version: "2.4.0"
   short-description: Instalacion guiada y edicion con brief obligatorio
 ---
 
@@ -28,18 +28,33 @@ continuar directamente con la recepcion del encargo.
    dar enlace oficial concreto y pasos manuales. No detenerse en «no tengo acceso».
 2. **Materiales y resultados.** Revisar la carpeta actual; si contiene videos,
    mostrar inventario y preguntar todos o cuales. Si no, pedir la ruta. Preguntar
-   cuantos videos finales quiere y como distribuirlos. Recibir audios opcionales.
+   cuantos videos finales quiere, su duracion objetivo y como distribuirlos.
+   La duracion la elige el usuario; no reducir a reels breves por iniciativa propia.
 3. **Brief tecnico.** Preguntar si aporta uno o usa el predeterminado. Mostrar
    SIEMPRE su ruta absoluta editable y leerlo completo antes de producir.
 4. **Guion creativo.** Preguntar propio o predeterminado y mostrar SIEMPRE la ruta
    absoluta de la copia predeterminada para leerla/editarla. Si no tiene uno, usar
    nuestro guion profesional; «hazlo con el de defecto» permite seguir sin otra
    confirmacion. Si ya lo eligio, mostrar la ruta y continuar sin volver a preguntar.
-5. **Recursos.** Preguntar si quiere escenas Omni; preguntar si quiere imagenes y
-   mostrar opciones de estilo y proveedores realmente disponibles. Concretar los
-   archivos a enviar. Para Omni, no pedir presupuesto: usar el ciclo siguiente.
-6. **Produccion y entrega.** Guardar las elecciones en ENCARGO.md, mostrar TAREAS.md
-   por cada video final, analizar, editar, revisar y exportar TODOS los solicitados.
+5. **Recursos.** Preguntar si quiere escenas Omni; junto con las imagenes preguntar
+   si aporta HTML/CSS, PDF, documentos o presentaciones, como archivos o carpeta.
+   Mostrar opciones de estilo y proveedores realmente disponibles. Concretar los
+   archivos a enviar. HTML y documentos son OPCIONALES: preguntar no exige aportarlos.
+   Preguntar tambien si quiere musica: ninguna, archivos MP3/audio o carpeta de
+   canciones. Leer [documentos de apoyo](references/documentos-apoyo.md) para
+   capturas fieles al HTML/CSS y [musica](references/musica.md) para la mezcla.
+   Para Omni, no pedir presupuesto: usar el ciclo siguiente.
+6. **Montaje y validacion.** Guardar elecciones en ENCARGO.md, mostrar TAREAS.md por
+   video, analizar, editar y revisar. Dar proyecto, timeline/revision y pasos reales
+   para REPRODUCIR cada montaje. Esperar el visto bueno antes del export final;
+   si pide ajustes, volver a mostrar la revision afectada.
+7. **Exportacion y publicacion opcional.** Tras la validacion preguntar si desea
+   solo los archivos o publicarlos directamente en TikTok, YouTube, Facebook e
+   Instagram, y en cuales cuentas. Titulo y descripcion los aporta el usuario
+   en el brief o en ese momento: reutilizar lo escrito y pedir solo lo que falta.
+   Exportar y verificar todos los videos aprobados. Publicar solo con autorizacion
+   del contenido/destinos concretos y conexion comprobada; seguir
+   [publicacion](references/publicacion.md). No confundir archivo exportado con post publicado.
 
 No hacer todas las preguntas de instalacion y produccion de golpe. Agrupar
 preguntas relacionadas, avanzar por etapas y guardar el siguiente paso para reinicios.
@@ -47,6 +62,12 @@ Si ya esta configurado, retomar desde materiales; una comprobacion tecnica breve
 no obliga a repetir la instalacion.
 
 ## Omni: generar, mostrar y esperar
+
+Omni recibe una pieza con imagen y voz YA CORREGIDAS y revisadas. Primero limpiar
+el tramo, verificar palabras completas y sincronizacion, y preparar su entrada
+con el informe de revision. No enviar la grabacion bruta ni restaurar despues
+su audio sin limpiar: conservar la voz corregida de esa misma pieza. Este orden
+tambien aplica a una muestra o prueba de angulo. Ver [Omni](references/omni.md).
 
 NO pedir presupuesto, tope de gasto ni numero de intentos para habilitar Omni.
 La eleccion real «si, usar Omni» permite preparar y generar UNA escena del guion;
@@ -120,6 +141,11 @@ otro video. Una eleccion previa de defaults para este encargo se reutiliza.
   una generacion por vez, mostrando video y coste antes de decidir la siguiente.
 - [Recursos](references/recursos.md): imagenes unicas y pertinentes; descubrir
   capacidades en cada host. Claude no hereda ImageGen de Codex.
+- [Documentos de apoyo](references/documentos-apoyo.md): HTML/CSS fiel, PDF,
+  capturas y resaltados sincronizados con el discurso; material opcional.
+- [Musica](references/musica.md): archivos/carpeta opcionales y voz corregida en off.
+- [Publicacion](references/publicacion.md): reproduccion y visto bueno antes de
+  exportar; textos del usuario, acceso y envio opcional a cuatro redes.
 - [Edicion](references/edicion.md): montaje, limpieza, subtitulos, QA y exports.
 - [Resolve practico](references/resolve-practico.md): API, Fusion y render.
 

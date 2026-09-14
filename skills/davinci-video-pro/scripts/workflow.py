@@ -160,14 +160,20 @@ def init_project(project, profile=None):
     atomic(project / 'CAMBIOS-PENDIENTES.md', '# Comentarios pendientes\n\nSin comentarios pendientes.\n')
     routing = ('# Edicion con DaVinci Video Pro\n\nPara editar videos usa la skill davinci-video-pro si esta disponible.\n'
                'Primero lee ESTADO.md, GUION-CREATIVO.md, BRIEF-TECNICO.md, TAREAS.md y CAMBIOS-PENDIENTES.md.\n'
-               'Primero instalacion/conexion; despues materiales, numero de salidas, brief, guion, Omni e imagenes.\n'
+               'Primero instalacion/conexion; despues materiales, numero y duracion de salidas, brief, guion y recursos opcionales.\n'
+               'Preguntar por HTML/CSS, PDF/documentos y musica MP3/carpeta; pueden omitirse.\n'
+               'HTML: abrir, capturar su diseno real y sincronizar resaltados con la voz corregida.\n'
                'Las pruebas tecnicas de conexion no requieren guion. Producir requiere guion y brief tecnico vigente.\n'
                'El brief tecnico es obligatorio: leerlo y aplicar todos sus criterios durante montaje y QA.\n'
                'Mostrar siempre las rutas absolutas editables de guion y brief. Leer ENCARGO.md si existe.\n'
                'Si dice no tengo guion o hazlo con el de defecto, usar use-default-script sin preguntar otra vez.\n'
                'Registrar confirm-brief y comprobar workflow.py gate; si pasa, retomar sin repetir preguntas.\n'
                'El guion es la fuente principal; no reemplaces sus decisiones con el estilo predeterminado.\n'
+               'Omni: limpiar y revisar imagen/voz antes de generar, tambien para muestras; no usar el clip bruto.\n'
                'Omni: no pedir presupuesto; generar uno, mostrar video y coste, esperar decision antes del siguiente.\n'
+               'Mostrar proyecto/timeline y como reproducir cada montaje; esperar visto bueno antes del export final.\n'
+               'Al cerrar preguntar por publicacion opcional en redes y usar titulo/descripcion del brief o pedirlos.\n'
+               'Publicar solo el contenido y destinos autorizados con acceso real; leer PUBLICACION.md para no duplicar subidas.\n'
                'Las revisiones de los dos documentos y las preferencias para futuros videos requieren un resumen confirmado.\n')
     for name in ('AGENTS.md', 'CLAUDE.md'):
         atomic(project / name, routing)

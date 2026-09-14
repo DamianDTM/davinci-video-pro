@@ -15,6 +15,9 @@ Las pruebas tecnicas de instalacion/conexion no requieren guion.
 - Gancho inicial, desarrollo y cierre: {{estructura}}
 - Llamada a la accion: {{cta_o_no_aplica}}
 - Contenido que debe conservarse: {{imprescindibles}}
+- Recursos HTML/CSS, PDF/documentos e imagenes aportados, si los hay:
+- Musica opcional: ninguna, archivo o carpeta/pista elegida:
+- Titulo y descripcion para publicar, si quiere indicarlos ahora (pueden darse al cierre):
 
 ## Preferencias creativas reutilizables
 
@@ -22,6 +25,12 @@ Estilo profesional, claro y natural. Subtitulos con enfasis selectivo, recursos
 visuales distintos que expliquen las ideas, variacion moderada de encuadres y
 perspectivas Omni donde aporten al mensaje. Adaptar paleta y tipografia a la marca.
 Estas preferencias no reemplazan las decisiones del guion de este video.
+
+Los documentos aportados se muestran con su diseno original, capturas fieles y
+resaltados sincronizados cuando corresponden al discurso. Mantener la propia voz
+corregida en off sobre los recursos. Preguntar por documentos y musica opcionales.
+El usuario valida reproduciendo el montaje antes del export final; la publicacion
+en redes es una eleccion posterior con sus textos y destinos concretos.
 
 ## Escenas previstas
 

@@ -68,6 +68,10 @@ de videos finales y distribucion, documentos, Omni e imagenes. ENCARGO.md guarda
 las elecciones y .davinci-video-pro/intake.json su registro. Reutilizarlo al retomar.
 Si cambian documentos, verificar la coherencia del plan, actualizarlo con las
 respuestas existentes y conservar el historial; no repetir todas las preguntas.
+Conservar tambien support_files, music y los textos publication de cada salida.
+Al retomar leer RECURSOS.md y PUBLICACION.md si existen: revision validada,
+capturas, pistas elegidas y estado/id por red. Actualizar intake no debe convertir
+datos antiguos en permisos nuevos. Nunca reintentar una subida sin consultar su estado.
 
 ## Rondas de comentarios
 

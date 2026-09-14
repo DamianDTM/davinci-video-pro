@@ -48,6 +48,13 @@ pertinentes que no contradigan sus decisiones y las excepciones explicitas.
 
 ## Montaje
 
+La duracion objetivo la indica el usuario. Conservar explicaciones utiles al limpiar;
+no convertir todo en resumen. Si no alcanza con calidad, comunicar duracion viable
+y acordar el cambio antes de apartarse del objetivo.
+Para insertos HTML/PDF/documentos, seguir documentos-apoyo.md: diseno original,
+capturas reales y coincidencia con el discurso. Mantener la voz corregida en off
+sobre esos recursos. Musica opcional desde archivos/carpeta segun musica.md.
+
 - Preservar originales; crear una línea de tiempo propia con nombre de revisión.
 - Quitar preparación, salida, silencios accidentales, muletillas reiteradas,
   sílabas repetidas, reinicios y frases fallidas. Mantener pausas expresivas,
@@ -91,12 +98,18 @@ con un icono discreto cuando ayude. No inventar promesas ni palabras para coment
 ## Revisión y exportación
 
 Primero revisar en Resolve una muestra representativa de título, subtítulo mixto,
-frase larga, inserto, fundido y CTA. Exportar una revisión nueva y comprobar:
+frase larga, inserto, fundido y CTA, y luego TODO el montaje. Mostrar al usuario
+proyecto y timeline/revision con pasos para reproducirlo. Esperar su visto bueno
+antes de exportar el final. Si se necesita previsualizacion local, identificarla
+como muestra y entregarla para validar. Ver publicacion.md para el ciclo completo.
+Tras aprobar, exportar una revisión nueva y comprobar:
 - Archivo reproducible, duración y fotogramas esperados, resolución/fps correctos.
 - Audio presente, sincronía, principio/final de palabras y empalmes naturales.
 - Ausencia de cuadros negros, huecos, offline o recortes inesperados.
 - Todos los subtítulos renderizados, sin solapamientos, con énfasis y buena lectura.
 - Cada recurso pertinente aparece una vez y las transiciones funcionan realmente.
+- Las capturas conservan HTML/CSS o diagramacion de origen; resaltados sincronizados
+  y legibles sin tapar subtitulos. La voz se entiende sobre la musica elegida.
 - Los requisitos del guion, incluidos los añadidos durante la edición, están cubiertos.
 
 Para cambios solo visuales sobre un audio ya revisado, comparar el audio decodificado
@@ -112,11 +125,15 @@ o instrucciones de sustitución. No prometer portabilidad por exportar un DRP so
 Revisar la cantidad de salidas de ENCARGO.md. Repetir montaje, QA y export para
 cada video solicitado; no confundir una escena Omni con una salida completa.
 Cerrar la lista de tareas solo al entregar todos y dar la ruta absoluta de cada video,
-enlace para abrirlo y ruta del proyecto. No publicar ni enviar a terceros por defecto.
+enlace para abrirlo y ruta del proyecto. Al cerrar preguntar si desea publicacion
+directa en las redes elegidas y recoger titulo/descripcion del brief o del usuario.
+Seguir publicacion.md; completar los destinos autorizados y dar su estado real.
 
 
 ## Angulos y revisiones
 
-Seguir omni.md para perspectivas sintetizadas y restaurar siempre el audio original.
+Seguir omni.md para perspectivas sintetizadas: primero corregir y revisar imagen
+y voz del tramo, generar desde esa pieza, y restaurar su audio ya corregido.
+La limpieza y su revision preceden a Omni incluso si solo se pide una prueba.
 Al cerrar comentarios, resumir cambios por documento y alcance, preguntar si son
 correctos y esperar confirmacion antes de aplicar revisiones persistentes.
