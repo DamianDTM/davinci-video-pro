@@ -162,6 +162,7 @@ def init_project(project, profile=None):
                'Primero lee ESTADO.md, GUION-CREATIVO.md, BRIEF-TECNICO.md, TAREAS.md y CAMBIOS-PENDIENTES.md.\n'
                'Primero instalacion/conexion; despues materiales, numero y duracion de salidas, brief, guion y recursos opcionales.\n'
                'Preguntar por HTML/CSS, PDF/documentos y musica MP3/carpeta; pueden omitirse.\n'
+               'Preguntar videos de referencia opcionales: mostrar en pantalla dividida/PiP o solo estilo; no insertar los de solo estilo.\n'
                'HTML: abrir, capturar su diseno real y sincronizar resaltados con la voz corregida.\n'
                'Las pruebas tecnicas de conexion no requieren guion. Producir requiere guion y brief tecnico vigente.\n'
                'El brief tecnico es obligatorio: leerlo y aplicar todos sus criterios durante montaje y QA.\n'

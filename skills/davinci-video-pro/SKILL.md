@@ -2,7 +2,7 @@
 name: davinci-video-pro
 description: Instala y conecta DaVinci Resolve, su MCP y Gemini en Codex o Claude Code; edita con guion y brief tecnico, documentos visuales, musica y Omni opcionales, revision previa y publicacion autorizada en redes.
 metadata:
-  version: "2.4.0"
+  version: "2.4.1"
   short-description: Instalacion guiada y edicion con brief obligatorio
 ---
 
@@ -40,6 +40,10 @@ continuar directamente con la recepcion del encargo.
    si aporta HTML/CSS, PDF, documentos o presentaciones, como archivos o carpeta.
    Mostrar opciones de estilo y proveedores realmente disponibles. Concretar los
    archivos a enviar. HTML y documentos son OPCIONALES: preguntar no exige aportarlos.
+   Preguntar si tiene videos de referencia opcionales y si quiere mostrarlos en
+   pantalla dividida/PiP o usarlos solo como guia de estilo. Recibir archivo/carpeta
+   y registrar el uso; no insertar un ejemplo de estilo. Ver
+   [videos de referencia](references/recursos.md#videos-de-referencia-y-composiciones-simultaneas).
    Preguntar tambien si quiere musica: ninguna, archivos MP3/audio o carpeta de
    canciones. Leer [documentos de apoyo](references/documentos-apoyo.md) para
    capturas fieles al HTML/CSS y [musica](references/musica.md) para la mezcla.

@@ -1,6 +1,12 @@
-# Validacion de la version 2.4.0
+# Validacion de la version 2.4.1
 
 ## Cambios y alcance
+
+La version 2.4.1 pregunta por videos de referencia opcionales y distingue usarlos
+en pantalla de tomarlos solo como guia de estilo. Incluye pantalla dividida y
+PiP segun la eleccion del usuario o composicion delegada. intake.py conserva
+reference_videos con path/use y no los convierte en tomas principales ni salidas.
+Las instrucciones tecnicas cubren composicion, tiempos y una voz principal clara.
 
 Esta revision incorpora recepcion opcional de HTML/CSS, PDF, documentos e imagenes,
 con instrucciones de capturas fieles y resaltados segun el discurso. La musica se
@@ -52,7 +58,7 @@ subir archivos ni gastar; no sustituye la comprobacion final de cada export.
 
 ## Pruebas locales del paquete
 
-40 pruebas funcionales sin claves reales ni llamadas a proveedores:
+42 pruebas funcionales sin claves reales ni llamadas a proveedores:
 
 - Gemini models/check funcionan sin documentos mediante cliente simulado; no analizan medios.
 - La consulta tecnica de Resolve funciona sin guion mediante puente simulado.
@@ -82,9 +88,11 @@ subir archivos ni gastar; no sustituye la comprobacion final de cada export.
 - Documentos opcionales, rutas seleccionadas exactas y rechazo de duplicados/tipos incorrectos.
 - Musica separada de la voz; eleccion pendiente/ninguna/aportada sin habilitar generacion pagada.
 - Titulo y descripcion con saltos de linea se preservan exactamente sin crear permiso de publicacion.
+- Referencias de video opcionales con rol explicito, separadas de las fuentes principales y la cantidad de salidas.
+- Referencias sin uso, duplicadas, con tipo/ruta incorrectos se rechazan conservando el registro anterior.
 
-Windows, Python 3.14.2 con google-genai==2.22.0: **40/40 aprobadas**.
-Python 3.11.15 sin google-genai: **39 aprobadas y 1 omitida** con instrucciones
+Windows, Python 3.14.2 con google-genai==2.22.0: **42/42 aprobadas**.
+Python 3.11.15 sin google-genai: **41 aprobadas y 1 omitida** con instrucciones
 de instalacion. La prueba omitida corresponde al SDK real, no se cuenta como aprobada.
 
 Las comprobaciones se ejecutan desde el ZIP extraido despues de empaquetarlo:
@@ -99,11 +107,11 @@ Tambien se revisan sintaxis, enlaces internos y ausencia de claves/rutas persona
 
 No se llamo a APIs audiovisuales ni se consumieron creditos en esta actualizacion.
 El flujo real anterior probo Resolve, Gemini y una generacion Omni; no constituye
-una prueba nueva de edicion completa con 2.4.0.
+una prueba nueva de edicion completa con 2.4.1.
 
 El usuario probo la version anterior en Claude y sus comentarios originaron esta
 actualizacion. No se ha ejecutado una nueva instalacion desde cero en otro equipo,
-una edicion real con 2.4.0 en Claude, ni una prueba interactiva nueva del formulario.
+una edicion real con 2.4.1 en Claude, ni una prueba interactiva nueva del formulario.
 Su entrada oculta y verificacion de catalogo se conservan; la comprobacion nueva
 del formulario solo valida parametros sin interfaz ni red.
 
@@ -111,6 +119,8 @@ El nuevo flujo de capturas, musica y revision/publicacion es una instruccion del
 asistente, no un motor visual o publicador autonomo incluido. No se ha probado
 en esta actualizacion un render HTML real, una mezcla musical real ni publicaciones
 en las cuatro redes. Las pruebas cubren inventario/registro sin servicios reales.
+No se genero una nueva composicion PiP/pantalla dividida real para esta revision:
+se comprueban el registro y sus invariantes; la guia exige revision visual al editar.
 La fidelidad visual, sincronizacion y validacion del usuario requieren ejecutar
 ese flujo con materiales reales; una cuenta conectada requiere verificacion propia.
 

@@ -69,6 +69,8 @@ las elecciones y .davinci-video-pro/intake.json su registro. Reutilizarlo al ret
 Si cambian documentos, verificar la coherencia del plan, actualizarlo con las
 respuestas existentes y conservar el historial; no repetir todas las preguntas.
 Conservar tambien support_files, music y los textos publication de cada salida.
+Conservar reference_videos con su uso on_screen/style; no convertir un ejemplo
+de estilo en un clip insertado al abrir otro chat.
 Al retomar leer RECURSOS.md y PUBLICACION.md si existen: revision validada,
 capturas, pistas elegidas y estado/id por red. Actualizar intake no debe convertir
 datos antiguos en permisos nuevos. Nunca reintentar una subida sin consultar su estado.

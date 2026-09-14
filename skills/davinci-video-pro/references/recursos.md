@@ -23,6 +23,41 @@ el resultado, respetar el aspecto de salida y dejar espacio para subtítulos.
 Para gráficos de texto o diagramas simples, una composición nativa editable puede
 resultar más precisa que una imagen generada.
 
+## Videos de referencia y composiciones simultaneas
+
+Preguntar durante la recepcion: «¿Tienes algun video que quieras mostrar como
+referencia dentro del montaje, o usar solo como guia de estilo? Puedes pasar el
+archivo o indicar su carpeta; tambien podemos continuar sin video de referencia».
+Reutilizar la respuesta si ya consta. La pregunta debe contemplarse, aportar un
+video es OPCIONAL y su ausencia no bloquea el encargo.
+
+Si lo quiere mostrar, ofrecer pantalla dividida (ambos videos a la vez), PiP
+(uno grande y otro pequeno superpuesto por un tramo) o dejar que la IA elija la
+composicion segun el guion. No exigir un instante exacto: usar el momento pertinente
+al discurso corregido salvo que el usuario indique uno. Conservar la eleccion en
+guion/RECURSOS.md con fuente, tramo, composicion, tiempos de montaje y audio principal.
+
+Registrar archivos locales elegidos en reference_videos de intake.py: cada entrada
+tiene path absoluto y use: on_screen (puede aparecer) o style (solo inspira).
+Una referencia style NO se inserta ni presta su audio, y no autoriza copiar su
+contenido. Identificar que aspectos del ejemplo quiere seguir (ritmo, composicion,
+tipografia, transiciones) sin reemplazar su guion. Si el papel del archivo es
+ambiguo, preguntar antes de incorporarlo. No sumar referencias a la cantidad de
+videos finales ni tratarlas como tomas principales que haya que usar por completo.
+
+Para pantalla dividida/PiP, conservar proporciones y nitidez, jerarquia clara,
+marcos/margenes coherentes y posiciones que no tapen rostros, documentos, CTA ni
+subtitulos. Usar entradas y salidas suaves y duracion suficiente para entender
+la relacion entre ambos planos; no mantener dos videos por adorno. Una unica
+voz principal legible: silenciar o bajar el audio del inserto salvo que el usuario
+quiera oirlo, en cuyo caso evitar dos discursos simultaneos. Mantener la voz
+corregida en off y sincronizar los tiempos con el montaje depurado. Si el inserto
+aporta dialogo que se va a escuchar, revisar tambien sus errores segun el brief.
+
+Revisar la reproduccion de esa composicion y mostrarla dentro del montaje para
+la validacion previa al export. La IA puede elegir detalles de composicion cuando
+el usuario lo delega; no debe inventar que aporto un video ni forzar su presencia.
+
 ## Higgsfield opcional
 
 "Highfield" probablemente se refiere a Higgsfield; usar ese nombre y comprobar la

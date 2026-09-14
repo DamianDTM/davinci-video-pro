@@ -1,10 +1,10 @@
-# DaVinci Video Pro 2.4.0
+# DaVinci Video Pro 2.4.1
 
 Skill para **Codex local y Claude Code** que guia la instalacion y organiza un
 encargo de edicion profesional con DaVinci Resolve, Gemini y recursos opcionales.
 
 Repositorio: [DamianDTM/davinci-video-pro](https://github.com/DamianDTM/davinci-video-pro).
-Paquete de esta version: [version 2.4.0](https://github.com/DamianDTM/davinci-video-pro/releases/tag/v2.4.0).
+Paquete de esta version: [version 2.4.1](https://github.com/DamianDTM/davinci-video-pro/releases/tag/v2.4.1).
 
 ## Instalacion sencilla
 
@@ -52,6 +52,9 @@ Resolve local por recibir un enlace: requiere acceso local, scripts y MCP compat
    documentos o presentaciones aportados como archivos/carpeta. Ofrece generacion
    de imagenes con las herramientas disponibles. Pregunta tambien si quieres
    musica desde MP3/otro audio, una carpeta de canciones o ninguna.
+   Pregunta por videos de referencia opcionales: para mostrarlos en pantalla
+   dividida/PiP o usarlos solo como ejemplo de estilo. Acepta archivo o carpeta
+   y permite delegar la composicion; una referencia de estilo no se inserta.
 8. **Produccion y revision:** guarda ENCARGO.md y tareas por salida, analiza,
    monta y corrige. Te indica como abrir y reproducir cada montaje en Resolve
    y espera tu visto bueno antes de exportarlo como final.

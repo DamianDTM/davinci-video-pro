@@ -134,6 +134,13 @@ canciones o continuar sin musica». Si aporta carpeta, reutilizar su eleccion o
 preguntar si tiene una pista concreta o delega la seleccion. Seguir [musica](musica.md).
 La pregunta es obligatoria; la musica es opcional y no exige una API de pago.
 
+Preguntar tambien si tiene un video que quiera referenciar dentro del montaje o
+solo como ejemplo de estilo. Puede pasar archivo/carpeta o continuar sin el.
+Si quiere mostrarlo, ofrecer pantalla dividida, un video pequeno sobre el grande
+(PiP) o eleccion de la IA segun el guion. Seguir
+[videos de referencia](recursos.md#videos-de-referencia-y-composiciones-simultaneas).
+Una referencia de estilo no debe insertarse por error como material de apoyo.
+
 ## E. Guardar el encargo y continuar
 
 El asistente registra las respuestas en un JSON local (no pedir al usuario que
@@ -144,6 +151,7 @@ escriba JSON) y usa intake.py save. Campos:
   "videos": ["ruta-absoluta-al-video-elegido.mp4"],
   "audios": [],
   "support_files": [],
+  "reference_videos": [],
   "music": {"mode": "none", "files": []},
   "output_count": 1,
   "omni": false,
@@ -159,6 +167,9 @@ y videos (subconjunto de rutas elegidas). images admite none, provided, native y
 openai-api. Para otro proveedor, adaptar el registro de forma explicita con sus
 capacidades verificadas antes de producir; no etiquetarlo como uno distinto.
 support_files guarda rutas absolutas de imagenes/HTML/PDF/documentos seleccionados.
+reference_videos guarda objetos con path absoluto al video y use: on_screen o
+style segun la respuesta real. Puede quedar vacio; no exigir videos adicionales.
+La composicion y el momento de aparicion se concretan en guion/RECURSOS.md.
 music.mode admite none, provided o undecided; provided requiere music.files con
 audios elegidos. undecided es una pregunta pendiente, no una eleccion silenciosa.
 Los audios de voz siguen en audios. El inventario detecta tipos; no renderiza HTML.

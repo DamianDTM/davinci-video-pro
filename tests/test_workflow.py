@@ -625,6 +625,46 @@ class Tests(unittest.TestCase):
             with self.assertRaises(ValueError): intake.save_intake(self.project, answers)
             self.assertEqual(before, path.read_bytes())
 
+    def test_reference_videos_are_optional_and_distinct_from_main_sources(self):
+        self.approve()
+        primary = self.root / 'speaker.mp4'; primary.write_bytes(b'offline speaker')
+        shown = self.root / 'demo.mp4'; shown.write_bytes(b'offline on-screen reference')
+        style = self.root / 'example.mov'; style.write_bytes(b'offline style reference')
+        answers = {'videos': [str(primary)], 'output_count': 1, 'omni': False, 'images': 'none',
+                   'user_responses': ['Un video: mostrar demo en PiP; example es solo referencia de estilo']}
+        path = Path(intake.save_intake(self.project, answers)['path'])
+        self.assertEqual(json.loads(path.read_text())['reference_videos'], [])
+        refs = [{'path': str(shown), 'use': 'on_screen'}, {'path': str(style), 'use': 'style'}]
+        answers['reference_videos'] = refs
+        intake.save_intake(self.project, answers)
+        record = json.loads(path.read_text())
+        self.assertEqual(record['reference_videos'], refs)
+        self.assertEqual(record['videos'], [str(primary)])
+        self.assertEqual(record['outputs'][0]['videos'], [str(primary)])
+        self.assertEqual(record['output_count'], 1)
+        self.assertIn('[style] ' + str(style), (self.project / 'ENCARGO.md').read_text(encoding='utf-8'))
+        # A style reference is not implicitly an authorized principal source.
+        answers['outputs'] = [{'id': 'video-01', 'purpose': 'Prueba', 'videos': [str(primary), str(style)]}]
+        before = path.read_bytes()
+        with self.assertRaises(ValueError): intake.save_intake(self.project, answers)
+        self.assertEqual(before, path.read_bytes())
+
+    def test_reference_video_role_and_file_are_required_without_changing_saved_choices(self):
+        self.approve()
+        video = self.root / 'speaker.mp4'; video.write_bytes(b'offline speaker')
+        image = self.root / 'image.png'; image.write_bytes(b'offline image')
+        answers = {'videos': [str(video)], 'output_count': 1, 'omni': False, 'images': 'none',
+                   'user_responses': ['Prueba local de referencias']}
+        path = Path(intake.save_intake(self.project, answers)['path']); before = path.read_bytes()
+        valid = {'path': str(video), 'use': 'on_screen'}
+        for invalid in ('not a list', [{'path': str(video)}], [{'path': str(image), 'use': 'on_screen'}],
+                        [{'path': str(video), 'use': 'automatic'}], [valid, valid],
+                        [{'path': 'relative.mp4', 'use': 'style'}]):
+            with self.subTest(invalid=invalid):
+                answers['reference_videos'] = invalid
+                with self.assertRaises(ValueError): intake.save_intake(self.project, answers)
+                self.assertEqual(before, path.read_bytes())
+
     def test_intake_keeps_exact_publication_text_without_authorizing_a_post(self):
         self.approve()
         video = self.root / 'video.mp4'; video.write_bytes(b'offline video')

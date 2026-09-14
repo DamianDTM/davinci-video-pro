@@ -65,6 +65,20 @@ def save_intake(project, answers):
     videos = selected_files(answers.get('videos'), VIDEO)
     audios = selected_files(answers.get('audios', []), AUDIO)
     support_files = selected_files(answers.get('support_files', []), SUPPORT)
+    reference_videos = answers.get('reference_videos', [])
+    if not isinstance(reference_videos, list):
+        raise ValueError('reference_videos debe ser una lista de videos y su uso elegido.')
+    references = []
+    seen_references = set()
+    for reference in reference_videos:
+        if (not isinstance(reference, dict) or set(reference) != {'path', 'use'}
+                or reference['use'] not in ('on_screen', 'style')):
+            raise ValueError('Cada video de referencia requiere path y use: on_screen o style.')
+        path = selected_files([reference['path']], VIDEO)[0]
+        if path in seen_references:
+            raise ValueError('El video de referencia aparece repetido.')
+        seen_references.add(path)
+        references.append({'path': path, 'use': reference['use']})
     music = answers.get('music', {'mode': 'undecided', 'files': []})
     if not isinstance(music, dict) or music.get('mode') not in ('none', 'provided', 'undecided'):
         raise ValueError('Elegir musica: none, provided o undecided si falta la respuesta.')
@@ -111,6 +125,7 @@ def save_intake(project, answers):
     if set(videos) != {path for output in planned for path in output['videos']}:
         raise ValueError('Quedan videos seleccionados sin asignar; acuerda su uso o retiralos de la seleccion.')
     record = {'version': 2, 'at': now(), 'videos': videos, 'audios': audios, 'support_files': support_files,
+              'reference_videos': references,
               'output_count': count, 'outputs': planned, 'omni': answers['omni'], 'images': mode, 'music': music,
               'image_style': str(answers.get('image_style', 'por acordar')),
               'user_responses': responses, 'script_sha256': digest(script),
@@ -131,6 +146,12 @@ def save_intake(project, answers):
         lines += ['', 'Abrir y revisar informacion y apariencia; HTML con su CSS real y captura visual.',
                   'Registrar en RECURSOS.md la fuente, pagina/seccion, captura, frase y tiempos del montaje corregido.',
                   'Insertar lo pertinente con diseno fiel y resaltado legible. Esta lista no demuestra revision ni obliga a usarlo todo.']
+    lines += ['', '## Videos de referencia opcionales', '']
+    lines += [f'- [{item["use"]}] {item["path"]}' for item in references] or ['Sin videos de referencia seleccionados.']
+    if references:
+        lines += ['', 'style: solo orienta el estilo, no insertar sus imagenes ni audio.',
+                  'on_screen: mostrar segun el guion; registrar pantalla dividida/PiP y tramo en RECURSOS.md.',
+                  'No contar estas referencias como videos finales ni como tomas principales seleccionadas.']
     lines += ['', '## Musica opcional', '', 'Eleccion: ' + music['mode']]
     lines += ['- ' + value for value in music_files]
     if music['mode'] == 'undecided':

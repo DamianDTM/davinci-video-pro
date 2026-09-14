@@ -16,6 +16,7 @@ Las pruebas tecnicas de instalacion/conexion no requieren guion.
 - Llamada a la accion: {{cta_o_no_aplica}}
 - Contenido que debe conservarse: {{imprescindibles}}
 - Recursos HTML/CSS, PDF/documentos e imagenes aportados, si los hay:
+- Videos de referencia opcionales: archivo/carpeta, mostrar o solo estilo; pantalla dividida/PiP si procede:
 - Musica opcional: ninguna, archivo o carpeta/pista elegida:
 - Titulo y descripcion para publicar, si quiere indicarlos ahora (pueden darse al cierre):
 
@@ -29,6 +30,8 @@ Estas preferencias no reemplazan las decisiones del guion de este video.
 Los documentos aportados se muestran con su diseno original, capturas fieles y
 resaltados sincronizados cuando corresponden al discurso. Mantener la propia voz
 corregida en off sobre los recursos. Preguntar por documentos y musica opcionales.
+Preguntar por videos de referencia opcionales y distinguir uso en pantalla de
+ejemplo de estilo. Pantalla dividida o PiP segun la eleccion del usuario/guion.
 El usuario valida reproduciendo el montaje antes del export final; la publicacion
 en redes es una eleccion posterior con sus textos y destinos concretos.
 

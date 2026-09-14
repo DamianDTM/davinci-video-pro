@@ -116,6 +116,22 @@ forma limpia, preservando una voz natural.
 - Mantener la propia voz YA CORREGIDA como voz en off sobre documentos e imagenes.
   Conservar el discurso continuo sin generar una narracion distinta por defecto.
 
+## Videos de referencia, pantalla dividida y PiP
+
+- Preguntar si tiene videos que quiera referenciar: archivos/carpeta, para mostrar
+  dentro del montaje o solo para orientar el estilo. Aportarlos es OPCIONAL.
+- Si quiere mostrarlos, ofrecer pantalla dividida, uno grande con otro pequeno
+  superpuesto (PiP) o composicion elegida por la IA segun el guion. Respetar su
+  eleccion y cualquier momento solicitado; si lo delega, escoger el tramo pertinente.
+- Registrar uso, archivo y tramo, composicion, tiempos del montaje corregido y
+  audio principal. Una referencia solo de estilo no se inserta ni aporta su audio.
+- Conservar proporciones, nitidez, margenes, rostros visibles y espacio para
+  subtitulos/CTA. Dar entradas y salidas suaves y una duracion que permita entender.
+- Mantener una voz principal clara y corregida; no superponer dos discursos por
+  accidente. Revisar tambien el dialogo del inserto si se va a escuchar.
+- Reproducir y revisar la composicion dentro del montaje antes del visto bueno
+  y export final. No generar otro video ni forzar una referencia si no la aporta.
+
 ## Musica opcional
 
 - Preguntar si quiere musica: pasar MP3/otro audio, indicar carpeta de canciones

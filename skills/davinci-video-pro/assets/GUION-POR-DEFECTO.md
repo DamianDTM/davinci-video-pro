@@ -61,6 +61,12 @@ la voz corregida al mostrar e integrar el resultado; verificar que no reaparezca
 
 ## Imagenes y representaciones visuales
 
+Preguntar si tiene un video de referencia opcional, como archivo o carpeta, para
+mostrarlo dentro del montaje o solo como guia de estilo. Si lo quiere mostrar,
+ofrecer pantalla dividida o un video pequeno sobre el principal (PiP), o dejar
+la composicion a la IA segun el mensaje. Elegir un tramo pertinente si no indica
+uno y mantener la voz principal clara. Una referencia de estilo no se inserta.
+
 - Elegir cada recurso después de conocer el contenido. Su función debe ser
   explicar, demostrar, contextualizar o ilustrar una frase concreta.
 - Priorizar material aportado por el usuario y recursos visuales coherentes

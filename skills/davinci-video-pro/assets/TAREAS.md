@@ -27,6 +27,8 @@ Reutilizar respuestas y pasos comprobados. Anotar evidencia y siguiente paso.
 - [ ] Preguntar si se generaran escenas Omni.
 - [ ] Preguntar si se usaran/generaran imagenes y mostrar opciones de estilo/proveedor disponibles.
 - [ ] Preguntar por HTML/CSS, PDF y documentos opcionales; recibir archivos/carpeta y registrar seleccion.
+- [ ] Preguntar por videos de referencia opcionales: mostrar en pantalla o solo estilo; recibir archivo/carpeta.
+- [ ] Si se mostraran, registrar pantalla dividida/PiP o composicion delegada y tramo del guion.
 - [ ] Preguntar musica opcional: MP3/archivo, carpeta de canciones o ninguna; registrar pistas/seleccion delegada.
 - [ ] Guardar ENCARGO.md, concretar archivos enviados y gasto si corresponde.
 - [ ] Comprobar guion y brief vigentes mediante workflow.py gate.
@@ -46,6 +48,7 @@ Reutilizar respuestas y pasos comprobados. Anotar evidencia y siguiente paso.
 - [ ] Esperar decision del usuario antes de otra generacion o reintento Omni.
 - [ ] Aplicar subtitulos, enfasis, CTA, titulares, transiciones, audio y color.
 - [ ] Animar resaltados de documentos cuando ayuden; conservar la voz corregida en off sobre los recursos.
+- [ ] Revisar pantalla dividida/PiP elegida: proporciones, margenes, subtitulos y una voz principal clara.
 - [ ] Mezclar solo la musica elegida con fundidos y voz clara; marcar no aplicable si no se pidio.
 - [ ] Revisar TODO el montaje contra guion y brief; registrar defectos y pendientes.
 - [ ] Dar proyecto, timeline/revision y como reproducir CADA video para validarlo.
