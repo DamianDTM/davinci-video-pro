@@ -1,4 +1,17 @@
-# Validacion de la version 2.4.2
+# Validacion de la version 2.4.3
+
+## Entrada con instalacion existente — 14-09-2026
+
+Se explicita la pregunta inicial por Resolve Y el puente. La ruta ya configurada
+comprueba conexion y retoma materiales/edicion; un puente apagado se activa sin
+reinstalar. La ruta incompleta instala solo componentes ausentes y conserva el
+MCP/puente al cambiar de chat o cliente. Un instalador descargado no equivale a
+Resolve instalado, ni un fallo de conexion a ausencia del puente.
+
+Cambio limitado a instrucciones, plantilla, README y metadatos; los scripts no
+cambian. Se revisan coherencia de las rutas, enlaces locales, metadatos y manifiesto.
+No se ejecuta una reinstalacion real ni se afirma que la documentacion garantice
+por si sola el comportamiento de todos los asistentes.
 
 ## Registro vivo de tareas — 14-09-2026
 

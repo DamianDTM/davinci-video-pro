@@ -1,4 +1,4 @@
-# DaVinci Video Pro 2.4.2
+# DaVinci Video Pro 2.4.3
 
 Skill para **Codex local y Claude Code** que guia la instalacion y organiza un
 encargo de edicion profesional con DaVinci Resolve, Gemini y recursos opcionales.
@@ -40,8 +40,11 @@ Resolve local por recibir un enlace: requiere acceso local, scripts y MCP compat
 
 ## Que preguntara y hara
 
-1. **Resolve:** si ya esta instalado y su version/edicion. Si no lo sabes, lo
-   detecta. Si falta o debe cambiarse, propone una version compatible concreta
+1. **Resolve y puente:** pregunta si ya estan instalados/configurados. Si funcionan,
+   comprueba la conexion y pasa a materiales o retoma la edicion pendiente. Si el
+   puente esta apagado, indica como activarlo; instala solo lo que falte. Reutiliza
+   respuestas previas y detecta version/edicion si no las sabes. Si debe cambiarse,
+   propone una version compatible concreta
    y pregunta por instalarla, preservando proyectos y autorizaciones anteriores.
 2. **Conexion:** registra el MCP para tu cliente, configura/reutiliza tu API key
    propia de Google mediante entrada local oculta, explica como abrir Resolve,

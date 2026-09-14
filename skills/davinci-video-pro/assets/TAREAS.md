@@ -29,10 +29,11 @@ bueno del usuario para exportar ni su autorizacion para publicar.
 
 ## Instalacion y conexion
 
-- [ ] Preguntar si posee Resolve y version/edicion; si no sabe, detectar localmente.
+- [ ] Preguntar si ya tiene Resolve instalado y puente configurado; reutilizar respuesta previa y comprobar estado/version.
+- [ ] Si ya funciona, omitir instalacion y pasar a materiales o pendientes; si esta apagado, activar el puente existente.
 - [ ] Sin acceso local, pedir datos pendientes y dar version compatible, enlace oficial y pasos manuales.
 - [ ] Reutilizar lo compatible o acordar una instalacion concreta preservando proyectos.
-- [ ] Instalar/registrar el MCP en el cliente elegido y conservar otros ajustes.
+- [ ] Instalar/registrar solo componentes ausentes en el cliente elegido; reutilizar MCP y puente existentes, conservando ajustes.
 - [ ] Configurar o reutilizar API key Google mediante entrada local oculta.
 - [ ] Verificar autenticacion/modelo sin enviar videos; no requiere guion.
 - [ ] Indicar abrir Resolve, abrir proyecto y activar Workspace > Scripts > resolve_bridge si aplica.
