@@ -9,6 +9,12 @@ Mostrar al usuario su ruta absoluta para leerlo o editarlo; registrar su eleccio
 Corregir solo defectos recuperables, respetar excepciones expresas y documentar
 lo que requiera otra toma. No declarar una correccion sin comprobar el resultado.
 
+Todo proceso automatico requiere revision posterior de la IA: abrir y revisar
+su evidencia y su efecto en el montaje. Incluye cortes, limpieza/normalizacion,
+alineacion, subtitulos, imagenes, documentos, Omni, transiciones y export.
+La lista de tareas conserva los pendientes; no se autoaprueba porque un programa
+devuelva exito. El objetivo es evitar errores detectables, sin garantizar cero.
+
 ## Analisis y preparacion
 
 - La duracion objetivo o intervalo por video lo define el usuario. Preguntarla
@@ -48,6 +54,12 @@ forma limpia, preservando una voz natural.
   respiraciones útiles y continuidad de entonación.
 - Usar transiciones de audio breves o ambiente de la misma grabación cuando
   hagan falta para evitar clics y cambios bruscos de ruido de fondo.
+- Buscar empalmes mas suaves: probar microfundidos de 5–20 ms solo si hay margen
+  limpio y ajustarlos por escucha. No recuperar silabas descartadas ni truncar
+  ataques/finales. No imponer 80–200 ms de pausa en todos los cortes.
+- Preservar sincronizacion y duracion al solapar audio. Revisar la frase completa
+  y cada corte a velocidad normal. En imagen, evitar disolver dos posiciones del
+  rostro; usar corte motivado, reencuadre o recurso pertinente cuando convenga.
 - Si una frase queda incompleta, buscar otra toma. Si falta información o una
   corrección factual es dudosa, señalar el fragmento para revisión o regrabación.
 
@@ -59,6 +71,12 @@ forma limpia, preservando una voz natural.
 - Incluir subtítulos durante todo el discurso. Sincronizarlos con la versión
   final del audio y agruparlos en frases breves con saltos de línea naturales,
   preferentemente en una o dos líneas. Corregir nombres y terminología.
+- Respetar lo que realmente se escucha, sin parafrasear el subtitulo para que
+  coincida con el guion. Contrastar transcripcion neutra y audio al verificar.
+- Realizar revision neutra de Gemini del discurso completo y revision posterior
+  del agente por escucha/imagen; ambas son necesarias. No aprobar por la respuesta
+  del modelo. Para cambios solo visuales, reutilizar Gemini unicamente si se
+  demuestra que el audio es identico y revisar de nuevo la imagen actual.
 - Resaltar las palabras clave dentro del subtítulo con un color de acento
   consistente y contrastante. Por defecto: texto blanco y palabras clave
   en dorado. Destacar conceptos importantes, sin colorear todas las palabras.

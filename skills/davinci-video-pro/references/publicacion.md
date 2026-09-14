@@ -7,6 +7,11 @@ suscripciones ni servicios de alojamiento por defecto.
 
 ## Primero mostrar el montaje
 
+El QA sigue [calidad](calidad.md): revision neutra de Gemini del discurso,
+comprobaciones automaticas y revision real de la IA. Pasar quality_review.py gate
+antes de presentar la previsualizacion como lista y sobre el MP4 final antes de
+entregar/publicar. Un archivo modificado invalida la revision anterior.
+
 Tras el QA, decir por cada video el proyecto de Resolve, nombre exacto de timeline,
 revision y como reproducirlo: abrir el proyecto, seleccionar esa timeline en Edit,
 ir al inicio y usar el boton de reproduccion del visor (o el atajo configurado).

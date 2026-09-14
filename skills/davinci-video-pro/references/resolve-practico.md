@@ -27,6 +27,10 @@ Guardar IDs y asociaciones de pistas en el estado del encargo.
 
 ## Duraciones e imágenes
 
+Consultar capacidades-resolve.md antes de elegir una via y calidad.md para medir
+la cobertura real y escuchar/ver cada empalme. Los rangos de destino [start,end)
+del plan QA no definen la semantica de endFrame de origen de AppendToTimeline.
+
 Medir el resultado de AppendToTimeline. Se observó un desfase de un fotograma:
 con endFrame=out-1 algunos medios devolvían duración esperada-1. Si ocurre,
 borrar únicamente el item recién creado, sin ripple, y probar endFrame=out.

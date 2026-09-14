@@ -192,6 +192,11 @@ video final. Reutilizar analisis ya valido cuando sirva a varias salidas sin rep
 
 ## F. Mostrar, validar y entregar
 
+Antes de presentarlo como listo, seguir [calidad](calidad.md): observacion neutra
+de Gemini del discurso completo, controles locales y revision posterior del agente.
+Escuchar/ver cada resultado automatico y el montaje completo; documentar la
+revision y comprobar quality_review.py gate. Repetir sobre el export final.
+
 Al terminar cada montaje, indicar como reproducirlo, con proyecto y timeline/revision
 reales. Esperar el visto bueno y atender cambios antes de exportar como final.
 Tras validar, preguntar si quiere solo los archivos o publicacion directa en las

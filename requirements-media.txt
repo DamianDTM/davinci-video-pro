@@ -1,4 +1,6 @@
-# Install in an isolated environment after receiving the user's script.
+# Install in an isolated environment. Connection tests need no script; production does.
 google-genai==2.22.0
 av>=14,<17
 imageio-ffmpeg>=0.6,<0.7
+numpy>=1.26,<3
+Pillow>=10,<13

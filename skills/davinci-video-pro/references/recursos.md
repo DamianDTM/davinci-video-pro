@@ -18,6 +18,13 @@ estilo, origen, estado y archivo final. Cada recurso generado será distinto.
 Mantener prompts y procedencia en RECURSOS.md. Verificar que los archivos descargados
 sean medios válidos antes de importarlos.
 
+Indicar explicitamente el idioma del video en cualquier texto generado y revisar
+ortografia, cifras y legibilidad en la imagen real. Preferir textos editables
+para informacion que deba ser exacta. Un generador no verifica por si solo lo
+escrito; adjuntar el recurso como evidencia en la revision de calidad. Corregir
+con una tecnica proporcionada al defecto; no forzar regeneraciones pagadas cuando
+un retoque o una composicion nativa resuelva bien el problema.
+
 Usar ImageGen si está disponible y encaja con fotografías/ilustraciones. Inspeccionar
 el resultado, respetar el aspecto de salida y dejar espacio para subtítulos.
 Para gráficos de texto o diagramas simples, una composición nativa editable puede

@@ -47,6 +47,11 @@ Cambiar de plano en límites de frase, cambios de tema, énfasis o cortes de
 limpieza. Aprovechar imágenes de apoyo para cubrir saltos visibles. Mantener
 la posición del rostro y la mirada coherentes entre planos.
 
+Buscar un discurso continuo y natural: el espectador debe entender cada palabra
+y percibir cambios de plano motivados. Suavizar el sonido de los empalmes sin
+ralentizar la pieza ni convertir cada corte de rostro en una disolucion visible.
+El brief tecnico define la ejecucion y la doble revision de Gemini y del agente.
+
 Estos recursos simulan una edición con varios planos. Una perspectiva lateral
 auténtica requiere otra toma; un recorte conserva la perspectiva de la cámara
 original. Limitar los acercamientos según la resolución y nitidez disponibles.

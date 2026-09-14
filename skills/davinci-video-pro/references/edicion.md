@@ -48,6 +48,10 @@ pertinentes que no contradigan sus decisiones y las excepciones explicitas.
 
 ## Montaje
 
+Leer [calidad y cortes suaves](calidad.md) y [capacidades de Resolve](capacidades-resolve.md).
+Aplicar los microfundidos segun el contexto y preservar sincronizacion/duracion;
+la IA escucha y ve cada resultado automatico antes de continuar con el siguiente.
+
 La duracion objetivo la indica el usuario. Conservar explicaciones utiles al limpiar;
 no convertir todo en resumen. Si no alcanza con calidad, comunicar duracion viable
 y acordar el cambio antes de apartarse del objetivo.
@@ -96,6 +100,11 @@ con la acción y la palabra realmente pronunciada. Mantenerla legible unos segun
 con un icono discreto cuando ayude. No inventar promesas ni palabras para comentar.
 
 ## Revisión y exportación
+
+Usar quality_review.py scan y completar la revision de la IA por salida segun
+[calidad](calidad.md). Pasar gate sobre la previsualizacion antes de presentarla
+como lista, y sobre el archivo final antes de entregarlo. No autoaprobar hallazgos
+ni sustituir la escucha por una transcripcion o por ebur128/blackdetect.
 
 Primero revisar en Resolve una muestra representativa de título, subtítulo mixto,
 frase larga, inserto, fundido y CTA, y luego TODO el montaje. Mostrar al usuario

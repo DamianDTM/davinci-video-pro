@@ -37,10 +37,14 @@ Reutilizar respuestas y pasos comprobados. Anotar evidencia y siguiente paso.
 
 - [ ] Analizar material seleccionado con Gemini, guion y brief; verificar tiempos localmente.
 - [ ] Crear tabla de montaje y criterios del brief para esta salida.
+- [ ] Probar capacidades de titulos/audio/fundidos en una muestra antes de automatizar el lote.
+- [ ] Registrar cada proceso automatico y la evidencia que la IA abrira/escuchara para revisarlo.
 - [ ] Abrir HTML con CSS y capturarlo; renderizar documentos aportados y revisar fidelidad visual.
 - [ ] Vincular cada captura con su pagina/seccion, frase y tiempos del discurso corregido; no forzar insertos.
 - [ ] Aplicar el brief: ruido, niveles, silencios, tartamudeos y repeticiones corregibles.
 - [ ] Escuchar empalmes, conservar palabras completas, respiracion y significado.
+- [ ] Revisar microfundidos y cortes visuales sin doble rostro, flashes ni cambios de sincronizacion.
+- [ ] Obtener observacion neutra de Gemini del discurso completo y contrastarla por escucha de la IA; registrar desacuerdos.
 - [ ] Antes de Omni, preparar imagen y voz sincronizadas desde el tramo YA CORREGIDO; registrar la revision con prepare_clip.py --review-file.
 - [ ] Crear solo recursos elegidos; imagenes unicas y una escena Omni por turno de revision.
 - [ ] Restaurar la voz corregida de la entrada y revisar la toma Omni antes de mostrarla; no recuperar el audio bruto.
@@ -51,9 +55,13 @@ Reutilizar respuestas y pasos comprobados. Anotar evidencia y siguiente paso.
 - [ ] Revisar pantalla dividida/PiP elegida: proporciones, margenes, subtitulos y una voz principal clara.
 - [ ] Mezclar solo la musica elegida con fundidos y voz clara; marcar no aplicable si no se pidio.
 - [ ] Revisar TODO el montaje contra guion y brief; registrar defectos y pendientes.
+- [ ] Leer la cobertura real de Resolve y ejecutar quality_review.py scan con plan, SRT y evidencias automaticas.
+- [ ] La IA reproduce TODO, escucha cada empalme, abre capturas/evidencias y documenta AI-REVIEW.json por item.
+- [ ] Resolver hallazgos y pasar quality_review.py gate sobre esta previsualizacion; no autoaprobar pendientes.
 - [ ] Dar proyecto, timeline/revision y como reproducir CADA video para validarlo.
 - [ ] Registrar el visto bueno del usuario; mostrar de nuevo las revisiones con cambios antes del export final.
 - [ ] Exportar y verificar MP4 completo, proyecto con medios y SRT.
+- [ ] Repetir QA y revision de la IA sobre el export final; comprobar gate y hashes antes de entregar/publicar.
 - [ ] Registrar id de salida, ruta absoluta, revision y evidencia de QA.
 
 ## Publicacion opcional al terminar

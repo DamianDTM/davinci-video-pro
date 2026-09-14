@@ -1,16 +1,23 @@
-# DaVinci Video Pro 2.4.1
+# DaVinci Video Pro 2.5.0-rc.1
+
+Rama de pruebas `feat/verified-editing-qa`. Incorpora verificacion neutra,
+controles locales con evidencias, revision obligatoria de la IA y cortes mas
+suaves. No es una actualizacion de main ni una certificacion de cero errores.
+Ver [procedimiento de calidad](skills/davinci-video-pro/references/calidad.md).
 
 Skill para **Codex local y Claude Code** que guia la instalacion y organiza un
 encargo de edicion profesional con DaVinci Resolve, Gemini y recursos opcionales.
 
 Repositorio: [DamianDTM/davinci-video-pro](https://github.com/DamianDTM/davinci-video-pro).
-Paquete de esta version: [version 2.4.1](https://github.com/DamianDTM/davinci-video-pro/releases/tag/v2.4.1).
+Version estable: [2.4.1](https://github.com/DamianDTM/davinci-video-pro/releases/tag/v2.4.1).
+Esta candidata se obtiene seleccionando la rama `feat/verified-editing-qa`.
 
 ## Instalacion sencilla
 
 Copia esto en Codex local o Claude Code:
 
-> Instala o actualiza DaVinci Video Pro desde https://github.com/DamianDTM/davinci-video-pro,
+> Descarga la rama feat/verified-editing-qa de https://github.com/DamianDTM/davinci-video-pro.
+> Quiero probar esta candidata; conserva una copia de mi instalacion anterior al actualizar.
 > Lee el README y aplica la skill para el asistente que estoy usando.
 > Primero configura la conexion y despues guiame por materiales, cantidad de videos,
 > brief tecnico, guion y recursos. Muestrame las rutas editables de los documentos.

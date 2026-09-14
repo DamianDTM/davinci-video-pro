@@ -27,6 +27,7 @@ python <skill>/scripts/gemini_video.py --project-dir <proyecto> status
 python <skill>/scripts/gemini_video.py --project-dir <proyecto> models
 python <skill>/scripts/gemini_video.py --project-dir <proyecto> check --model gemini-3.8-flash
 python <skill>/scripts/gemini_video.py --project-dir <proyecto> analyze --file <archivo> --output <informe-nuevo.json> --model gemini-3.8-flash --processing agentic --upload-to-google
+python <skill>/scripts/gemini_video.py --project-dir <proyecto> verify --file <revision-o-fragmento> --output <verificacion-nueva.json> --model gemini-3.8-flash --processing static --upload-to-google
 ```
 
 status es local; models/check son pruebas tecnicas sin guion. analyze exige
@@ -39,6 +40,21 @@ El helper incluye el guion como fuente principal y el brief tecnico en la petici
 registra hashes y modelo, espera Files ACTIVE y elimina su entrada remota en finally.
 Si falla limpieza, informar. Tiempos de Gemini son estimados: verificar con escucha,
 forma de onda y transcripcion alineada antes de cortar. No inventar dialogo faltante.
+
+Lo anterior describe analyze. verify mantiene los requisitos locales de guion y
+brief, pero NO envia sus textos, nombres de archivos descriptivos ni la respuesta
+esperada. Transcribe lo escuchado, incluidos tropiezos. La IA debe revisar el
+resultado contra el audio real; ver [calidad](calidad.md). No certifica cortes ni
+precision temporal. No usar analyze para decidir si desaparecio un defecto ya
+descrito en el brief. Cada informe registra mode y editorial_context_sent.
+
+El SDK conserva reintentos desactivados. SOLO analyze/verify disponen de una capa
+limitada para HTTP 500/502/503/504: --max-attempts 1, 2 (predeterminado) o 3, incluida
+la peticion inicial, con espera creciente corta. Sin reintentar 400/401/403/429,
+timeouts, errores desconocidos, subida o JSON invalido. Guarda .attempts.json
+tambien en fallos; el coste incierto no se presenta como cero. Reutilizar la misma
+subida durante esos intentos y revisar el registro antes de iniciar otra llamada.
+Omni NO usa esa capa; conserva exactamente un intento por decision del usuario.
 
 Agentic sirve para explorar el material segun el encargo; static es configurable
 para clips cortos o compatibilidad. Registrar cual ocurrio, no solo cual se pidio.

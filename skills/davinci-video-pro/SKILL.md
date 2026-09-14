@@ -2,7 +2,7 @@
 name: davinci-video-pro
 description: Instala y conecta DaVinci Resolve, su MCP y Gemini en Codex o Claude Code; edita con guion y brief tecnico, documentos visuales, musica y Omni opcionales, revision previa y publicacion autorizada en redes.
 metadata:
-  version: "2.4.1"
+  version: "2.5.0-rc.1"
   short-description: Instalacion guiada y edicion con brief obligatorio
 ---
 
@@ -49,7 +49,11 @@ continuar directamente con la recepcion del encargo.
    capturas fieles al HTML/CSS y [musica](references/musica.md) para la mezcla.
    Para Omni, no pedir presupuesto: usar el ciclo siguiente.
 6. **Montaje y validacion.** Guardar elecciones en ENCARGO.md, mostrar TAREAS.md por
-   video, analizar, editar y revisar. Dar proyecto, timeline/revision y pasos reales
+   video, analizar, editar y revisar. Leer [calidad y cortes suaves](references/calidad.md):
+   revision neutra separada de Gemini del discurso, controles locales y revision REAL de la IA de cada
+   resultado automatico. Ejecutar quality_review.py scan y gate por salida;
+   ningun script se autoaprueba ni reemplaza escuchar/ver el montaje completo.
+   Dar proyecto, timeline/revision y pasos reales
    para REPRODUCIR cada montaje. Esperar el visto bueno antes del export final;
    si pide ajustes, volver a mostrar la revision afectada.
 7. **Exportacion y publicacion opcional.** Tras la validacion preguntar si desea
@@ -104,6 +108,15 @@ cambio o esta pendiente una revision, leer su version vigente y resolverla antes
 de producir. Las pruebas tecnicas de Resolve y Gemini (autenticacion, catalogo y
 respuesta minima de prueba) pueden hacerse sin guion ni brief. Esta excepcion NO
 permite subir videos, analizarlos, generar recursos ni editar durante instalacion.
+
+Todo resultado automatico (cortes, limpieza de audio, alineacion, recursos,
+subtitulos, transiciones, mediciones y export) requiere revision posterior de la
+IA con evidencia concreta. [Calidad](references/calidad.md) define los pendientes
+y la puerta de entrega. No llenar aprobaciones en lote ni prometer cero errores.
+Antes de construir el montaje, consultar [capacidades de Resolve](references/capacidades-resolve.md)
+y probar una muestra de la via elegida para titulos, audio y fundidos.
+La revision neutra de Gemini y la revision del agente son complementarias:
+ninguna sustituye a la otra ni al visto bueno final del usuario.
 
 Usar scripts/workflow.py --project-dir <carpeta> init y documents para crear y
 mostrar las copias locales. Enlazar rutas absolutas reales; no mostrar <carpeta>

@@ -1,4 +1,65 @@
-# Validacion de la version 2.4.1
+# Validacion de 2.5.0-rc.1 — rama feat/verified-editing-qa
+
+Revision del 14-09-2026. Candidata en una rama separada, sin modificar main ni
+instalarse sobre las skills actuales de Codex/Claude. La instalacion de prueba
+usa un entorno aislado dentro del worktree, excluido de Git y del paquete.
+
+## Cambios nuevos y resultado comprobado
+
+**64 pruebas aprobadas**, incluidas las 42 heredadas. Python 3.14.2, Windows,
+google-genai 2.22.0, PyAV 16.1.0, imageio-ffmpeg 0.6.0 (FFmpeg 7.1), NumPy 2.5.3,
+Pillow 12.3.0. La validacion de metadatos de skill-creator tambien paso.
+En Python 3.11 sin el SDK de Gemini: 63 aprobadas y 1 omitida explicitamente
+(la prueba del SDK real). Los controles de medios sinteticos tambien pasaron.
+
+- verify excluye guion, brief, respuesta esperada y nombre descriptivo del medio;
+  conserva esos documentos como requisitos locales. analyze mantiene el contexto.
+- Se rechazan respuestas con intervalos invalidos y documentos que cambian durante
+  la peticion; se limpia el archivo remoto simulado tambien ante fallo de escritura.
+- Reintentos SOLO de observacion: hasta 1–3 intentos (2 por defecto) para HTTP
+  500/502/503/504; subida unica, registro de intentos y coste fallido desconocido.
+  400/401/403/429, timeout y errores desconocidos no se reintentan. Omni conserva
+  su cliente sin reintentos y las pruebas de un intento por autorizacion pasan.
+- QA decodifica medios sinteticos reales. Detecta un negro de exactamente un
+  fotograma y un hueco de destino de un fotograma; acepta solapamiento intencional.
+- Detecta cantidad de fotogramas incorrecta, ausencia de audio requerido, falta de
+  inventario real de timeline, SRT fuera de tiempo y archivo corrupto.
+- Se comprueban fps fraccionarios 30000/1001 y medicion de audio con ebur128.
+- Los resultados automaticos quedan pendientes. Gate rechaza revision incompleta,
+  informe ajeno, evidencia inventada, corte sin revisar o falta de reproduccion total.
+- Cambiar video, SRT, captura o brief invalida la revision anterior.
+- Con speech:true, QA exige informe neutro verify y revision posterior del agente.
+  No acepta un informe analyze como sustituto. Con audio y speech omitido, exige
+  igualmente esa revision; speech:false solo corresponde a piezas sin discurso.
+- Puede reutilizar observacion neutra tras remux visual con audio identico;
+  rechaza cambios de audio o de sus tiempos aunque las muestras puedan coincidir.
+- Instrucciones para cortes mas suaves: microfundidos adaptados, palabras enteras,
+  handles limpios, duracion/sincronia conservadas y ausencia de doble rostro/flashes.
+- Tabla de capacidades y alternativas de Text+, audio y render; idioma explicito
+  para recursos con texto. Nuevas tareas de revision por cada resultado automatico.
+
+Comando reproducible desde el repositorio, usando un entorno aislado con
+requirements-media.txt instalado:
+
+```text
+python -B -m unittest discover -s tests -v
+```
+
+Las pruebas de medios se omiten explicitamente si faltan dependencias; una
+omision no valida esa integracion. Las revisiones rellenadas en las pruebas son
+fixtures identificados como UNIT_TEST_ONLY, no revisiones perceptivas reales.
+
+## Limites de esta validacion
+
+No hubo llamadas de pago ni pruebas en proyectos reales de Resolve durante esta
+revision. No se ejecuto una sesion completa en Claude ni una instalacion nueva de
+Resolve. No se afirma que los cortes de un video concreto ya hayan mejorado.
+Las pruebas verifican scripts, evidencias y requisitos; la suavidad de voz e
+imagen se comprueba durante la edicion mediante Gemini neutro y escucha/vision
+del agente. Los hashes y formularios no pueden demostrar que el agente escucho.
+No se garantiza cero errores ni se sustituye el visto bueno del usuario.
+
+## Base heredada y validacion anterior de 2.4.1
 
 ## Cambios y alcance
 
