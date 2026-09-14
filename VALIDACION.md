@@ -1,4 +1,25 @@
-# Validacion de la version 2.4.1
+# Validacion de la version 2.4.2
+
+## Registro vivo de tareas — 14-09-2026
+
+Cambio de instrucciones, plantilla y documentacion: TAREAS.md desglosa cada
+cambio concreto por video y revision, antes de ejecutarlo. La IA lo actualiza
+durante el trabajo y marca hecho solo despues de aplicar y revisar el resultado,
+con evidencia. Conserva peticiones nuevas, hallazgos, bloqueos y reaperturas entre
+chats, sin sobrescribir tareas de proyectos anteriores. No se modifica el codigo
+de edicion ni se incorpora a main el control experimental de la rama de QA.
+
+Comprobacion local de esta actualizacion: **42/42 pruebas existentes aprobadas**
+en Windows con Python 3.14.2 y google-genai 2.22.0; metadatos de la skill validos.
+Se revisaron las instrucciones y la plantilla sin anadir tests que solo repitan
+su redaccion. Las pruebas funcionales verifican instalacion y flujo de documentos;
+no certifican que otro asistente actualice la lista en cada interaccion real.
+
+La lista la mantiene el agente siguiendo la skill; un checkbox no demuestra por
+si mismo calidad ni sustituye el visto bueno del usuario. Este cambio no es una
+prueba de edicion real ni una promesa de ausencia de errores.
+
+## Base heredada y validacion anterior de 2.4.1
 
 ## Cambios y alcance
 

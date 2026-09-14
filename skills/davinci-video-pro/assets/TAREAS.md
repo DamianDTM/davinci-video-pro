@@ -1,7 +1,31 @@
 # Tareas del encargo
 
-Estados: pendiente, en curso, hecho con evidencia, no aplicable con motivo.
-Reutilizar respuestas y pasos comprobados. Anotar evidencia y siguiente paso.
+Estados: pendiente, en curso, en revision, hecho con evidencia, bloqueado,
+no aplicable con motivo. Reutilizar respuestas y pasos comprobados.
+
+## Registro vivo de cambios por video
+
+La IA mantiene aqui una tarea concreta por cada cambio previsto o solicitado,
+ademas de la lista general de etapas que sigue. Anadirla ANTES de ejecutar,
+actualizarla al empezar y marcar [x] solo despues de aplicar y revisar el resultado.
+Mientras falte ejecucion o revision, mantener [ ] y el estado correspondiente.
+
+Cada tarea indica: ID unico, video/salida, revision y tramo o alcance global,
+origen (guion, brief, comentario del usuario o hallazgo), accion concreta,
+criterio de comprobacion, estado, resultado y evidencia. Añadir fecha de actualizacion.
+Usar subtareas cuando haya varios cambios que puedan completarse por separado.
+No inventar tareas terminadas, tiempos del video ni rutas de evidencias.
+
+Agregar los cambios reales del encargo debajo de este texto, agrupados por video.
+Las tareas nuevas permanecen pendientes; despues de cada operacion se actualiza
+su avance y resultado. Registrar tambien bloqueos y correcciones fallidas.
+No cerrar en lote al terminar la sesion. Reabrir una tarea si cambia el requisito
+o se descubre un defecto, conservando la revision y evidencia anteriores.
+
+Al retomar otro chat, leer este registro y continuar los pendientes. Conservar
+las notas y tareas existentes al incorporar esta seccion a un proyecto antiguo.
+Una tarea hecha acredita el cambio revisado por la IA; no sustituye el visto
+bueno del usuario para exportar ni su autorizacion para publicar.
 
 ## Instalacion y conexion
 

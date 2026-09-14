@@ -2,7 +2,7 @@
 name: davinci-video-pro
 description: Instala y conecta DaVinci Resolve, su MCP y Gemini en Codex o Claude Code; edita con guion y brief tecnico, documentos visuales, musica y Omni opcionales, revision previa y publicacion autorizada en redes.
 metadata:
-  version: "2.4.1"
+  version: "2.4.2"
   short-description: Instalacion guiada y edicion con brief obligatorio
 ---
 
@@ -122,6 +122,17 @@ propio, ofrecer y aplicar el predeterminado elegido. No sobrescribir documentos
 propios ni preferencias de otros proyectos al seleccionar defaults.
 
 ## Continuidad y mejoras
+
+Gestionar **TAREAS.md como registro vivo de cada cambio del video**, ademas de las
+etapas generales. Antes de ejecutar un cambio autorizado, anotarlo con ID, video,
+revision/tramo, accion y criterio de comprobacion. Marcarlo en curso al comenzar,
+en revision al aplicarlo y hecho [x] SOLO despues de revisar el resultado real,
+anotando evidencia. Actualizar el documento tras cada cambio, no reconstruirlo
+al final. Incluir nuevas peticiones y defectos hallados; conservar historial y
+reabrir tareas si una correccion posterior invalida lo hecho. Mostrar su ruta
+absoluta y el avance durante el trabajo. Seguir [registro de cambios](references/continuidad.md#registro-vivo-de-cambios-en-tareasmd).
+Actualizar este documento no requiere una nueva confirmacion del usuario ni
+autoriza acciones pendientes. Cada salida lleva tareas propias identificables.
 
 Al retomar leer ESTADO.md, ENCARGO.md si existe, guion, brief, TAREAS.md y
 CAMBIOS-PENDIENTES.md. Conservar decisiones y rutas; no crear otro task/chat salvo

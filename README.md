@@ -1,10 +1,17 @@
-# DaVinci Video Pro 2.4.1
+# DaVinci Video Pro 2.4.2
 
 Skill para **Codex local y Claude Code** que guia la instalacion y organiza un
 encargo de edicion profesional con DaVinci Resolve, Gemini y recursos opcionales.
 
 Repositorio: [DamianDTM/davinci-video-pro](https://github.com/DamianDTM/davinci-video-pro).
-Paquete de esta version: [version 2.4.1](https://github.com/DamianDTM/davinci-video-pro/releases/tag/v2.4.1).
+Esta version se obtiene desde la rama `main` (clonar o descargar su ZIP).
+Paquete anterior: [version 2.4.1](https://github.com/DamianDTM/davinci-video-pro/releases/tag/v2.4.1).
+
+Durante la edicion, la skill mantiene **TAREAS.md** con cada cambio concreto por
+video: pendiente, en curso, en revision y hecho. Lo actualiza tras cada operacion
+y marca una tarea hecha cuando el cambio esta aplicado y revisado, con evidencia.
+Nuevas peticiones y defectos se incorporan a la lista; conserva pendientes e
+historial entre chats y muestra la ruta del documento para consultar el avance.
 
 ## Instalacion sencilla
 
