@@ -1,8 +1,21 @@
-# Validacion de 2.5.0-rc.2 — rama feat/verified-editing-qa
+# Validacion de 2.5.0-rc.3 — rama feat/verified-editing-qa
 
 Revision del 14-09-2026. Candidata en una rama separada, sin modificar main ni
 instalarse sobre las skills actuales de Codex/Claude. La instalacion de prueba
 usa un entorno aislado dentro del worktree, excluido de Git y del paquete.
+
+## Entrada con instalacion existente — 14-09-2026
+
+Se explicita la pregunta inicial por Resolve Y el puente. La ruta ya configurada
+comprueba conexion y retoma materiales/edicion; un puente apagado se activa sin
+reinstalar. La ruta incompleta instala solo componentes ausentes y conserva el
+MCP/puente al cambiar de chat o cliente. Un instalador descargado no equivale a
+Resolve instalado, ni un fallo de conexion a ausencia del puente.
+
+Cambio limitado a instrucciones, plantilla, README y metadatos; los scripts no
+cambian. Se revisan coherencia de las rutas, enlaces locales, metadatos y manifiesto.
+No se ejecuta una reinstalacion real ni se afirma que la documentacion garantice
+por si sola el comportamiento de todos los asistentes.
 
 ## Registro vivo de tareas en rc.2 — 14-09-2026
 

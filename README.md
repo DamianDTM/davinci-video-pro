@@ -1,4 +1,4 @@
-# DaVinci Video Pro 2.5.0-rc.2
+# DaVinci Video Pro 2.5.0-rc.3
 
 Rama de pruebas `feat/verified-editing-qa`. Incorpora verificacion neutra,
 controles locales con evidencias, revision obligatoria de la IA y cortes mas
@@ -9,7 +9,7 @@ Skill para **Codex local y Claude Code** que guia la instalacion y organiza un
 encargo de edicion profesional con DaVinci Resolve, Gemini y recursos opcionales.
 
 Repositorio: [DamianDTM/davinci-video-pro](https://github.com/DamianDTM/davinci-video-pro).
-Version estable: [2.4.2 en main](https://github.com/DamianDTM/davinci-video-pro/tree/main).
+Version estable: [2.4.3 en main](https://github.com/DamianDTM/davinci-video-pro/tree/main).
 Esta candidata se obtiene seleccionando la rama `feat/verified-editing-qa`.
 Paquete anterior: [version 2.4.1](https://github.com/DamianDTM/davinci-video-pro/releases/tag/v2.4.1).
 
@@ -47,8 +47,11 @@ Resolve local por recibir un enlace: requiere acceso local, scripts y MCP compat
 
 ## Que preguntara y hara
 
-1. **Resolve:** si ya esta instalado y su version/edicion. Si no lo sabes, lo
-   detecta. Si falta o debe cambiarse, propone una version compatible concreta
+1. **Resolve y puente:** pregunta si ya estan instalados/configurados. Si funcionan,
+   comprueba la conexion y pasa a materiales o retoma la edicion pendiente. Si el
+   puente esta apagado, indica como activarlo; instala solo lo que falte. Reutiliza
+   respuestas previas y detecta version/edicion si no las sabes. Si debe cambiarse,
+   propone una version compatible concreta
    y pregunta por instalarla, preservando proyectos y autorizaciones anteriores.
 2. **Conexion:** registra el MCP para tu cliente, configura/reutiliza tu API key
    propia de Google mediante entrada local oculta, explica como abrir Resolve,

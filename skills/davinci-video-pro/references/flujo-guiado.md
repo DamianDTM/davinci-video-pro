@@ -7,8 +7,17 @@ encargo. Nunca pedir claves en el chat. Usar lista de tareas visible y guardar e
 
 ## A. Instalacion
 
-1. Si no hay informacion previa: «¿Ya tienes DaVinci Resolve? ¿Sabes que version
-   tienes y si es Free o Studio? Si no lo sabes, lo reviso en tu equipo».
+1. Al invocar la skill, preguntar: «¿Ya tienes DaVinci Resolve instalado y el
+   puente configurado, o necesitas que los instalemos?». Reutilizar una respuesta
+   que ya conste; no repetirla durante el mismo encargo. Distinguir instalado de
+   solo tener el instalador descargado, y puente instalado de puente activo.
+   Si dice que si, comprobar brevemente la conexion existente. Si la conexion responde y
+   Gemini esta configurado, pasar directamente a B o a las tareas pendientes del
+   encargo; no pedir reinstalar, reiniciar ni activar un puente que ya responde.
+   Si solo esta apagado, guiar su activacion. Si dice que no, iniciar la instalacion
+   de los componentes que falten; si tiene solo una parte, conservarla. Un fallo
+   de conexion por si solo no demuestra que falte la instalacion.
+   Cuando falte el dato, preguntar version/edicion de Resolve, o revisarla localmente.
    Ante desconocimiento y acceso al equipo, ejecutar diagnostico local; no mandar
    al usuario a buscar algo que la IA puede leer. Si ya esta detectado, informarlo.
    Sin acceso local, seguir el modo guiado de instalacion.md: pedir solo sistema,
@@ -27,10 +36,11 @@ encargo. Nunca pedir claves en el chat. Usar lista de tareas visible y guardar e
    Si existe, abrir la entrada local oculta de configure-gemini.ps1; no solicitar
    pegarla en el chat. En otro sistema usar el almacen local apropiado. Reutilizar
    una clave vigente. Ver gemini.md para verificar SDK, autenticacion y modelo.
-5. Con los componentes instalados, dar estos pasos al usuario, de forma numerada:
-   abrir/reiniciar Resolve; abrir o crear un proyecto; ir a Workspace > Scripts >
+5. Solo si falta activar la conexion, dar estos pasos al usuario, de forma numerada:
+   abrir Resolve si esta cerrado; abrir o crear un proyecto si no hay uno; ir a Workspace > Scripts >
    resolve_bridge; mantener Resolve abierto y avisar «listo». Si se usa Studio con
    scripting directo, indicar su configuracion aplicable en lugar del puente.
+   Reiniciar solo si un cambio de configuracion lo requiere; conservar el trabajo abierto.
 6. Cuando responda, comprobar version y proyecto mediante la conexion. Si falta
    un paso, decir app, accion y resultado esperado. Guardar evidencia sin secretos.
    Las pruebas de autenticacion, catalogo, texto minimo y consulta de version/proyecto

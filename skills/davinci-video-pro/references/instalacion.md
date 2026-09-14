@@ -2,8 +2,9 @@
 
 ## Primera etapa: instalar y conectar
 
-Seguir flujo-guiado.md: preguntar si ya posee Resolve y version/edicion. Si no lo
-sabe, revisarlo localmente. Mostrar una version compatible concreta y preguntar
+Seguir flujo-guiado.md: preguntar si ya posee Resolve instalado y el puente
+configurado; reutilizar lo que ya confirmo. Si desconoce version/edicion o estado,
+revisarlo localmente. Mostrar una version compatible concreta y preguntar
 por instalarla si falta o hay que cambiarla, preservando proyectos y autorizaciones
 previas. No pedir guion ni brief para instalar o probar conexiones.
 
@@ -84,7 +85,7 @@ repositorio. La instalación de esos sistemas no fue probada con este paquete.
 | Situación real | Siguiente paso |
 | --- | --- |
 | Resolve Studio con scripting disponible | Preferencias > Sistema > General > External scripting using: Local. Reiniciar si Resolve lo requiere y comprobar API. |
-| Free 21.0.x | Instalar el puente del repositorio y ejecutarlo desde Workspace > Scripts > resolve_bridge con un proyecto abierto. |
+| Free 21.0.x | Reutilizar el puente existente; instalarlo solo si falta. Activarlo desde Workspace > Scripts > resolve_bridge con un proyecto abierto si aun no responde. |
 | Free 21.1 o posterior | Comprobar soporte actual. El README consultado indica que 21.1 restringe Python a Studio. No insistir con el mismo puente ni prometer que funcionará. |
 | Resolve ausente | Encontrar un instalador oficial compatible con edición, sistema y puente elegido; guiar su instalación y comprobar versión al terminar. |
 | Ya hay conexión funcional | Reutilizarla; omitir reinstalaciones y cambios de versión. |
@@ -98,6 +99,16 @@ El registro, la descarga, el instalador y un diálogo de Windows pueden requerir
 Explica esa acción justo cuando haga falta. No rellenes identidad o datos de contacto inventados.
 
 ## Instalar el MCP
+
+Antes de descargar, clonar, registrar o ejecutar el instalador del puente,
+comprobar lo que ya existe: MCP del cliente actual, checkout/rutas configuradas
+y script del puente en Resolve. Preguntar solo los datos que no puedan revisarse.
+Resolver la ruta real; no crear otro checkout ni otra copia del puente porque
+se abrio otro chat. No ejecutar install_resolve_bridge.py si ya esta instalado
+y compatible. Si esta detenido o Resolve cerrado, activar/abrir y volver a probar.
+Si solo falta el registro en Codex o Claude, completar ese registro reutilizando
+el servidor y puente existentes. Ante una averia o incompatibilidad demostrada,
+diagnosticar y reparar lo necesario, conservando configuracion y personalizaciones.
 
 Descubre primero herramientas instaladas de Resolve. Si responden, comprueba su
 versión y reutiliza la conexión. Si solo falta exponer el servidor en esta sesión,
@@ -117,8 +128,10 @@ git clone https://github.com/samuelgursky/davinci-resolve-mcp.git <repo>
 <python-del-venv-del-repo> <repo>/scripts/install_resolve_bridge.py
 ```
 
-Ejecuta install.py con el repositorio como directorio de trabajo. La última línea
-es para Free compatible o cuando se ha elegido explícitamente el puente.
+Ejecuta install.py con el repositorio como directorio de trabajo solo cuando
+corresponda instalar/configurar componentes pendientes. La última línea es para
+un puente que falta en Free compatible o cuando se ha elegido explícitamente esa
+via; omitirla si ya existe y funciona. No ejecutar la secuencia entera al reconectar.
 El instalador crea su entorno y combina la entrada de Codex. Examina los flags
 actuales antes de usarlos; no inventes --skip-test o --no-update-check.
 Los identificadores comprobados son `codex` y `claude-code`; selecciona el cliente solicitado. Para Claude Code lee clientes.md: el instalador upstream escribe .mcp.json en su cwd. No configures `all`.

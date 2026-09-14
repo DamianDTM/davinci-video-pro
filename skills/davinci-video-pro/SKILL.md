@@ -2,7 +2,7 @@
 name: davinci-video-pro
 description: Instala y conecta DaVinci Resolve, su MCP y Gemini en Codex o Claude Code; edita con guion y brief tecnico, documentos visuales, musica y Omni opcionales, revision previa y publicacion autorizada en redes.
 metadata:
-  version: "2.5.0-rc.2"
+  version: "2.5.0-rc.3"
   short-description: Instalacion guiada y edicion con brief obligatorio
 ---
 
@@ -16,10 +16,13 @@ continuar directamente con la recepcion del encargo.
 
 ## Orden de trabajo obligatorio
 
-1. **Instalacion y conexion.** Preguntar si tiene Resolve y que version/edicion;
-   si no sabe, comprobar localmente. Reutilizar lo compatible. Si falta o requiere
+1. **Instalacion y conexion.** Al invocar, preguntar si ya tiene Resolve instalado
+   y el puente configurado, o necesita instalarlos; reutilizar una respuesta ya dada.
+   Comprobar version/edicion y conexion sin reinstalar. Si ya funciona, pasar a
+   materiales o retomar la edicion pendiente. Un puente instalado pero apagado
+   requiere activacion, no otra copia. Si falta o requiere
    cambio, preparar la version compatible y preguntar por su instalacion concreta.
-   Registrar el MCP en el cliente real, configurar la clave propia de Google
+   Completar solo lo pendiente: registrar el MCP en el cliente real, configurar la clave de Google
    localmente y dar los pasos para abrir Resolve, un proyecto y activar el puente.
    Verificar conexion. Leer [instalacion](references/instalacion.md) y
    [clientes](references/clientes.md). No pedir guion para esta etapa tecnica.
