@@ -1,8 +1,21 @@
-# Validacion de 2.5.0-rc.1 — rama feat/verified-editing-qa
+# Validacion de 2.5.0-rc.2 — rama feat/verified-editing-qa
 
 Revision del 14-09-2026. Candidata en una rama separada, sin modificar main ni
 instalarse sobre las skills actuales de Codex/Claude. La instalacion de prueba
 usa un entorno aislado dentro del worktree, excluido de Git y del paquete.
+
+## Registro vivo de tareas en rc.2 — 14-09-2026
+
+Se incorpora desde main 2.4.2 el registro vivo de TAREAS.md, con cambios concretos
+por video, estados, evidencia, bloqueos y reaperturas. Las tareas se anotan antes
+de ejecutar y se cierran despues de revisar; se conservan entre chats sin borrar
+notas anteriores. El seguimiento es comun a ambas ramas; esta candidata conserva
+la observacion neutra de Gemini y la revision del agente, vinculadas a las tareas.
+
+Es un cambio de instrucciones, plantilla y documentacion, sin cambios nuevos a
+los scripts. Un checkbox no demuestra que el agente haya revisado ni sustituye
+las evidencias de QA o el visto bueno del usuario. No se anaden pruebas que solo
+comprueben palabras de las instrucciones.
 
 ## Cambios nuevos y resultado comprobado
 

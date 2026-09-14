@@ -1,4 +1,4 @@
-# DaVinci Video Pro 2.5.0-rc.1
+# DaVinci Video Pro 2.5.0-rc.2
 
 Rama de pruebas `feat/verified-editing-qa`. Incorpora verificacion neutra,
 controles locales con evidencias, revision obligatoria de la IA y cortes mas
@@ -9,8 +9,15 @@ Skill para **Codex local y Claude Code** que guia la instalacion y organiza un
 encargo de edicion profesional con DaVinci Resolve, Gemini y recursos opcionales.
 
 Repositorio: [DamianDTM/davinci-video-pro](https://github.com/DamianDTM/davinci-video-pro).
-Version estable: [2.4.1](https://github.com/DamianDTM/davinci-video-pro/releases/tag/v2.4.1).
+Version estable: [2.4.2 en main](https://github.com/DamianDTM/davinci-video-pro/tree/main).
 Esta candidata se obtiene seleccionando la rama `feat/verified-editing-qa`.
+Paquete anterior: [version 2.4.1](https://github.com/DamianDTM/davinci-video-pro/releases/tag/v2.4.1).
+
+Durante la edicion, la skill mantiene **TAREAS.md** con cada cambio concreto por
+video: pendiente, en curso, en revision y hecho. Lo actualiza tras cada operacion
+y marca una tarea hecha cuando el cambio esta aplicado y revisado, con evidencia.
+Nuevas peticiones y defectos se incorporan a la lista; conserva pendientes e
+historial entre chats y muestra la ruta del documento para consultar el avance.
 
 ## Instalacion sencilla
 

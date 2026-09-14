@@ -75,6 +75,55 @@ Al retomar leer RECURSOS.md y PUBLICACION.md si existen: revision validada,
 capturas, pistas elegidas y estado/id por red. Actualizar intake no debe convertir
 datos antiguos en permisos nuevos. Nunca reintentar una subida sin consultar su estado.
 
+## Registro vivo de cambios en TAREAS.md
+
+TAREAS.md es el documento task del encargo y se mantiene DURANTE la edicion.
+La checklist general no basta: desglosar los cambios reales del guion, brief y
+pedidos del usuario por cada salida. Incluir tambien los defectos detectados en
+la revision, aunque el usuario no los haya enumerado. Mostrar siempre la ruta
+absoluta del documento y resumir el avance cuando cambie una etapa relevante.
+
+Antes de cada modificacion autorizada, crear o actualizar una tarea concreta.
+Ejemplos: retirar una repeticion en un tramo identificado, suavizar ese empalme,
+subir el titular, ajustar el enfasis de una palabra o sustituir un recurso repetido.
+No agrupar todo como «editar video» ni marcar como hecha una lista de intenciones.
+
+Formato orientativo para una tarea real (reemplazar los campos con datos del encargo):
+
+```text
+- [ ] V01-C001 — Estado: pendiente — Accion concreta.
+  Video y revision: identificadores reales. Tramo: tiempo real o alcance global.
+  Origen: requisito del guion/brief, comentario o hallazgo que motiva el cambio.
+  Comprobacion: que se debe observar o escuchar para considerarlo resuelto.
+  Resultado/evidencia: completar despues de aplicar y revisar; ruta o referencia concreta.
+  Actualizado: fecha y hora. Historial: conservar revisiones y reaperturas.
+```
+
+El ciclo es pendiente → en curso → en revision → hecho. Cambiar a en curso al
+comenzar, a en revision cuando se aplico y a hecho [x] solo tras comprobar imagen,
+audio o datos pertinentes. Anotar que cambio, la revision resultante y evidencia
+real: archivo/captura, informe o posicion de timeline identificable. Un resultado
+success de una herramienta no basta. Actualizar TAREAS.md inmediatamente despues
+de cada operacion; no esperar al final ni generar aprobaciones masivas.
+
+En esta rama, vincular las tareas con los informes de [calidad](calidad.md):
+observacion neutra de Gemini del discurso y revision real del agente. La lista
+no sustituye esas revisiones; si quedan invalidadas, reabrir las tareas afectadas.
+
+Si falla, mantener [ ] como pendiente/bloqueado con causa y siguiente paso. Si el
+cambio deja de aplicar por decision del usuario, anotar no aplicable y el motivo;
+no presentarlo como trabajo realizado. Si se descubre una regresion o cambia el
+requisito, reabrir la tarea o crear una vinculada, conservando lo anterior.
+
+Al cerrar una sesion, indicar tareas hechas, pendientes y bloqueadas por video.
+Al retomar, leer el documento, comprobar que la revision y evidencias siguen
+siendo pertinentes y continuar los pendientes. No sobrescribir listas o notas
+previas al adaptar un proyecto antiguo; insertar este registro si falta.
+No marcar terminado el encargo con cambios aplicables pendientes. Las tareas de
+edicion verificadas no equivalen a la aprobacion del usuario para exportar/publicar.
+Registrar tareas no obliga a abrir otro chat ni a pedir permiso otra vez por
+cambios que el usuario ya autorizo.
+
 ## Rondas de comentarios
 
 Guardar comentarios en CAMBIOS-PENDIENTES.md mientras se ejecuta trabajo autorizado.
